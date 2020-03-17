@@ -1,4 +1,5 @@
-
+import datetime
+from datetime import datetime
 
 class PrograPostMenu:
     def __init__(self, user): # user is picked from array of objects
@@ -42,14 +43,72 @@ class PrograPostMenu:
 
 
     def post(self):
-        date = "14-07-2000"
-        content = "Goood morning"
+        content = input("\nEscriba algo (maximo 140 caracteres): ")
+        if len(content) > 140:
+            print("Superaste el limite de 140 caracteres. Intentalo de nuevo.")
+            return self.post()
+        else:
+            with open('posts.csv', 'a') as f:
+                date = datetime.datetime.now().strftime("%Y/%m/%d")
+                f.writelines("{},{},{}\n".format(self.logged_user, date, content))
+                f.close()
+                print("\nContenido publicado.")
+
+
+
 
     def delete_post(self):
-        pass
+        date = input("\nIngrese la fecha de la publicación que desea eliminar"
+                     +" (en formato 'yy/mm/dd'): ")
+        date_of_post = parse(date).strftime("%Y/%m/%d")
+
+        with open('posts.csv', 'r') as f:
+            posts = [i.split(',', 2) for i in f.readlines().split('\n')]
+            f.close()
+
+
 
     def see_own_posts(self):
-        pass
+
+        with open('posts.csv', 'r') as f:
+            posts = [i.split(',', 2) for i in f.read().split('\n')]
+
+            # create array with posts from user:
+            posts_list = [i for i in posts if i[0] == self.logged_user]
+
+            # sort by date from less recent to most recent
+            # if post_list is empty, nothing happens:
+            posts_list = sorted(posts_list, key=lambda x: datetime.strptime(x[1], '%Y/%m/%d'))
+
+            if len(posts_list) == 0:
+                print("{}, no tienes publicaciones aun.".format(self.logged_user))
+
+            else:
+                # from most recent to less recent means that recent posts will output first and
+                # less recent will output last, making less recent posts appear bottom
+                order = input("\nEn que orden desea ver sus publicaciones? \n"
+                              +"[1] desde el mas reciente al menos reciente \n"
+                              +"[2] desde el menos reciente al mas reciente \n"
+                              +"Ingrese su opcion (1 o 2): ")
+
+                if order == "1":
+                    print("\nPublicaciones de {}: ".format(self.logged_user))
+                    for i in posts_list[::-1]:
+                        print("{}: {}".format(i[1], i[2]))
+
+
+                elif order == "2":
+                    print("\nPublicaciones de {}: ".format(self.logged_user))
+                    for i in posts_list:
+                        print("{}: {}".format(i[1], i[2]))
+
+                else:
+                    print("\nEnter a valid option")
+                    f.close()
+                    return self.see_own_posts()
+
+            f.close()
+
 
     def see_user_posts(self):
         pass
