@@ -38,11 +38,13 @@ class InitialMenu:
 
         if menu_input == "1": # redirect to Progra posts menu's interface
             menu = PrograPostMenu(self.logged_user)
-            return menu.interface()
+            menu.interface()
+            return self.select_menu()
 
         elif menu_input == "2": # redirect to followers menu's interface
             menu = FollowersMenu(self.logged_user)
-            return menu.interface()
+            menu.interface()
+            return self.select_menu()
 
         elif menu_input == "0":
             pass # exit
