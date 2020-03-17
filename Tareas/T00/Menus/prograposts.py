@@ -3,7 +3,15 @@ class PrograPostMenu:
         self.logged_user = user
 
     def interface(self):
-        user_input = input("Qué acción desea realizar?")
+        user_input = input("\nQue accion desea realizar? \n"
+                           +"[1] Publicar algo \n"
+                           +"[2] Eliminar una publicacion \n"
+                           +"[3] Ver mis propias publicaciones \n"
+                           +"[4] Ver las publicaciones de alguien mas \n"
+                           +"[5] Ver usuarios seguidos \n"
+                           +"[0] Volver atras \n"
+                           +"Indique su opcion (1, 2, 3, 4, 5 o 0): ")
+
 
         if user_input == "1":
             return self.post()
@@ -19,6 +27,9 @@ class PrograPostMenu:
 
         elif user_input == "5":
             return self.see_followed_users()
+
+        elif user_input == "0":
+            pass # return to start menu without logging out
 
 
     def post(self):

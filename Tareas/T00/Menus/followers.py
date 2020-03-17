@@ -3,7 +3,11 @@ class FollowersMenu:
         self.logged_user = user
 
     def interface(self):
-        user_input = input("Qué acción desea realizar?")
+        user_input = input("\nQue accion desea realizar? \n"
+                           +"[1] Seguir a alguien \n"
+                           +"[2] Dejar de seguir a alguien \n"
+                           +"[0] Volver atras \n"
+                           +"Indique su opcion (1, 2, o 0): ")
 
         if user_input == "1":
             return self.follow()
