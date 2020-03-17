@@ -22,7 +22,7 @@ class InitialMenu:
             return self.sign_up()
 
         elif user_input == "0":
-            pass
+            pass # program stops
 
         else:
             print("\nINGRESE UNA OPCION VALIDA")
@@ -46,7 +46,7 @@ class InitialMenu:
             return self.select_menu()
 
         elif menu_input == "0":
-            return self.interface()
+            return self.interface() # return to log in menu (interface())
 
         else:
             print("\nINGRESE UNA OPCION VALIDA")
@@ -54,7 +54,6 @@ class InitialMenu:
 
     def log_in(self):
         user_input = input("\nIngrese su nombre de usuario: ")
-        # do something with user_input
         with open("usuarios.csv", "r") as f:
             users = f.read().split("\n")
             f.close()

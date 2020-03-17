@@ -1,3 +1,5 @@
+
+
 class PrograPostMenu:
     def __init__(self, user): # user is picked from array of objects
         self.logged_user = user
@@ -21,7 +23,6 @@ class PrograPostMenu:
             self.delete_post()
             return self.interface()
 
-
         elif user_input == "3":
             self.see_own_posts()
             return self.interface()
@@ -30,7 +31,6 @@ class PrograPostMenu:
         elif user_input == "4":
             self.see_user_posts()
             return self.interface()
-
 
         elif user_input == "5":
             self.see_followed_users()

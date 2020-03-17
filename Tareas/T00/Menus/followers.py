@@ -27,8 +27,6 @@ class FollowersMenu:
 
     def follow(self):
         user_to_follow = input("A quien desea seguir? : ")
-        pass
 
     def unfollow(self):
         user_to_unfollow = input("A quien desea dejar de seguir? : ")
-        pass
