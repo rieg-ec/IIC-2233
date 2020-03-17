@@ -60,11 +60,30 @@ class PrograPostMenu:
     def delete_post(self):
         date = input("\nIngrese la fecha de la publicación que desea eliminar"
                      +" (en formato 'yy/mm/dd'): ")
-        date_of_post = parse(date).strftime("%Y/%m/%d")
+        date_of_post = datetime.strptime(date, "%Y/%m/%d")
 
         with open('posts.csv', 'r') as f:
-            posts = [i.split(',', 2) for i in f.readlines().split('\n')]
+            posts = [i.split(',', 2) for i in f.read().split('\n') if i != ""]
+            own_posts = [i for i in posts if i[0] == self.logged_user]
             f.close()
+
+        posts_in_date = [i for i in own_posts if i[1] == date]
+
+        if len(posts_in_date) == 0:
+            print("\nNo tienes publicaciones en esa fecha.")
+
+        elif len(posts_in_date) == 1:
+            with open('posts.csv', 'w') as f:
+                for i in posts:
+                    if i not in posts_in_date:
+                        str = "{}, {}, {}\n".format(i[0], i[1], i[2]) # each row of posts.csv as a str
+                        f.write(str)
+                f.close()
+                print("\nPublicacion eliminada: '{}'".format(posts_in_date[0][2]))
+
+        else:
+            pass
+
 
 
 
@@ -74,13 +93,13 @@ class PrograPostMenu:
             posts = [i.split(',', 2) for i in f.read().split('\n')]
 
             # create array with posts from user:
-            posts_list = [i for i in posts if i[0] == self.logged_user]
+            own_posts = [i for i in posts if i[0] == self.logged_user]
 
             # sort by date from less recent to most recent
             # if post_list is empty, nothing happens:
-            posts_list = sorted(posts_list, key=lambda x: datetime.strptime(x[1], '%Y/%m/%d'))
+            own_posts = sorted(own_posts, key=lambda x: datetime.strptime(x[1], '%Y/%m/%d'))
 
-            if len(posts_list) == 0:
+            if len(own_posts) == 0:
                 print("{}, no tienes publicaciones aun.".format(self.logged_user))
 
             else:
@@ -93,13 +112,13 @@ class PrograPostMenu:
 
                 if order == "1":
                     print("\nPublicaciones de {}: ".format(self.logged_user))
-                    for i in posts_list[::-1]:
+                    for i in own_posts[::-1]:
                         print("{}: {}".format(i[1], i[2]))
 
 
                 elif order == "2":
                     print("\nPublicaciones de {}: ".format(self.logged_user))
-                    for i in posts_list:
+                    for i in own_posts:
                         print("{}: {}".format(i[1], i[2]))
 
                 else:
