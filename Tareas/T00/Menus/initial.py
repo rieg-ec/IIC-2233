@@ -29,11 +29,10 @@ class InitialMenu:
             return self.interface()
 
     def select_menu(self):
-        menu_input = input("\nBienvenido {}! \n".format(self.logged_user)
-                            +"seleccione una opcion: \n"
+        menu_input = input("\nseleccione una opcion: \n"
                             +"[1] Menu de prograposts \n"
                             +"[2] Menu de seguidores \n"
-                            +"[0] Salir \n"
+                            +"[0] Cerrar sesion \n"
                             +"Indique su opcion (0, 1 o 2): ")
 
         if menu_input == "1": # redirect to Progra posts menu's interface
@@ -47,7 +46,7 @@ class InitialMenu:
             return self.select_menu()
 
         elif menu_input == "0":
-            pass # exit
+            return self.interface()
 
         else:
             print("\nINGRESE UNA OPCION VALIDA")
@@ -56,19 +55,43 @@ class InitialMenu:
     def log_in(self):
         user_input = input("\nIngrese su nombre de usuario: ")
         # do something with user_input
-        if user_input:
-            name = user_input
+        with open("usuarios.csv", "r") as f:
+            users = f.read().split("\n")
+            f.close()
 
-        self.logged_user = name
-        self.select_menu()
+            if user_input in users and user_input != "":
+                self.logged_user = user_input
+                print("\nBienvenido {}!".format(self.logged_user))
+                self.select_menu()
 
+            else:
+                print("\nUsuario no existente")
+                return self.interface()
 
 
     def sign_up(self):
         user_input = input("\nEscoja un nombre de usuario: ")
-        # do something with user_input
-        if user_input:
-            # create user
-            name = user_input
+        with open("usuarios.csv", "r+") as f:
 
-        self.log_in()
+            users = f.read().split('\n')
+
+            if user_input != "" and user_input in users: # username exists
+                print("\nEste usuario ya existe")
+                f.close()
+                return self.interface()
+
+            elif user_input == "" \
+                    or user_input.isalnum() is False \
+                    or user_input.isdigit() is True \
+                    or user_input.isalpha() is True:
+
+                print("\nNombre de usuario no valido: \n"
+                      +"El nombre de usuario debe contener al menos 1 letra, 1 numero "
+                      +"y minimo 8 caracteres.")
+                return self.interface()
+
+            else:
+                f.writelines(user_input)
+                f.close()
+                print("\nUsuario {} registrado".format(user_input))
+                return self.log_in()

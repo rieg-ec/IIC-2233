@@ -14,19 +14,28 @@ class PrograPostMenu:
 
 
         if user_input == "1":
-            return self.post()
+            self.post()
+            return self.interface()
 
         elif user_input == "2":
-            return self.delete_post()
+            self.delete_post()
+            return self.interface()
+
 
         elif user_input == "3":
-            return self.see_own_posts()
+            self.see_own_posts()
+            return self.interface()
+
 
         elif user_input == "4":
-            return self.see_user_posts()
+            self.see_user_posts()
+            return self.interface()
+
 
         elif user_input == "5":
-            return self.see_followed_users()
+            self.see_followed_users()
+            return self.interface()
+
 
         elif user_input == "0":
             pass # return to start menu without logging out

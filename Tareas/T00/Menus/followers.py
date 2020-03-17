@@ -10,10 +10,12 @@ class FollowersMenu:
                            +"Indique su opcion (1, 2, o 0): ")
 
         if user_input == "1":
-            return self.follow()
+            self.follow()
+            return self.interface()
 
         elif user_input == "2":
-            return self.unfollow()
+            self.unfollow()
+            return self.interface()
 
         elif user_input == "0":
             pass # exit
@@ -24,9 +26,9 @@ class FollowersMenu:
 
 
     def follow(self):
-        user_to_follow = input("A quien desea seguir? :")
+        user_to_follow = input("A quien desea seguir? : ")
         pass
 
     def unfollow(self):
-        user_to_unfollow = input("A quien desea dejar de seguir? :")
+        user_to_unfollow = input("A quien desea dejar de seguir? : ")
         pass
