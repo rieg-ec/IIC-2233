@@ -3,6 +3,10 @@ from Menus.prograposts import PrograPostMenu
 
 
 class InitialMenu:
+
+    def __init__(self):
+        self.logged_user = ""
+
     def interface(self):
         user_input = input("\nBienvenido a DCCahuin!! \n"
                         +"Seleccione una opción: \n"
@@ -20,24 +24,32 @@ class InitialMenu:
         elif user_input == "0":
             pass
 
-    def select_menu(self, name):
-        menu_input = input("\nBienvenido {}! \n".format(name)
+        else:
+            print("\nINGRESE UNA OPCION VALIDA")
+            return self.interface()
+
+    def select_menu(self):
+        menu_input = input("\nBienvenido {}! \n".format(self.logged_user)
                             +"seleccione una opcion: \n"
                             +"[1] Menu de prograposts \n"
                             +"[2] Menu de seguidores \n"
                             +"[0] Salir \n"
                             +"Indique su opcion (0, 1 o 2): ")
 
-        if menu_input == "1":
-            menu = PrograPostMenu(name)
+        if menu_input == "1": # redirect to Progra posts menu's interface
+            menu = PrograPostMenu(self.logged_user)
             return menu.interface()
 
-        elif menu_input == "2":
-            menu = FollowersMenu(name)
+        elif menu_input == "2": # redirect to followers menu's interface
+            menu = FollowersMenu(self.logged_user)
             return menu.interface()
 
         elif menu_input == "0":
-            pass # salir
+            pass # exit
+
+        else:
+            print("\nINGRESE UNA OPCION VALIDA")
+            return self.select_menu()
 
     def log_in(self):
         user_input = input("\nIngrese su nombre de usuario: ")
@@ -45,7 +57,8 @@ class InitialMenu:
         if user_input:
             name = user_input
 
-        self.select_menu(name)
+        self.logged_user = name
+        self.select_menu()
 
 
 
@@ -53,6 +66,7 @@ class InitialMenu:
         user_input = input("\nEscoja un nombre de usuario: ")
         # do something with user_input
         if user_input:
+            # create user
             name = user_input
 
-        self.select_menu(name)
+        self.log_in()
