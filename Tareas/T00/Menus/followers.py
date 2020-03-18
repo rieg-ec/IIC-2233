@@ -26,7 +26,39 @@ class FollowersMenu:
 
 
     def follow(self):
-        user_to_follow = input("A quien desea seguir? : ")
+
+        user_to_follow = input("\nA quien desea seguir? : ")
+        with open('usuarios.csv', 'r') as f:
+            users = [i for i in f.read().split('\n')]
+            f.close()
+
+        if user_to_follow not in users:
+            print("\nUsuario no existente.")
+
+        else:
+            with open('seguidores.csv', 'r+') as f:
+                user_followers = [i.split(',', 1) for i in f.read().split('\n')] #[[user, followers]]
+                followers_list = [i[1] for i in user_followers if i[0] == self.logged_user]
+                f.close()
+
+            if user_to_follow in followers_list:
+                print("\nYa sigue a este usuario")
+            else:
+                followers_list.append(user_to_follow)
+
+                with open('seguidores.csv', 'w') as f:
+                    for i in user_followers:
+                        user = i[0]
+                        if user != self.logged_user:
+                            followers = i[1]
+                        else:
+                            followers = followers_list
+                        str = [user, followers]
+                        print(str)
+                    f.close()
+
+
+
 
     def unfollow(self):
         user_to_unfollow = input("A quien desea dejar de seguir? : ")
