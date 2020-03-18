@@ -37,25 +37,37 @@ class FollowersMenu:
 
         else:
             with open('seguidores.csv', 'r+') as f:
-                user_followers = [i.split(',', 1) for i in f.read().split('\n')] #[[user, followers]]
-                followers_list = [i[1] for i in user_followers if i[0] == self.logged_user]
+                user_followers = [i.split(',', 1) for i in f.read().split('\n')] #[[user, followers]] if following someone
+                followers_list = [i[1].split(',') for i in user_followers if i[0] == self.logged_user and len(i) > 1 and i[1] != ""]
                 f.close()
 
-            if user_to_follow in followers_list:
+            if len(followers_list) > 0 and user_to_follow in followers_list[0]:
                 print("\nYa sigue a este usuario")
+
             else:
-                followers_list.append(user_to_follow)
+                if len(followers_list) > 0:
+                    followers_list[0].append(user_to_follow)
+                else:
+                    followers_list.append([user_to_follow])
 
                 with open('seguidores.csv', 'w') as f:
                     for i in user_followers:
-                        user = i[0]
-                        if user != self.logged_user:
-                            followers = i[1]
+
+                        if i[0] != self.logged_user:
+                            if len(i) > 1 and i[1] != "": # i[1] is users followed and not something else than can cause bugs
+                                str = "{},{}\n".format(i[0], i[1])
+                                f.write(str)
+
+                            else:
+                                f.write(i[0] + '\n') # i[1] doesn't exists or isn't important
+
                         else:
-                            followers = followers_list
-                        str = [user, followers]
-                        print(str)
+                            str = "{},{}\n".format(self.logged_user, ",".join(i for i in followers_list[0]))
+                            f.write(str)
+
                     f.close()
+
+
 
 
 
