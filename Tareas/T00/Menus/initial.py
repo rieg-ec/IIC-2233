@@ -70,27 +70,36 @@ class InitialMenu:
 
     def sign_up(self):
         user_input = input("\nEscoja un nombre de usuario: ")
-        with open("usuarios.csv", "r+") as f:
 
-            users = f.read().split('\n')
+        if user_input == "" \
+                or user_input.isalnum() is False \
+                or user_input.isdigit() is True \
+                or user_input.isalpha() is True:
 
-            if user_input != "" and user_input in users: # username exists
-                print("\nEste usuario ya existe")
-                f.close()
-                return self.interface()
+            print("\nNombre de usuario no valido: \n"
+                  +"El nombre de usuario debe contener al menos 1 letra, 1 numero "
+                  +"y minimo 8 caracteres.")
+            return self.interface()
 
-            elif user_input == "" \
-                    or user_input.isalnum() is False \
-                    or user_input.isdigit() is True \
-                    or user_input.isalpha() is True:
+        else:
+            with open("usuarios.csv", "r+") as f:
 
-                print("\nNombre de usuario no valido: \n"
-                      +"El nombre de usuario debe contener al menos 1 letra, 1 numero "
-                      +"y minimo 8 caracteres.")
-                return self.interface()
+                users = f.read().split('\n')
 
-            else:
-                f.writelines(user_input)
-                f.close()
-                print("\nUsuario {} registrado".format(user_input))
-                return self.log_in()
+                if user_input in users: # username exists
+                    print("\nEste usuario ya existe")
+                    f.close()
+                    return self.interface()
+
+
+                else:
+                    f.writelines(user_input)
+                    f.close()
+                    print("\nUsuario {} registrado".format(user_input))
+
+                    with open('seguidores.csv', 'r+') as f: # add username to seguidores.csv also
+                        users = [i.split(',', 1) for i in f.read().split('\n')]
+                        if user_input not in users[::][0]:
+                            f.writelines(user_input)
+
+                    return self.log_in()
