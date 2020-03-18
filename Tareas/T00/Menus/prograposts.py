@@ -49,7 +49,8 @@ class PrograPostMenu:
         else:
             with open('posts.csv', 'a') as f:
                 date = datetime.now().strftime("%Y/%m/%d")
-                f.writelines("{},{},{}\n".format(self.logged_user, date, content))
+                str = "{},{},{}\n".format(self.logged_user, date, content)
+                f.write(str)
                 f.close()
                 print("\nContenido publicado.")
 
@@ -57,46 +58,36 @@ class PrograPostMenu:
 
 
     def delete_post(self):
-        date = input("\nIngrese la fecha de la publicación que desea eliminar"
-                     +" (en formato 'yy/mm/dd'): ")
-        date_of_post = datetime.strptime(date, "%Y/%m/%d")
 
         with open('posts.csv', 'r') as f:
             posts = [i.split(',', 2) for i in f.read().split('\n') if i != ""]
-            own_posts = [i for i in posts if i[0] == self.logged_user]
+            own_posts = [i for i in posts if i[0] == self.logged_user] # [[self.user, date, posts], [], ...]
+            own_posts = sorted(own_posts, key=lambda x: datetime.strptime(x[1], '%Y/%m/%d'))
             f.close()
 
-        posts_in_date = [i for i in own_posts if i[1] == date]
+        if len(own_posts) == 0:
+            print("\nNo tienes publicaciones aun.")
 
-        if len(posts_in_date) == 0:
-            print("\nNo tienes publicaciones en esa fecha.")
-
-        elif len(posts_in_date) == 1:
-            with open('posts.csv', 'w') as f:
-                for i in posts:
-                    if i not in posts_in_date:
-                        str = "{},{},{}\n".format(i[0], i[1], i[2]) # each row of posts.csv as a str
-                        f.write(str)
-                f.close()
-                print("\nPublicacion eliminada: '{}'".format(posts_in_date[0][2]))
-
+        
         else:
-            n_of_posts = len(posts_in_date)
-            print("\nTienes %d publicaciones en esa fecha: " %n_of_posts)
+            print("\nTienes {} publicaciones: ".format(len(own_posts)))
+            for i in range(len(own_posts)):
+                print("\n[{}]: ({}) {}".format(i+1, own_posts[i][1], own_posts[i][2]))
 
-            for i in range(n_of_posts):
-                print("\n[{}]: {}".format(i+1, posts_in_date[i][2]))
+            choice = int(input("\nCual deseas eliminar? (ingresa el numero): ")) -1
+            if choice not in [i for i in range(len(own_posts))]:
+                print("\nIngresa un numero valido.")
+                return self.delete_post()
+            else:
+                post_to_delete = own_posts[choice]
+                posts.remove(post_to_delete)
+                print("\nPublicacion eliminada: {}".format(post_to_delete[2]))
 
-            choice = input("\nCual deseas eliminar?: ")
-            post_to_delete = posts_in_date[int(choice)-1]
-
-            with open('posts.csv', 'w') as f:
-                for i in posts:
-                    if i != post_to_delete:
-                        str = "{},{},{}\n".format(i[0], i[1], i[2]) # each row of posts.csv as a str
+                with open('posts.csv', 'w') as f:
+                    for i in posts:
+                        str = "{},{},{}\n".format(i[0], i[1], i[2])
                         f.write(str)
-                f.close()
-                print("\nPublicacion eliminada: '{}'".format(post_to_delete[2]))
+                    f.close()
 
 
 
@@ -148,7 +139,7 @@ class PrograPostMenu:
     def display_wall(self):
         with open('seguidores.csv', 'r') as f:
             user_followers = [i.split(',', 1) for i in f.read().split('\n')] # [[user, followers], ...]
-            followers = [i[1].split(',') for i in user_followers if i[0] == self.logged_user]
+            followers = [i[1].split(',') for i in user_followers if i[0] == self.logged_user and len(i) > 1]
             f.close()
 
         if len(followers) == 0:
@@ -161,7 +152,6 @@ class PrograPostMenu:
                 f.close()
 
             wall_sorted = sorted(wall, key=lambda x: datetime.strptime(x[1], '%Y/%m/%d'))
-            print(wall_sorted)
 
             if len(wall_sorted) == 0:
                 print("\nTus amigos aun no publican nada.")

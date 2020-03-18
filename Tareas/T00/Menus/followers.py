@@ -35,6 +35,9 @@ class FollowersMenu:
         if user_to_follow not in users:
             print("\nUsuario no existente.")
 
+        elif user_to_follow == self.logged_user:
+            print("\nNo puedes seguirte a ti mismo.")
+
         else:
             with open('seguidores.csv', 'r+') as f:
                 user_followers = [i.split(',', 1) for i in f.read().split('\n')] #[[user, followers]] if following someone
@@ -76,6 +79,9 @@ class FollowersMenu:
 
         if user_to_unfollow not in users:
             print("\nUsuario no existente.")
+
+        elif user_to_unfollow == self.logged_user:
+            print("\nNo puedes dejar de seguirte a ti mismo.")
 
         else:
             with open('seguidores.csv', 'r+') as f:
