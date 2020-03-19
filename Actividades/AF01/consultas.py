@@ -21,16 +21,8 @@ def cantidad_animes_genero(animes):
     return animes_per_genre
 
 def generos_distintos(anime, animes):
-    return animes
+    pass
 
 
 def promedio_rating_genero(animes):
-    ratings_per_genre = {}
-    genres = {}
-
-    for i in animes:
-        for x in i:
-            genres[x] = 0
-
-    for i in animes:
-        for x in i[2]:
+    pass
