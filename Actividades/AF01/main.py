@@ -58,7 +58,7 @@ def main():
     # No modificar
     animes = cargar_animes('animes.csv')
     consultas = cargar_consultas('consultas.csv')
-
+    
     if not animes:
         print("cargar_animes no implementado.")
     if not consultas:
