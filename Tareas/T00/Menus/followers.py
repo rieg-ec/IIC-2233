@@ -21,7 +21,7 @@ class FollowersMenu:
             pass # exit
 
         else:
-            print("\nINGRESE UNA OPCION VALIDA")
+            print("\nIngrese una opcion valida.")
             return self.interface()
 
 
@@ -41,7 +41,8 @@ class FollowersMenu:
         else:
             with open('seguidores.csv', 'r+') as f:
                 user_followers = [i.split(',', 1) for i in f.read().split('\n')] #[[user, followers]] if following someone
-                followers_list = [i[1].split(',') for i in user_followers if i[0] == self.logged_user and len(i) > 1 and i[1] != ""]
+                followers_list = [i[1].split(',') for i in user_followers if i[0] == self.logged_user
+                                  and len(i) > 1 and i[1] != ""]
                 f.close()
 
             if len(followers_list) > 0 and user_to_follow in followers_list[0]:
@@ -86,7 +87,8 @@ class FollowersMenu:
         else:
             with open('seguidores.csv', 'r+') as f:
                 user_followers = [i.split(',', 1) for i in f.read().split('\n')] #[[user, followers]] if following someone
-                followers_list = [i[1].split(',') for i in user_followers if i[0] == self.logged_user and len(i) > 1 and i[1] != ""]
+                followers_list = [i[1].split(',') for i in user_followers if i[0] == self.logged_user
+                                  and len(i) > 1 and i[1] != ""]
                 f.close()
 
             if len(followers_list) == 0 or user_to_unfollow not in followers_list[0]:

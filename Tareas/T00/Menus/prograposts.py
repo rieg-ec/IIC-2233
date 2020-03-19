@@ -68,7 +68,7 @@ class PrograPostMenu:
         if len(own_posts) == 0:
             print("\nNo tienes publicaciones aun.")
 
-        
+
         else:
             print("\nTienes {} publicaciones: ".format(len(own_posts)))
             for i in range(len(own_posts)):
@@ -139,7 +139,8 @@ class PrograPostMenu:
     def display_wall(self):
         with open('seguidores.csv', 'r') as f:
             user_followers = [i.split(',', 1) for i in f.read().split('\n')] # [[user, followers], ...]
-            followers = [i[1].split(',') for i in user_followers if i[0] == self.logged_user and len(i) > 1]
+            followers = [i[1].split(',') for i in user_followers if i[0] == self.logged_user
+                         and len(i) > 1]
             f.close()
 
         if len(followers) == 0:
