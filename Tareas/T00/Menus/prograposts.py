@@ -1,4 +1,3 @@
-import datetime
 from datetime import datetime
 
 class PrograPostMenu:
@@ -44,7 +43,7 @@ class PrograPostMenu:
     def post(self):
         content = input("\nEscriba algo (maximo 140 caracteres): ")
         if len(content) > 140:
-            print("Superaste el limite de 140 caracteres. Intentalo de nuevo.")
+            print("\nSuperaste el limite de 140 caracteres. Intentalo de nuevo.")
             return self.post()
         else:
             with open('posts.csv', 'a') as f:
@@ -66,7 +65,7 @@ class PrograPostMenu:
             f.close()
 
         if len(own_posts) == 0:
-            print("\nNo tienes publicaciones aun.")
+            print("\n{}, no tienes publicaciones aun.".format(self.logged_user))
 
 
         else:

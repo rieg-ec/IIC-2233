@@ -40,9 +40,12 @@ class FollowersMenu:
 
         else:
             with open('seguidores.csv', 'r+') as f:
-                user_followers = [i.split(',', 1) for i in f.read().split('\n')] #[[user, followers]] if following someone
-                followers_list = [i[1].split(',') for i in user_followers if i[0] == self.logged_user
-                                  and len(i) > 1 and i[1] != ""]
+                user_followers = [i.split(',', 1) for i in f.read().split('\n')] #[[user, followers], ..]
+
+                followers_list = [i[1].split(',') for i in user_followers if
+                                        i[0] == self.logged_user and
+                                        len(i) > 1] # if no followers, returns empty list []
+                                                    # if there's followers, returns [[user1, ..]]
                 f.close()
 
             if len(followers_list) > 0 and user_to_follow in followers_list[0]:
@@ -52,7 +55,7 @@ class FollowersMenu:
                 if len(followers_list) > 0:
                     followers_list[0].append(user_to_follow)
                 else:
-                    followers_list.append([user_to_follow])
+                    followers_list.append([user_to_follow]) # satisfies [[]] needed format
 
                 with open('seguidores.csv', 'w') as f:
                     for i in user_followers:
@@ -70,6 +73,7 @@ class FollowersMenu:
                             f.write(str)
 
                     f.close()
+                    print("\nAhora sigues a {}.".format(user_to_follow))
 
 
     def unfollow(self):
@@ -114,3 +118,4 @@ class FollowersMenu:
                                 f.write(self.logged_user + '\n')
 
                     f.close()
+                    print("\nDejaste de seguir a {}".format(user_to_unfollow))

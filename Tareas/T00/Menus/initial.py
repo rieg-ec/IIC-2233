@@ -74,7 +74,8 @@ class InitialMenu:
         if user_input == "" \
                 or user_input.isalnum() is False \
                 or user_input.isdigit() is True \
-                or user_input.isalpha() is True:
+                or user_input.isalpha() is True \
+                or len(user_input) < 8:
 
             print("\nNombre de usuario no valido: \n"
                   +"El nombre de usuario debe contener al menos 1 letra, 1 numero "
