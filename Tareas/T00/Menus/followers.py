@@ -61,7 +61,8 @@ class FollowersMenu:
                     for i in user_followers:
 
                         if i[0] != self.logged_user:
-                            if len(i) > 1 and i[1] != "": # i[1] is users followed and not something else than can cause bugs
+                            if len(i) > 1 and i[1] != "": # i[1] is users followed and not
+                                                          # something else than can cause bugs
                                 str = "{},{}\n".format(i[0], i[1])
                                 f.write(str)
 
@@ -69,7 +70,8 @@ class FollowersMenu:
                                 f.write(i[0] + '\n') # i[1] doesn't exists or isn't important
 
                         else:
-                            str = "{},{}\n".format(self.logged_user, ",".join(i for i in followers_list[0]))
+                            str = "{},{}\n".format(self.logged_user, ",".join(i for i in
+                                                                              followers_list[0]))
                             f.write(str)
 
                     f.close()
@@ -90,7 +92,9 @@ class FollowersMenu:
 
         else:
             with open('seguidores.csv', 'r+') as f:
-                user_followers = [i.split(',', 1) for i in f.read().split('\n')] #[[user, followers]] if following someone
+                user_followers = [i.split(',', 1) for i in
+                                  f.read().split('\n')] #[[user, followers]] if following someone
+
                 followers_list = [i[1].split(',') for i in user_followers if i[0] == self.logged_user
                                   and len(i) > 1 and i[1] != ""]
                 f.close()
@@ -112,8 +116,10 @@ class FollowersMenu:
                                 f.write(i[0] + '\n')
                         else:
                             if len(followers_list[0]) > 0:
-                                str = "{},{}".format(self.logged_user, ",".join(i for i in followers_list[0]))
+                                str = "{},{}".format(self.logged_user, ",".join(i for i in
+                                                                                followers_list[0]))
                                 f.write(str)
+                                
                             else:
                                 f.write(self.logged_user + '\n')
 

@@ -137,7 +137,9 @@ class PrograPostMenu:
 
     def display_wall(self):
         with open('seguidores.csv', 'r') as f:
-            user_followers = [i.split(',', 1) for i in f.read().split('\n')] # [[user, followers], ...]
+            user_followers = [i.split(',', 1) for i in
+                              f.read().split('\n')] # [[user, followers], ...]
+            
             followers = [i[1].split(',') for i in user_followers if i[0] == self.logged_user
                          and len(i) > 1]
             f.close()
@@ -147,7 +149,9 @@ class PrograPostMenu:
 
         else:
             with open('posts.csv', 'r') as f:
-                user_date_posts = [i.split(',', 2) for i in f.read().split('\n')] # [[user, date, posts], ...]
+                user_date_posts = [i.split(',', 2) for i in
+                                   f.read().split('\n')] # [[user, date, posts], ...]
+
                 wall = [i for i in user_date_posts if i[0] in followers[0]]
                 f.close()
 
