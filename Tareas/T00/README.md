@@ -44,7 +44,7 @@ Para que el programa funcione, es requisito que estén creados los archivos ```p
 
 ### Librerías propias
 
-**Las siguientes librerias fueron creadas dentro de la carpeta** ```Menus```:
+**Los siguientes modulos fueron creados dentro de la carpeta** ```Menus```:
 
 1. ```initial``` que contiene la clase ```InitialMenu``` con las funciones del menu de inicio de sesión y el metodo ```interface``` que llama a las clases ```FollowersMenu``` y ```PrograPostsMenu```
 2. ```followers``` que contiene la clase ```FollowersMenu``` con las funciones del menu de seguidores
