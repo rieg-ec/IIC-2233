@@ -60,17 +60,5 @@ Los supuestos que realicé durante la tarea son los siguientes:
 
 1. Debido a que habían hartas dudas respecto al flujo de menús, mi forma de implementarlo fue así:
 
-```mermaid
-graph LR
-  A[Menu de registro/inicio de sesion] --> B(Menu de inicio)
-  B --> |Menu prograposts| C[Menu de prograposts]
-  B --> |Menu de seguidores| D[Menu de seguidores]
-  B --> |Salir| A
-  C --> CA(Publicar algo)
-  C --> CB(Eliminar una publicacion)
-  C --> CC(Ver mis propias publicaciones)
-  C --> CD(Ver publicaciones de usuarios que sigo)
-  D --> DA(Seguir a alguien)
-  D --> DB(Dejar de seguir a alguien)
-```
+[![Grafico de flujo](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggTFJcbkFbTWVudSBkZSByZWdpc3Ryby9pbmljaW8gZGUgc2VzaW9uXSAtLT4gQihNZW51IGRlIGluaWNpbylcbkIgLS0-IHxNZW51IHByb2dyYXBvc3RzfCBDW01lbnUgZGUgcHJvZ3JhcG9zdHNdXG5CIC0tPiB8TWVudSBkZSBzZWd1aWRvcmVzfCBEW01lbnUgZGUgc2VndWlkb3Jlc11cbkIgLS0-IHxTYWxpcnwgQVxuXG5DIC0tPiBDQShQdWJsaWNhciBhbGdvKVxuQyAtLT4gQ0IoRWxpbWluYXIgdW5hIHB1YmxpY2FjaW9uKVxuQyAtLT4gQ0MoVmVyIG1pcyBwcm9waWFzIHB1YmxpY2FjaW9uZXMpXG5DIC0tPiBDRChWZXIgcHVibGljYWNpb25lcyBkZSB1c3VhcmlvcyBxdWUgc2lnbylcbkMgLS0-IHxTYWxpcnxCXG5cbkQgLS0-IERBKFNlZ3VpciBhIGFsZ3VpZW4pXG5EIC0tPiBEQihEZWphciBkZSBzZWd1aXIgYSBhbGd1aWVuKVxuRCAtLT4gfFNhbGlyfEIiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlfQ)
 -------
