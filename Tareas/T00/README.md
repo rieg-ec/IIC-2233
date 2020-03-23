@@ -1,13 +1,4 @@
-# Tarea X: Nombre de la tarea :school_satchel:
-
-
-Un buen ```README.md``` puede marcar una gran diferencia en la facilidad con la que corregimos una tarea, y consecuentemente cómo funciona su programa, por lo en general, entre más ordenado y limpio sea éste, mejor será 
-
-Para nuestra suerte, GitHub soporta el formato [MarkDown](https://es.wikipedia.org/wiki/Markdown), el cual permite utilizar una amplia variedad de estilos de texto, tanto para resaltar cosas importantes como para separar ideas o poner código de manera ordenada ([pueden ver casi todas las funcionalidades que incluye aquí](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet))
-
-Un buen ```README.md``` no tiene por que ser muy extenso tampoco, hay que ser **concisos** (a menos que lo consideren necesario) pero **tampoco pueden** faltar cosas. Lo importante es que sea claro y limpio 
-
-**Dejar claro lo que NO pudieron implementar y lo que no funciona a la perfección. Esto puede sonar innecesario pero permite que el ayudante se enfoque en lo que sí podría subir su puntaje.**
+# Tarea 00: DCCahuín :school_satchel:
 
 ## Consideraciones generales :octocat:
 
@@ -17,82 +8,69 @@ en cierta línea del código o comentar una función>
 
 ### Cosas implementadas y no implementadas :white_check_mark: :x:
 
-* <Nombre item pauta<sub>1</sub>>: Hecha completa
-* <Nombre item pauta<sub>2</sub>>: Me faltó hacer <insertar qué cosa faltó>
-    * <Nombre subitem pauta<sub>2.1</sub>>: Hecha completa 
-    * <Nombre subitem pauta<sub>2.2</sub>>: Me faltó hacer <insertar qué cosa faltó>
-    * ...
-* <Nombre item pauta<sub>3</sub>>: Me faltó hacer <insertar qué cosa faltó>
-* ...
-* <Nombre item pauta<sub>n</sub>>: Me faltó hacer <insertar qué cosa faltó>
+
+* **Menu inicial**: En este se pregunta si desea iniciar sesion, registrarse o salir del programa.
+    * **Iniciar sesion**: Implementado correctamente :heavy_check_mark:
+    * **Registrarse**: Implementado correctamente :heavy_check_mark:
+    * **Salir**: Implementado correctamente :heavy_check_mark:
+
+## Una vez iniciada sesion, aparece un menu de inicio donde se puede acceder al menu de prograposts, al menu seguidores o cerrar sesión y volver al menu de inicio de sesión.
+
+* **Menu de prograposts**:
+    * **Publicar un prograpost**: Implementado correctamente :heavy_check_mark:
+    * **Eliminar un prograpost**: Implementado correctamente :heavy_check_mark:
+    * **Ver mis prograposts**: Implementado correctamente :heavy_check_mark:
+    * **Ver mi muro**: Aquí aparecerán los prograposts de los usuarios que el usuario iniciado
+    sigue, ordenados ascendiente o descendientemente :heavy_check_mark:
+    * **Volver atras**: Opcion para volver al menu de inicio sin cerrar sesión
+
+* **Menu de seguidores**:
+    * **Seguir a alguien**: Implementado correctamente :heavy_check_mark:
+    * **Dejar de seguir a alguien**: Implementado correctamente :heavy_check_mark:
+    * **Volver atras**: Opcion para volver al menu de inicio sin cerrar sesión
+
+
 
 ## Ejecución :computer:
-El módulo principal de la tarea a ejecutar es  ```archivo.py```. Además se debe crear los siguientes archivos y directorios adicionales:
-1. ```archivo.ext``` en ```ubicación```
-2. ```directorio``` en ```ubicación```
-3. ...
+El módulo principal de la tarea a ejecutar es  ```main.py```. Además, hay una carpeta llamada **Menus** donde están ubicados los archivos:
 
+1. ```ìnitial.py```
+2. ```followers.py```
+3. ```prograposts.py```
+
+Para que el programa funcione, es requisito que estén creados los archivos ```posts.csv```, ```seguidores.csv``` y ```usuarios.csv``` dentro de la carpeta ```T00```, en el mismo nivel que ```main.py```
 
 ## Librerías :books:
 ### Librerías externas utilizadas
-La lista de librerías externas que utilicé fue la siguiente:
 
-1. ```librería_1```: ```función() / módulo```
-2. ```librería_2```: ```función() / módulo``` (debe instalarse)
-3. ...
+1. ```datetime```: Contiene a ```datetime``` utilizada para parsear inputs y almacenar fechas en formato ```yyyy/mm/dd``` (debe instalarse, una manera fácil es escribir ```pip3 install datetime``` en la terminal)
+
 
 ### Librerías propias
-Por otro lado, los módulos que fueron creados fueron los siguientes:
 
-1. ```librería_1```: Contiene a ```ClaseA```, ```ClaseB```, (ser general, tampoco es necesario especificar cada una)...
-2. ```librería_2```: Hecha para <insertar descripción **breve** de lo que hace o qué contiene>
-3. ...
+**Las siguientes librerias fueron creadas dentro de la carpeta*** ```Menus```:
+
+1. ```followers```: Contiene a ```FollowersMenu``` que contiene la clase ```InitialMenu``` con las funciones del menu de inicio de sesión
+2. ```followers``` que contiene la clase ```FollowersMenu``` con las funciones del menu de seguidores
+3. ```prograposts``` que contiene la clase ```PrograPostsMenu```con las funciones del menu de prograposts
+
 
 ## Supuestos y consideraciones adicionales :thinking:
 Los supuestos que realicé durante la tarea son los siguientes:
 
-1. <Descripción/consideración 1 y justificación del por qué es válido/a> 
-2. <Descripción/consideración 2 y justificación del por qué es válido/a>
-3. ...
+1. Debido a que habían hartas dudas respecto al flujo de menús, mi forma de implementarlo fue así:
 
-PD: <una última consideración (de ser necesaria) o comentario hecho anteriormente que se quiera **recalcar**>
-
-
+```mermaid
+graph LR
+  A[Menu de registro/inicio de sesion] --> B(Menu de inicio)
+  B --> |Menu prograposts| C[Menu de prograposts]
+  B --> |Menu de seguidores| D[Menu de seguidores]
+  B --> |Salir| A
+  C --> CA(Publicar algo)
+  C --> CB(Eliminar una publicacion)
+  C --> CC(Ver mis propias publicaciones)
+  C --> CD(Ver publicaciones de usuarios que sigo)
+  D --> DA(Seguir a alguien)
+  D --> DB(Dejar de seguir a alguien)
+```
 -------
-
-
-
-**EXTRA:** si van a explicar qué hace específicamente un método, no lo coloquen en el README mismo. Pueden hacerlo directamente comentando el método en su archivo. Por ejemplo:
-
-```python
-class Corrector:
-
-    def __init__(self):
-          pass
-
-    # Este método coloca un 6 en las tareas que recibe
-    def corregir(self, tarea):
-        tarea.nota  = 6
-        return tarea
-```
-
-Si quieren ser más formales, pueden usar alguna convención de documentación. Google tiene la suya, Python tiene otra y hay muchas más. La de Python es la [PEP287, conocida como reST](https://www.python.org/dev/peps/pep-0287/). Lo más básico es documentar así:
-
-```python
-def funcion(argumento):
-    """
-    Mi función hace X con el argumento
-    """
-    return argumento_modificado
-```
-Lo importante es que expliquen qué hace la función y que si saben que alguna parte puede quedar complicada de entender o tienen alguna función mágica usen los comentarios/documentación para que el ayudante entienda sus intenciones.
-
-## Referencias de código externo :book:
-
-Para realizar mi tarea saqué código de:
-1. \<link de código>: este hace \<lo que hace> y está implementado en el archivo <nombre.py> en las líneas <número de líneas> y hace <explicación breve de que hace>
-
-
-
-## Descuentos
-La guía de descuentos se encuentra [link](https://github.com/IIC2233/syllabus/blob/master/Tareas/Descuentos.md).
