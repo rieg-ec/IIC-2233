@@ -2,10 +2,6 @@
 
 ## Consideraciones generales :octocat:
 
-<Descripción de lo que hace y que **_no_** hace la tarea que entregaron junto
-con detalles de último minuto y consideraciones como por ejemplo cambiar algo
-en cierta línea del código o comentar una función>
-
 ### Cosas implementadas y no implementadas :white_check_mark: :x:
 
 
@@ -14,7 +10,7 @@ en cierta línea del código o comentar una función>
     * **Registrarse**: Implementado correctamente :heavy_check_mark:
     * **Salir**: Implementado correctamente :heavy_check_mark:
 
-## Una vez iniciada sesion, aparece un menu de inicio donde se puede acceder al menu de prograposts, al menu seguidores o cerrar sesión y volver al menu de inicio de sesión.
+**Una vez iniciada sesion, aparece un menu de inicio donde se puede acceder al menu de prograposts, al menu seguidores o cerrar sesión y volver al menu de inicio de sesión**
 
 * **Menu de prograposts**:
     * **Publicar un prograpost**: Implementado correctamente :heavy_check_mark:
@@ -48,9 +44,9 @@ Para que el programa funcione, es requisito que estén creados los archivos ```p
 
 ### Librerías propias
 
-**Las siguientes librerias fueron creadas dentro de la carpeta*** ```Menus```:
+**Las siguientes librerias fueron creadas dentro de la carpeta** ```Menus```:
 
-1. ```followers```: Contiene a ```FollowersMenu``` que contiene la clase ```InitialMenu``` con las funciones del menu de inicio de sesión
+1. ```initial```: Contiene a ```InitialMenu``` con las funciones del menu de inicio de sesión y el metodo ```interface``` que llama a las clases ```FollowersMenu``` y ```PrograPostsMenu```
 2. ```followers``` que contiene la clase ```FollowersMenu``` con las funciones del menu de seguidores
 3. ```prograposts``` que contiene la clase ```PrograPostsMenu```con las funciones del menu de prograposts
 
