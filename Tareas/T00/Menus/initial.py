@@ -1,5 +1,5 @@
 from Menus.followers import FollowersMenu
-from Menus.prograposts import PrograPostMenu
+from Menus.prograposts import PrograPostsMenu
 
 
 class InitialMenu:
@@ -36,7 +36,7 @@ class InitialMenu:
                             +"Indique su opcion (0, 1 o 2): ")
 
         if menu_input == "1": # redirect to Progra posts menu's interface
-            menu = PrograPostMenu(self.logged_user)
+            menu = PrograPostsMenu(self.logged_user)
             menu.interface()
             return self.select_menu()
 

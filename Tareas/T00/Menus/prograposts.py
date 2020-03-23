@@ -1,6 +1,6 @@
 from datetime import datetime
 
-class PrograPostMenu:
+class PrograPostsMenu:
     def __init__(self, user): # user is picked from array of objects
         self.logged_user = user
 
@@ -139,7 +139,7 @@ class PrograPostMenu:
         with open('seguidores.csv', 'r') as f:
             user_followers = [i.split(',', 1) for i in
                               f.read().split('\n')] # [[user, followers], ...]
-            
+
             followers = [i[1].split(',') for i in user_followers if i[0] == self.logged_user
                          and len(i) > 1]
             f.close()
