@@ -18,12 +18,12 @@
     * **Ver mis prograposts**: Implementado correctamente :heavy_check_mark:
     * **Ver mi muro**: Aquí aparecerán los prograposts de los usuarios que el usuario iniciado
     sigue, ordenados ascendiente o descendientemente :heavy_check_mark:
-    * **Volver atras**: Opcion para volver al menu de inicio sin cerrar sesión
+    * **Volver atras**: Opcion para volver al menu de inicio sin cerrar sesión :heavy_check_mark:
 
 * **Menu de seguidores**:
     * **Seguir a alguien**: Implementado correctamente :heavy_check_mark:
     * **Dejar de seguir a alguien**: Implementado correctamente :heavy_check_mark:
-    * **Volver atras**: Opcion para volver al menu de inicio sin cerrar sesión
+    * **Volver atras**: Opcion para volver al menu de inicio sin cerrar sesión :heavy_check_mark:
 
 
 
