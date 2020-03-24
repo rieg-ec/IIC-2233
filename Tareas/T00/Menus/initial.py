@@ -94,13 +94,13 @@ class InitialMenu:
 
 
                 else:
-                    f.writelines(user_input)
+                    f.write(user_input + '\n')
                     f.close()
                     print("\nUsuario {} registrado".format(user_input))
 
                     with open('seguidores.csv', 'r+') as f: # add username to seguidores.csv also
                         users = [i.split(',', 1) for i in f.read().split('\n')]
                         if user_input not in users[::][0]:
-                            f.writelines(user_input)
+                            f.write(user_input + '\n')
 
                     return self.log_in()
