@@ -1,6 +1,8 @@
 # Tarea 00: DCCahuín :school_satchel:
 
 ## Consideraciones generales :octocat:
+**Es necesario hacer un pequeño cambio**: el archivo ```initial.py``` ubicado en Menus, en la linea 97 es necesario cambiar ```f.writelines(user_input)``` por ```f.write(user_input + '\n')```
+y en el mismo archivo, en la linea 104 es necesario cambiar ```f.writelines(user_input)``` por ```f.write(user_input + '\n')```.
 
 ### Cosas implementadas y no implementadas :white_check_mark: :x:
 
