@@ -21,12 +21,28 @@ class DCCuarentena:
                 print("Intenta nuevamente. \n")
 
     def sugerir_actividad(self):
-        # Acá debes rellenar con un código que sugiera una actividad
-        # según el nivel de estres y felicidad.
-        # Además, recuerda que el usuario debe realizar la actividad.
 
+        if len(self.usuario_actual.deberes) == 0 and len(self.usuario_actual.hobbies) == 0:
+            print("No quedan actividades, hora de descansar :)")
+            actividad_sugerida = False
 
-        pass
+        elif len(self.usuario_actual.hobbies) > 0 and \
+            (self.usuario_actual.felicidad < 50 or self.usuario_actual.estres > 50):
+
+            actividad_sugerida = self.usuario_actual.hobbies[0]
+            self.usuario_actual.hobbies.pop(0)
+
+        elif len(self.usuario_actual.deberes) > 0:
+            actividad_sugerida = self.usuario_actual.deberes[0]
+            self.usuario_actual.deberes.pop(0)
+
+        else:
+            actividad_sugerida = self.usuario_actual.hobbies[0]
+            self.usuario_actual.hobbies.pop(0)
+
+        if actividad_sugerida:
+            self.usuario_actual.realizar_actividad(self.actividades[actividad_sugerida])
+
 
     def opcion(self):
         """

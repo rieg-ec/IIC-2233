@@ -13,13 +13,10 @@ def cargar_estudiantes(ruta_archivo_estudiantes):
             tipo, username, hobbies, deberes = line.strip().split(";")
             hobbies = hobbies.split(",")
             deberes = deberes.split(",")
-            """
-            COMIENZA A MODIFICAR DESDE ACÁ
-            Aquí debes instanciar a los alumnos y estudiantes.
-            Además, debes guardarlos en el defaultdict estudiantes,
-            con el formato username:instancia
-            """
-
+            if tipo == "ayudante":
+                estudiantes[username] = Ayudante(username, hobbies, deberes)
+            else:
+                estudiantes[username] = Alumno(username, hobbies, deberes)
 
         return estudiantes
 
@@ -32,14 +29,12 @@ def cargar_actividades(ruta_archivo_actividades):
             tipo, nombre, felicidad, estres = line.strip().split(";")
             felicidad = int(felicidad)
             estres = int(estres)
-            """
-            COMIENZA A MODIFICAR DESDE ACÁ
-            Debes instanciar las actividades acá.
-            Además, debes guardarlas en el dict actividades,
-            en el formato nombre:instancia
-            """
 
-        
+            if tipo == "hobby":
+                actividades[nombre] =  Hobby(nombre, felicidad, estres)
+            else:
+                actividades[nombre] = Deber(nombre, felicidad, estres)
+
         return actividades
 
 

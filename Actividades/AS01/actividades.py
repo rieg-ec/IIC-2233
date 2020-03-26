@@ -1,13 +1,15 @@
 class Actividad:
-    # Acá debes crear el constructor de la clase Actividad
-    pass
+    def __init__(self, nombre, felicidad, estres):
+        self.nombre = nombre
+        self.felicidad = felicidad
+        self.estres = estres
 
 
-class Hobby():
-    # Acá debes crear el constructor de la clase hobby.
-    pass
+class Hobby(Actividad):
+    def __init__(self, nombre, felicidad, estres):
+        super().__init__(nombre, felicidad, estres)
 
 
-class Deber():
-    # Acá debes crear el constructor de la clase Deber.
-    pass
+class Deber(Actividad):
+    def __init__(self, nombre, felicidad, estres):
+        super().__init__(nombre, felicidad, estres)
