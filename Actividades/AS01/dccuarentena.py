@@ -26,8 +26,8 @@ class DCCuarentena:
             print("No quedan actividades, hora de descansar :)")
             actividad_sugerida = False
 
-        elif len(self.usuario_actual.hobbies) > 0 and \
-            (self.usuario_actual.felicidad < 50 or self.usuario_actual.estres > 50):
+        elif (self.usuario_actual.felicidad < 50 or self.usuario_actual.estres > 50) and \
+            len(self.usuario_actual.hobbies) > 0:
 
             actividad_sugerida = self.usuario_actual.hobbies[0]
             self.usuario_actual.hobbies.pop(0)
