@@ -22,15 +22,13 @@ class Estudiante:
 
     @felicidad.setter
     def felicidad(self, nueva_felicidad):
-        if isinstance(nueva_felicidad, int):
-            if nueva_felicidad > self.rango_felicidad[1]:
-                self.__felicidad = self.rango_felicidad[1]
-            elif nueva_felicidad < self.rango_felicidad[0]:
-                self.__felicidad = self.rango_felicidad[0]
-            else:
-                self.__felicidad = nueva_felicidad
+        if nueva_felicidad > self.rango_felicidad[1]:
+            self.__felicidad = self.rango_felicidad[1]
+        elif nueva_felicidad < self.rango_felicidad[0]:
+            self.__felicidad = self.rango_felicidad[0]
         else:
-            print("Ingrese un numero")
+            self.__felicidad = nueva_felicidad
+
     # Debes rellenar las property estres
     @property
     def estres(self):
@@ -38,15 +36,12 @@ class Estudiante:
 
     @estres.setter
     def estres(self, nuevo_estres):
-        if isinstance(nuevo_estres, int):
-            if nuevo_estres > self.rango_estres[1]:
-                self.__estres = self.rango_estres[1]
-            elif nuevo_estres < self.rango_estres[0]:
-                self.__estres = self.rango_estres[0]
-            else:
-                self.__estres = nuevo_estres
+        if nuevo_estres > self.rango_estres[1]:
+            self.__estres = self.rango_estres[1]
+        elif nuevo_estres < self.rango_estres[0]:
+            self.__estres = self.rango_estres[0]
         else:
-            print("Ingrese un numero")
+            self.__estres = nuevo_estres
 
 
 ######## REVISAR LOS PARAMETROS
