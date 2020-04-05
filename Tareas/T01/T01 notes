@@ -1,0 +1,152 @@
+Menus
+
+1- Menu de inicio
+	- crear magizologo
+		* nombre unico y caracteres alfanumericos
+		* mayusculas o minusculas son lo mismo
+		- opcion seleccionar tipo de magizologo
+			* Docencio, Tareo o Hibrido
+		
+	- cargar magizologo
+	- salir
+
+2- Menu de acciones
+	
+	2.1- Menu de cuidar DCCriaturas
+		* opciones ocupan energia constante, se debe descontar
+		- Alimentar DCCriatura	
+			* opciones son qué criatura y qué alimento dar
+		- Recuperar DCCriatura
+			* mostrar criaturas que han escapado, seleccionar una e intentar 				recuperarla
+		- Sanar DCCriatura
+			* mosrar criaturas enfermas, hacer intento de sanar seleccionada
+		- Usar habilidad especial
+			* solo se puede usar una vez por usuario
+			* Efecto cambia segun tipo de magizologo
+		- volver
+		- salir
+
+	2.2- Menu DCC
+		- Adoptar DCCriaturas
+			- opcion de adoptar criatura a cambio de sickles
+		- Comprar alimentos al DCC
+			- comprar alimentos a cambio de sickles
+		- ver estado de magizologo y DCCriaturas
+			- imprimir datos actuales de magizologo y dccriaturas
+		- volver
+		- salir
+	2.3- Pasar al dia siguiente
+	2.4- Volver
+	2.5- Salir
+
+
+	2.3- pasar al dia siguiente
+		* cada dia las criaturas tienen probabilidad de enfrmar y escaparse. 
+		* si llevan dias sin comer, cambia su hambre
+		* si criatura esta enferma o hambirneta, disminuye salud
+		* calcular nivel de aprobacion para mantener licencia, criaturas que 			enfermaron, criaturas que escaparon, criaturas hambrientas, salud de 			criaturas, nivel de aprobacion, estado de licencia, multas, pagos y saldo 			actual.
+
+3- entidades
+	
+	3.1- Magizologos
+		- nombre
+		- criaturas
+		- alimentos
+		- sickles
+		- energia actual
+		- licencia
+		- nivel de aprobacion
+
+		- nivel de magico
+		- destreza
+		- energia total
+		- responsabilidad
+
+	3.2 acciones de magizologos
+		- adoptar criaturas
+		- comprar alimentos
+		- alimentar una criatura
+		- recuperar criatura
+		- sanar criatura
+		- usar habilidad especial
+
+
+
+4- magizologos
+
+	4.1 magizologo docencio
+		
+
+	4.2 magizologo tareo
+		
+
+	4.3 magizologo hibrido
+		
+5- dccriaturas
+
+	- todas las ddcriaturas pueden alimentarse, escapar e interactuar con magizologo
+	- atributos: 
+
+		nombre
+		nivel magico
+		puntos de salud total
+		puntos de salud actual
+		probabilidad de escaparse
+		probabilidad de enfermarse
+		estado de salud
+		nivel de hambre
+		dias sin comer
+		nivel de agresividad
+
+	- acciones:
+		
+		alimentarse
+		escaparse
+		enfermarse
+
+tipos de ddcriaturas:
+
+	- augurey
+		
+
+	- niffer
+
+	- erkling
+
+
+tipos de alimentos:
+	- tarta de melaza
+	
+	- higado de dragon
+
+	- buñuelo de gusarajo
+
+DCC:
+	funcionalidades:
+		- calcular nivel de aprobacion
+
+		- pagar a los magizoologos
+
+		- fiscalisar a los magizoologos
+
+		- vender criatura a magizoologo
+
+		- vender alimentos a magizoologo
+
+		- mostrar estado de magizologo y ddcriaturas
+
+
+
+importante:
+	- ocupar clases y metodos abstractos
+	- ocupar getters y setters
+
+	- ocupar polimorfismo
+	- ocupar herencia
+
+
+
+
+
+
+
