@@ -1,4 +1,5 @@
 from abc import ABC
+import random
 
 
 class DCCriatura(ABC):
@@ -33,10 +34,29 @@ class DCCriatura(ABC):
 class Augurey(DCCriatura):
     def __init__(self, nombre, nivel_magico, prob_esc, prob_enf, estado_salud \
                  estado_escape, salud_total, salud_actual, nivel_hambre, nivel_agresividad \
-                 dias_sin_comer, nivel_clepto):
+                 dias_sin_comer):
+
+        super().__init__(nombre, nivel_magico, prob_esc, prob_enf, estado_salud \
+                     estado_escape, salud_total, salud_actual, nivel_hambre, nivel_agresividad \
+                     dias_sin_comer)
+
+
+class Niffler(DCCriatura):
+    def __init__(self, nombre, nivel_magico, prob_esc, prob_enf, estado_salud \
+                 estado_escape, salud_total, salud_actual, nivel_hambre, nivel_agresividad \
+                 dias_sin_comer, nivel_clepto=random.randint(5,10)):
 
         super().__init__(nombre, nivel_magico, prob_esc, prob_enf, estado_salud \
                      estado_escape, salud_total, salud_actual, nivel_hambre, nivel_agresividad \
                      dias_sin_comer)
 
         self.nivel_clepto = nivel_clepto
+
+class Erkling(DCCriatura):
+    def __init__(self, nombre, nivel_magico, prob_esc, prob_enf, estado_salud \
+                 estado_escape, salud_total, salud_actual, nivel_hambre, nivel_agresividad \
+                 dias_sin_comer):
+
+        super().__init__(nombre, nivel_magico, prob_esc, prob_enf, estado_salud \
+                     estado_escape, salud_total, salud_actual, nivel_hambre, nivel_agresividad \
+                     dias_sin_comer)

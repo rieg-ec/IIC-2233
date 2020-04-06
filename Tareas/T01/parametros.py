@@ -15,3 +15,9 @@ NIVEL_MAGICO_HIBRIDO = (35, 45)
 DESTREZA_HIBRIDO = (30, 50)
 ENERGIA_HIBRIDO = (50, 55)
 RESPONSABILIDAD_HIBRIDO = (15, 25)
+
+magos = {
+    "1": "Docencio",
+    "2": "Tareo",
+    "3": "Hibrido"
+}

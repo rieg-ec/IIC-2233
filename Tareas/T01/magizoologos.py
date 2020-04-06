@@ -32,6 +32,9 @@ class Magizoologo(ABC):
     def sanar_criatura(self):
         pass
 
+    def mostrar_estado(self):
+        pass
+
     @abstractmethod
     def habilidad_especial(self):
         pass
