@@ -21,9 +21,6 @@ class DCCriatura(ABC):
         self.nivel_agresividad = nivel_agresividad
         self.dias_sin_comer = dias_sin_comer
 
-    def alimentarse(self):
-        pass
-
     def escaparse(self):
         pass
 

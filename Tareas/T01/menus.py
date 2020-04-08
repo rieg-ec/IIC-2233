@@ -1,8 +1,13 @@
-import parametros
+import parametros as pm
+from collections import defaultdict
+import magizoologos # which contains ABC module also
+import random
+import dcc
 
-class LoginMenu():
+class LoginMenu:
     def __init__(self):
         self.usuario = "Usuario anonimo" # Usuario actual
+        self.magizoologo = None
 
     @staticmethod
     def usuarios_registrados(solo_nombres=True):
@@ -27,10 +32,13 @@ class LoginMenu():
             return nombres
 
     @staticmethod
-    def registrar_usuario(nombre, tipo):
+    def registrar_usuario(nombre, tipo, sickles, dccriaturas, alimentos, licencia, nivel_magico, \
+                          destreza, energia_total, responsabilidad, habilidad_especial):
+
         usuarios_registrados = LoginMenu.usuarios_registrados(solo_nombres=False)
         with open('magizoologos.csv', 'a') as f:
-            f.write(f"{nombre},{tipo}")
+            f.write(f"{nombre},{tipo},{sickles},{dccriaturas},{alimentos},{licencia},{nivel_magico},"
+                    +f"{destreza},{energia_total},{responsabilidad},{habilidad_especial}")
             f.write("\n")
 
     def interfaz(self):
@@ -48,6 +56,9 @@ class LoginMenu():
         elif opcion == "2":
             self.log_in()
 
+        elif opcion == "3":
+            pass
+
         else:
             print("\nOpcion invalida")
 
@@ -57,14 +68,29 @@ class LoginMenu():
 
     def log_in(self):
 
-        usuarios_registrados = LoginMenu.usuarios_registrados(solo_nombres=True)
+        usuarios_registrados = LoginMenu.usuarios_registrados(solo_nombres=False) # info completa
+        nombres = LoginMenu.usuarios_registrados(solo_nombres=True) # solo para revisar si usuario
+                                                                    # existe
 
-        usuario = input("\nNombre de Usuario : ")
-        if usuario.lower() in usuarios_registrados:
-            self.usuario = usuario
-            menu = MainMenu(self.usuario)
-            print(f"\nBienvenido {self.usuario}")
-            menu.interfaz() # ir a menu de acciones
+        usuario_input = input("\nNombre de Usuario : ")
+
+        if usuario_input.lower() in nombres:
+            for info in usuarios_registrados:
+                nombre = info[0]
+                tipo = info.pop(1) # la clase Magizoologos no recibe el tipo como parametro
+                if usuario_input.lower() == nombre.lower():
+                    if tipo == "Docencio":
+                        magizoologo = magizoologos.Docencio(*info)
+                    elif tipo == "Tareo":
+                        magizoologo = magizoologos.Tareo(*info)
+                    elif tipo == "Híbrido":
+                        magizoologo = magizoologos.Hibrido(*info)
+
+            self.magizoologo =  magizoologo
+            self.usuario = magizoologo.nombre
+            print(f"\nBienvenido(a) {self.usuario}")
+            siguiente_menu = MainMenu(self.usuario, self.magizoologo)
+            siguiente_menu.interfaz() # Menu de acciones
 
         else:
             print("\nUsuario inexistente")
@@ -83,33 +109,42 @@ class LoginMenu():
 
         else:
             tipo_mago = input("\nQue tipo de magizoologo desea ser:"
-                              +"\n[1] Docencio"
-                              +"\n[2] Tareo"
-                              +"\n[3] Hibrido"
+                              +"\n[0] Docencio"
+                              +"\n[1] Tareo"
+                              +"\n[2] Hibrido"
                               +"\n"
-                              +"\nIndique su opcion (1, 2 o 3): ")
+                              +"\nIndique su opcion (0, 1 o 2): ")
 
-            if tipo_mago in parametros.magos.keys():
-                LoginMenu.registrar_usuario(usuario, parametros.magos[tipo_mago])
+            if tipo_mago in pm.magos.keys(): # para no ocupar tanto espacio con un dict
+                LoginMenu.registrar_usuario(usuario, pm.magos[tipo_mago], \
+                                            pm.sickles_iniciales, \
+                                            random.choice(pm.atr_mag["dccriaturas"]), \
+                                            random.choice(pm.atr_mag["alimentos"]), \
+                                            "True", \
+                                            random.choice(pm.atr_mag["nivel_magico"][int(tipo_mago)]), \
+                                            random.choice(pm.atr_mag["destreza"][int(tipo_mago)]), \
+                                            random.choice(pm.atr_mag["energia_total"][int(tipo_mago)]), \
+                                            random.choice(pm.atr_mag["responsabilidad"][int(tipo_mago)]), \
+                                            "True")
 
             else:
                 print("\nOpcion invalida")
 
-        return self.interfaz()
 
 
-
-class MainMenu():
-    def __init__(self, usuario):
+class MainMenu:
+    def __init__(self, usuario, magizoologo):
         self.usuario = usuario
+        self.magizoologo = magizoologo
+
 
     def interfaz(self):
         opcion = input("\n***** Menu de acciones *****"
                        + "\nSeleccione una opcion:"
-                       +"\n[1] Menu de cuidar DCCriaturas"
+                       +"\n[1] Menu cuidar DCCriaturas"
                        +"\n[2] Menu DCC"
                        +"\n[3] Pasar al dia siguiente"
-                       +"\n[4] Volver atras"
+                       +"\n[4] Volver atras (cerrar sesion)"
                        +"\n"
                        +"\nIndique su opcion (1, 2, 3, 4 o 5): ")
 
@@ -123,8 +158,8 @@ class MainMenu():
             self.pasar_al_dia_siguiente()
 
         elif opcion == "4":
-            print("\nSesion cerrada")
-            pass # no hacer nada
+            print(f"\nHasta luego {self.usuario}")
+            print(self.magizoologo)
 
         else:
             print("\nOpcion invalida")
@@ -133,13 +168,69 @@ class MainMenu():
             return self.interfaz()
 
     def cuidar_dccriaturas(self):
-        pass
+        opcion = input("\n***** Menu cuidar DCCriaturas *****"
+                       +"\nSeleccione una opcion:"
+                       +"\n[1] Alimentar DCCriatura"
+                       +"\n[2] Recuperar DCCriatura"
+                       +"\n[3] Sanar DCCriatura"
+                       +"\n[4] Usar habilidad especial"
+                       +"\n[5] Volver atras"
+                       +"\n"
+                       +"\nIndique su opcion (1, 2, 3, 4 o 5): ")
+
+        if opcion == "1":
+            self.magizoologo.alimentar_dccriatura()
+
+        elif opcion == "2":
+            self.magizoologo.recuperar_dccriatura()
+
+        elif opcion == "3":
+            self.magizoologo.sanar_dccriatura()
+
+        elif opcion == "4":
+            self.magizoologo.habilidad_especial()
+
+        elif opcion == "5":
+            pass
+
 
     def dcc(self):
-        pass
+        opcion = input("\n***** Menu DCC *****"
+                       +"\nSeleccione una opcion:"
+                       +"\n[1] Adoptar una DCCriatura"
+                       +"\n[2] Comprar alimentos"
+                       +"\n[3] Ver estado de magizoologo"
+                       +"\n[4] Volver atras"
+                       +"\n"
+                       +"\nIndique su opcion (1, 2, 3, o 4): ")
+        if opcion == "1":
+            dcc.DCC.vender_dccriatura(self.magizoologo)
+        elif opcion == "2":
+            dcc.DCC.vender_alimento(self.magizoologo)
+        elif opcion == "3":
+            pass
+        elif opcion == "4":
+            pass
 
     def pasar_al_dia_siguiente(self):
         pass
+        # print("\n¡¡Has pasado al dia siguiente!!"
+        #       +"\n***********************************"
+        #       +"\nResumen de los eventos de hoy:"
+        #       +"\n"
+        #       +"\n"
+        #       +f"\nCriaturas que enfermaron: {}"
+        #       +f"\nCriaturas que escaparon: {}"
+        #       +f"\nCriaturas hambrientas: {}"
+        #       +f"\n{'salud'}"
+        #       +f"\n{'hambre'}"
+        #       +f"\n{'algo mas'}
+        #       +"\n***********************************"
+        #       +"\nNivel de aprobación: {}"
+        #       +"\n{licencia}"
+        #       +"\n{multa}"
+        #       +"\n{pagos}"
+        #       +"\nTu saldo actual es: {self.magizoologo.sickles} sickles")
 
     def volver(self):
         pass

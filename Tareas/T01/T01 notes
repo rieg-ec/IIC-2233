@@ -6,15 +6,15 @@ Menus
 		* mayusculas o minusculas son lo mismo
 		- opcion seleccionar tipo de magizologo
 			* Docencio, Tareo o Hibrido
-		
+
 	- cargar magizologo
 	- salir
 
 2- Menu de acciones
-	
+
 	2.1- Menu de cuidar DCCriaturas
 		* opciones ocupan energia constante, se debe descontar
-		- Alimentar DCCriatura	
+		- Alimentar DCCriatura
 			* opciones son qué criatura y qué alimento dar
 		- Recuperar DCCriatura
 			* mostrar criaturas que han escapado, seleccionar una e intentar 				recuperarla
@@ -41,13 +41,13 @@ Menus
 
 
 	2.3- pasar al dia siguiente
-		* cada dia las criaturas tienen probabilidad de enfrmar y escaparse. 
+		* cada dia las criaturas tienen probabilidad de enfrmar y escaparse.
 		* si llevan dias sin comer, cambia su hambre
 		* si criatura esta enferma o hambirneta, disminuye salud
 		* calcular nivel de aprobacion para mantener licencia, criaturas que 			enfermaron, criaturas que escaparon, criaturas hambrientas, salud de 			criaturas, nivel de aprobacion, estado de licencia, multas, pagos y saldo 			actual.
 
 3- entidades
-	
+
 	3.1- Magizologos
 		- nombre
 		- criaturas
@@ -75,17 +75,17 @@ Menus
 4- magizologos
 
 	4.1 magizologo docencio
-		
+
 
 	4.2 magizologo tareo
-		
+
 
 	4.3 magizologo hibrido
-		
+
 5- dccriaturas
 
 	- todas las ddcriaturas pueden alimentarse, escapar e interactuar con magizologo
-	- atributos: 
+	- atributos:
 
 		nombre
 		nivel magico
@@ -99,7 +99,7 @@ Menus
 		nivel de agresividad
 
 	- acciones:
-		
+
 		alimentarse
 		escaparse
 		enfermarse
@@ -107,7 +107,7 @@ Menus
 tipos de ddcriaturas:
 
 	- augurey
-		
+
 
 	- niffer
 
@@ -116,7 +116,7 @@ tipos de ddcriaturas:
 
 tipos de alimentos:
 	- tarta de melaza
-	
+
 	- higado de dragon
 
 	- buñuelo de gusarajo
@@ -146,7 +146,22 @@ importante:
 
 
 
+	Estado inicial de magizoologos:
+		- nombre
+		- criaturas --> todos parten con 1 aleatoria
+		- alimentos --> todos parten con 1 aleatorio
+		- sickles --> todos parten con 500
+		- energia actual --> depende de cada magizoologo
+		- licencia --> todos parten con licencia
+		- Nivel de aprobacion --> se calcula
+		- nivel magico --> depende de subclase
+		- destreza --> depende de subclase
+		- energia total --> depende de subclase
+		- responsabilidad --> depende de subclase
 
 
+	TO-DO:
 
 
+DCC.registrar_dccriatura() --> DCC.vender_dccriatura()
+pasar_al_dia_siguiente()
