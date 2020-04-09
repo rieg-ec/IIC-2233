@@ -1,17 +1,18 @@
 import parametros as pm
+import dccriaturas
+import random
 
 class DCC:
 
-    def registrar_dccriatura():
-        pass
 
-    def dccriaturas_existentes(solo_nombres=True):
+    def dccriaturas_existentes():
         with open('criaturas.csv', 'r') as f:
-            for i in f.readlines().strip().split(','):
-                if solo_nombres:
-                    return i[0]
-                else:
-                    return i
+            nombres = []
+            for i in f.readlines():
+                i = i.strip().split(',')
+                nombres.append(i[0])
+
+            return nombres
 
     def calcular_aprobacion(magizoologo):
         pass
@@ -23,38 +24,49 @@ class DCC:
         pass
 
     def vender_dccriatura(magizoologo):
+        """
+        Esta funcion hace:
+        (1) revisa que el magizoologo tenga sickles suficientes para comprar al menos la
+        mascota mas barata
+        (2) revisa que el magizoologo tenga sickles para comprar la mascota que desea
+        (3) una vez elegida la mascota, el usuario escoge el nombre
+        (4) descuenta los sickles y crea el objeto dccriatura correspondiente y lo guarda en el
+        parametro dccriaturas_actuales del magizoologo correspondiente como un objeto
+        (5) registra la nueva dccriatura en el archivo dccriaturas.csv y en magizoologos.csv con sus
+        correspondientes parametros llamando a DCC.registrar_dccriatura()
+        """
         if magizoologo.licencia == "True" \
             and magizoologo.sickles >= min([pm.PRECIO_AUGUREY, pm.PRECIO_NIFFLER, pm.PRECIO_ERKLING]):
             opcion = input("\nQue DCCriatura desea adoptar?"
-                           +"\n[0] Augurey: $75 Sickles"
-                           +"\n[1] Niffler: $100 Sickles"
-                           +"\n[2] Erkling: $125 Sickles"
-                           +"\n"
-                           +"\nIndique su opcion (0, 1 o 2): ")
+                           +f"\n[0] Augurey: ${pm.PRECIO_AUGUREY} Sickles"
+                           +f"\n[1] Niffler: ${pm.PRECIO_NIFFLER} Sickles"
+                           +f"\n[2] Erkling: ${pm.PRECIO_ERKLING} Sickles"
+                           +f"\n"
+                           +f"\nIndique su opcion (0, 1 o 2): ")
+            opciones = {
+                "0": ["Augurey", pm.PRECIO_AUGUREY],
+                "1": ["Niffler", pm.PRECIO_NIFFLER],
+                "2": ["Erkling", pm.PRECIO_ERKLING]
+            }
 
-            if opcion == "0":
-                if magizoologo.sickles >= pm.PRECIO_AUGUREY:
-                    magizoologo.sickles -= pm.PRECIO_AUGUREY
-                    nombre_dccriatura = input("\nComo deseas llamarla?: ")
-                    DCC.registrar_dccriatura
-                    magizoologo.dccriaturas.append(nombre_dccriatura)
-                    print(f"\nAugurey '{nombre_dccriatura}' comprado")
-                else:
-                    print("\nNo te alcanza para esta mascota")
+            dccriaturas_clases = (dccriaturas.Augurey, dccriaturas.Niffler, dccriaturas.Erkling)
 
-            elif opcion == "1":
-                if magizoologo.sickles >= pm.PRECIO_NIFFLER:
-                    magizoologo.sickles -= pm.PRECIO_NIFFLER
-                    magizoologo.dccriaturas.append("Niffler")
-                    print("\nNiffler comprado")
-                else:
-                    print("\nNo te alcanza para esta mascota")
+            if opcion in opciones.keys():
+                if magizoologo.sickles >= opciones[opcion][1]:
+                    nombre_dccriatura = input("\nComo deseas llamar a "
+                                            +f"tu nueva DCCriatura {opciones[opcion][0]}?: ")
 
-            elif opcion == "2":
-                if magizoologo.sickles >= pm.PRECIO_ERKLING:
-                    magizoologo.sickles -= pm.PRECIO_ERKLING
-                    magizoologo.dccriaturas.append("Erkling")
-                    print("\nErkling comprado")
+
+                    if nombre_dccriatura not in DCC.dccriaturas_existentes():
+                        magizoologo.sickles -= opciones[opcion][1]
+                        dccriatura = dccriaturas_clases[int(opcion)](nombre_dccriatura) # crea objeto dccriatura
+                        magizoologo.dccriaturas_actuales.append(dccriatura) # agregar a dccriaturas de magizoologo
+                        print(f"\nDCCriatura {dccriatura.tipo} {dccriatura.nombre} adoptada")
+                        dccriatura.actualizar_archivo() # registrar en criaturas.csv
+                        magizoologo.actualizar_archivo()
+                    else:
+                        print("\nNombre ya existente")
+
                 else:
                     print("\nNo te alcanza para esta mascota")
             else:
@@ -73,33 +85,22 @@ class DCC:
                            +"\n"
                            +"\nIndique su opcion (0, 1 o 2): ")
 
-            if opcion == "0":
-                if magizoologo.sickles >= pm.PRECIO_TARTA_DE_MELAZA:
-                    magizoologo.sickles -= pm.PRECIO_TARTA_DE_MELAZA
-                    magizoologo.alimentos.append("Tarta de Melaza")
-                    print("\nTarta de Melaza comprada")
-                else:
-                    print("\nNo tienes sickles suficientes para este alimento")
+            opciones = {
+                "0": ["Tarta de Melaza", pm.PRECIO_TARTA_DE_MELAZA],
+                "1": ["Hígado de Dragón", pm.PRECIO_HIGADO_DE_DRAGON],
+                "2": ["Buñuelo de Gusarajo", pm.PRECIO_BUÑUELO_DE_GUSARAJO]
+            }
 
-            elif opcion == "1":
-                if magizoologo.sickles >= pm.PRECIO_HIGADO_DE_DRAGON:
-                    magizoologo.sickles -= pm.PRECIO_HIGADO_DE_DRAGON
-                    magizoologo.alimentos.append("Hígado de Dragón")
-                    print("\nHígado de Dragón comprado")
-                else:
-                    print("\nNo tienes sickles suficientes para este alimento")
 
-            elif opcion == "2":
-                if magizoologo.sickles >= pm.PRECIO_BUÑUELO_DE_GUSARAJO:
-                    magizoologo.sickles -= pm.PRECIO_BUÑUELO_DE_GUSARAJO
-                    magizoologo.alimentos.append("Buñuelo de Gusarajo")
-                    print("\nBuñuelo de Gusarajo comprado")
-                else:
-                    print("\nNo tienes sickles suficientes para este alimento")
+            if magizoologo.sickles >= opciones[opcion][1]:
+                magizologo.sickles -= opciones[opcion][1]
+                magizoologo.alimentos.append(opciones[opcion][0])
+                magizoologo.actualizar_archivo()
+                print(f"\n{opcioneS[opcion[0]]} comprada")
+
             else:
-                print("\nOpcion invalida")
-        else:
-            print("\nNo tienes dinero para alimentos")
+                print("\nNo tienes sickles suficiente")
+
 
 
     def mostrar_estado(magizoologo):

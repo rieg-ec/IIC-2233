@@ -31,16 +31,6 @@ class LoginMenu:
         else:
             return nombres
 
-    @staticmethod
-    def registrar_usuario(nombre, tipo, sickles, dccriaturas, alimentos, licencia, nivel_magico, \
-                          destreza, energia_total, responsabilidad, habilidad_especial):
-
-        usuarios_registrados = LoginMenu.usuarios_registrados(solo_nombres=False)
-        with open('magizoologos.csv', 'a') as f:
-            f.write(f"{nombre},{tipo},{sickles},{dccriaturas},{alimentos},{licencia},{nivel_magico},"
-                    +f"{destreza},{energia_total},{responsabilidad},{habilidad_especial}")
-            f.write("\n")
-
     def interfaz(self):
         opcion = input("\n***** Menu de inicio *****"
                        +"\nSeleccion una opcion:"
@@ -67,6 +57,16 @@ class LoginMenu:
 
 
     def log_in(self):
+        """
+        Esta funcion hace:
+        (1) guarda los usuarios registrados en usuarios_registrados, y los nombres de estos en nombres
+        (2) si el input del usuario es un usuario existente, crea un objeto Magizoologo con su nombre
+        y llama al metodo modificar_parametros() para hacer un override de los parametros iniciales de la clase
+        por los existentes
+        (3) asigna el objeto magizoologo a self.magizoologo y lo pasa como argumento a MainMenu, clase que recibe
+        el nombre y el objeto del magizoologo que inicia sesion como argumentos
+        (4) llama a MainMenu.interfaz(), lo que significa ir al "menu de acciones"
+        """
 
         usuarios_registrados = LoginMenu.usuarios_registrados(solo_nombres=False) # info completa
         nombres = LoginMenu.usuarios_registrados(solo_nombres=True) # solo para revisar si usuario
@@ -76,16 +76,19 @@ class LoginMenu:
 
         if usuario_input.lower() in nombres:
             for info in usuarios_registrados:
-                nombre = info[0]
-                tipo = info.pop(1) # la clase Magizoologos no recibe el tipo como parametro
+                nombre = info.pop(0)
+                tipo = info.pop(0)
                 if usuario_input.lower() == nombre.lower():
                     if tipo == "Docencio":
-                        magizoologo = magizoologos.Docencio(*info)
+                        magizoologo = magizoologos.Docencio(nombre)
                     elif tipo == "Tareo":
-                        magizoologo = magizoologos.Tareo(*info)
+                        magizoologo = magizoologos.Tareo(nombre)
                     elif tipo == "Híbrido":
-                        magizoologo = magizoologos.Hibrido(*info)
+                        magizoologo = magizoologos.Hibrido(nombre)
 
+                    informacion = info # argumento que sera ocupado en modificar_parametros()
+
+            magizoologo.modificar_parametros(*informacion)
             self.magizoologo =  magizoologo
             self.usuario = magizoologo.nombre
             print(f"\nBienvenido(a) {self.usuario}")
@@ -115,17 +118,10 @@ class LoginMenu:
                               +"\n"
                               +"\nIndique su opcion (0, 1 o 2): ")
 
-            if tipo_mago in pm.magos.keys(): # para no ocupar tanto espacio con un dict
-                LoginMenu.registrar_usuario(usuario, pm.magos[tipo_mago], \
-                                            pm.sickles_iniciales, \
-                                            random.choice(pm.atr_mag["dccriaturas"]), \
-                                            random.choice(pm.atr_mag["alimentos"]), \
-                                            "True", \
-                                            random.choice(pm.atr_mag["nivel_magico"][int(tipo_mago)]), \
-                                            random.choice(pm.atr_mag["destreza"][int(tipo_mago)]), \
-                                            random.choice(pm.atr_mag["energia_total"][int(tipo_mago)]), \
-                                            random.choice(pm.atr_mag["responsabilidad"][int(tipo_mago)]), \
-                                            "True")
+            if tipo_mago in pm.MAGOS.keys(): # para no ocupar tanto espacio con un dict
+                lista_magos = (magizoologos.Docencio, magizoologos.Tareo, magizoologos.Hibrido)
+                magizoologo = lista_magos[int(tipo_mago)](usuario) # instanciar magizoologo
+                magizoologo.actualizar_archivo() # guardar informacion en magizoologos.csv
 
             else:
                 print("\nOpcion invalida")

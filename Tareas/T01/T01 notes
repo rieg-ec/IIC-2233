@@ -163,5 +163,12 @@ importante:
 	TO-DO:
 
 
-DCC.registrar_dccriatura() --> DCC.vender_dccriatura()
+DCC.registrar_dccriatura()  --> DCC.vender_dccriatura()
+	- vender criatura, descontar sickles
+	- crear objeto criatura
+	- agregar objeto a criaturas del magizoologo
+	- registrar criatura en .csv del dueño
+	- registrar criatura en criaturas.csv
+
+ --> DCC.vender_dccriatura()
 pasar_al_dia_siguiente()
