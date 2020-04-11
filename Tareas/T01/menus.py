@@ -1,6 +1,8 @@
 import parametros as pm
 from collections import defaultdict
-import magizoologos # which contains ABC module also
+from abc import ABC, abstractmethod
+import magizoologos
+import dccriaturas
 import random
 import dcc
 
@@ -59,21 +61,28 @@ class LoginMenu:
     def log_in(self):
         """
         Esta funcion hace:
-        (1) guarda los usuarios registrados en usuarios_registrados, y los nombres de estos en nombres
-        (2) si el input del usuario es un usuario existente, crea un objeto Magizoologo con su nombre
-        y llama al metodo modificar_parametros() para hacer un override de los parametros iniciales de la clase
-        por los existentes
-        (3) asigna el objeto magizoologo a self.magizoologo y lo pasa como argumento a MainMenu, clase que recibe
-        el nombre y el objeto del magizoologo que inicia sesion como argumentos
+        (1) guarda los usuarios registrados en usuarios_registrados,
+        y los nombres de estos en nombres
+        (2) si el input del usuario es un usuario existente, crea un objeto Magizoologo
+        con su nombre y llama al metodo modificar_parametros() para hacer un override
+        de los parametros iniciales de la clase por los existentes
+        (3) asigna el objeto magizoologo a self.magizoologo y lo pasa como argumento a MainMenu,
+        clase que recibe el nombre y el objeto del magizoologo que inicia sesion como argumentos
         (4) llama a MainMenu.interfaz(), lo que significa ir al "menu de acciones"
+
+        TO-DO:
+
+        - documentar mejor
         """
 
-        usuarios_registrados = LoginMenu.usuarios_registrados(solo_nombres=False) # info completa
-        nombres = LoginMenu.usuarios_registrados(solo_nombres=True) # solo para revisar si usuario
-                                                                    # existe
+        # usuarios con toda la informacion en el archivo magizoologos.csv
+        usuarios_registrados = LoginMenu.usuarios_registrados(solo_nombres=False)
+        # nombres de magizoologos para chequear existencia
+        nombres = LoginMenu.usuarios_registrados(solo_nombres=True)
 
         usuario_input = input("\nNombre de Usuario : ")
 
+        # ignorar mayusculas
         if usuario_input.lower() in nombres:
             for info in usuarios_registrados:
                 nombre = info.pop(0)
@@ -86,27 +95,42 @@ class LoginMenu:
                     elif tipo == "Híbrido":
                         magizoologo = magizoologos.Hibrido(nombre)
 
-                    informacion = info # argumento que sera ocupado en modificar_parametros()
+                    # argumento de modificar_parametros() del magizoologo
+                    informacion = info
 
+
+            # hacer override a los atributos generados random por los ya existentes
             magizoologo.modificar_parametros(*informacion)
+            # guardar objeto magizoologo
             self.magizoologo =  magizoologo
+            # guardar nombre de magizoologo aparte por conveniencia
             self.usuario = magizoologo.nombre
             print(f"\nBienvenido(a) {self.usuario}")
+            # instanciar menu de acciones con usuario loggeado como argumento
             siguiente_menu = MainMenu(self.usuario, self.magizoologo)
-            siguiente_menu.interfaz() # Menu de acciones
+            # ir a la interfaz del menu de acciones
+            siguiente_menu.interfaz()
 
         else:
             print("\nUsuario inexistente")
             return self.interfaz()
 
     def sign_up(self):
+        """
+        TO-DO:
+
+        - explicar funcionamiento y documentar mejor
+        """
+        # nombres de magizoologos ya ocupados
         usuarios_registrados = LoginMenu.usuarios_registrados(solo_nombres=True)
 
         usuario = input("\nNombre de usuario : ")
 
+        # chequear que sea alfanumerico
         if usuario.isalnum() == False:
             print("\nNombre de usuario no valido")
 
+        # chequear que no este ocupado
         elif usuario.lower() in usuarios_registrados:
             print("\nUsuario existente")
 
@@ -118,11 +142,34 @@ class LoginMenu:
                               +"\n"
                               +"\nIndique su opcion (0, 1 o 2): ")
 
-            if tipo_mago in pm.MAGOS.keys(): # para no ocupar tanto espacio con un dict
-                lista_magos = (magizoologos.Docencio, magizoologos.Tareo, magizoologos.Hibrido)
-                magizoologo = lista_magos[int(tipo_mago)](usuario) # instanciar magizoologo
-                magizoologo.actualizar_archivo() # guardar informacion en magizoologos.csv
+            if tipo_mago in ["0", "1", "2"]:
+                tipo_dccriatura = input("\nQue DCCriatura deseas adoptar? :"
+                                   +"\n[0] Augurey"
+                                   +"\n[1] Niffler"
+                                   +"\n[2] Erkling"
+                                   +"\n"
+                                   +"\nIndique su opcion (0, 1 o 2): ")
+                if tipo_dccriatura in ["0", "1", "2"]:
+                    nombre_dccriatura = input("\nComo deseas llamar a tu DCCriatura?: ")
+                    if nombre_dccriatura not in dcc.DCC.dccriaturas_existentes():
 
+                        lista_dccriaturas = (dccriaturas.Augurey, \
+                                             dccriaturas.Niffler, dccriaturas.Erkling)
+                        lista_magos = (magizoologos.Docencio, magizoologos.Tareo, magizoologos.Hibrido)
+
+                        # instanciar magizoologo
+                        magizoologo = lista_magos[int(tipo_mago)](usuario)
+                        # instanciar dccriatura
+                        dccriatura = lista_dccriaturas[int(tipo_dccriatura)](nombre_dccriatura)
+                        magizoologo.dccriaturas_actuales.append(dccriatura)
+                        # guardar informacion de dccriatura en criaturas.csv
+                        dccriatura.actualizar_archivo()
+                        # guardar informacion de magizoologo en magizoologos.csv
+                        magizoologo.actualizar_archivo()
+
+                        print(f"\nUsuario {magizoologo.nombre} creado!")
+                    else:
+                        print("\nNombre de DCCriatura ocupado")
             else:
                 print("\nOpcion invalida")
 
@@ -204,32 +251,92 @@ class MainMenu:
         elif opcion == "2":
             dcc.DCC.vender_alimento(self.magizoologo)
         elif opcion == "3":
-            pass
+            dcc.DCC.mostrar_estado(self.magizoologo)
         elif opcion == "4":
             pass
 
     def pasar_al_dia_siguiente(self):
-        pass
-        # print("\n¡¡Has pasado al dia siguiente!!"
-        #       +"\n***********************************"
-        #       +"\nResumen de los eventos de hoy:"
-        #       +"\n"
-        #       +"\n"
-        #       +f"\nCriaturas que enfermaron: {}"
-        #       +f"\nCriaturas que escaparon: {}"
-        #       +f"\nCriaturas hambrientas: {}"
-        #       +f"\n{'salud'}"
-        #       +f"\n{'hambre'}"
-        #       +f"\n{'algo mas'}
-        #       +"\n***********************************"
-        #       +"\nNivel de aprobación: {}"
-        #       +"\n{licencia}"
-        #       +"\n{multa}"
-        #       +"\n{pagos}"
-        #       +"\nTu saldo actual es: {self.magizoologo.sickles} sickles")
+        """
+        TO-DO:
+        # 1- imprimir criaturas que enfermaron --> se debe simular
+        # 2- imprimir criaturas que escaparon --> se debe simular
+        # 3- imprimir criaturas que estan hambrientas  --> informacion existente
+        4- imprimir eventos de criaturas:
+            1- cuales perdieron salud por hambre o por enfermedad
 
-    def volver(self):
-        pass
+        # 5- imprimir nivel de aprobacion
+        # 6- imprimir estado de licencia (si continua, si la pierde o si ya la habia perdido)
+        # 7- imprimir multas --> DCC.fiscalizar retornara dict con esta info
+        # 8- imprimir pago del DCC --> llamar a pagar_a_magizoologo
+        # 9- imprimir pagos en multas --> DCC.fiscalizar retorna tambien esta info
+        # 10- imprimir saldo actual
+        """
 
-    def salir():
-        pass
+        # resetear
+        self.magizoologo.dccriaturas_escapadas_hoy = []
+        self.magizoologo.dccriaturas_enfermas_hoy = []
+        self.magizoologo.dccriaturas_salud_minima_hoy = []
+
+        DCCriaturas_hambrientas = [i for i in self.magizoologo.dccriaturas_actuales if i.nivel_hambre == "hambrienta"]
+
+        # simular eventos de DCCriaturas:
+        for dccriatura in self.magizoologo.dccriaturas_actuales:
+            # retorna True si la dccriatura se escapa
+            if dccriatura.escaparse():
+                self.magizoologo.dccriaturas_escapadas_hoy.append(dccriatura)
+
+            # retorna True si la dccriatura se enferma
+            if dccriatura.enfermarse():
+                self.magizoologo.dccriaturas_enfermas_hoy.append(dccriatura)
+
+
+            if dccriatura.salud_actual <= pm.SALUD_MINIMA_DCCRIATURAS:
+                self.magizoologo.dccriaturas_salud_minima_hoy.append(dccriatura)
+
+        print("\nHas pasado al dia siguiente:")
+        print("***********************************************")
+        print("Resumen de los eventos de hoy:")
+        print("")
+        print(f"Criaturas que enfermaron: {[i.nombre for i in self.magizoologo.dccriaturas_enfermas_hoy]}")
+        print(f"Criaturas que escaparon: {[i.nombre for i in self.magizoologo.dccriaturas_escapadas_hoy]}")
+        print(f"Criaturas hambrientas: {[i.nombre for i in DCCriaturas_hambrientas]}")
+        """TO-DO: mostrar criaturas que perdieron salud"""
+        print("***********************************************")
+        print(f"Nivel de aprobacion: {dcc.DCC.calcular_aprobacion(self.magizoologo)}")
+        # fiscalizar al magizoologo y guardar la informacion de la fiscalizacion en
+        # variable "fiscalizacion":
+        fiscalizaciones = dcc.DCC.fiscalizar(self.magizoologo)
+        # si el magizoologo perdio su licencia:
+        if fiscalizaciones["estado licencia"][0] == "perdio":
+            print(f"Perdiste tu licencia, motivo: {fiscalizaciones['estado licencia'][1]}")
+        # si el magizoologo recupero su licencia:
+        elif fiscalizaciones["estado licencia"][0] == "recupero":
+            print("Felicidades, recuperaste tu licencia")
+        # si el magizoologo continua sin licencia:
+        elif self.magizoologo.licencia == "False":
+            print("Continuas sin licencia")
+        # si el magizoologo continua con su licencia:
+        elif self.magizoologo.licencia == "True":
+            print("Felicidades, continuas con tu licencia")
+
+
+        for dccriatura in fiscalizaciones["multas por enfermedad"]:
+            if dccriatura:
+                print(f"Recibiste una multa porque {dccriatura.nombre} enfermo")
+
+        for dccriatura in fiscalizaciones["multas por escape"]:
+            if dccriatura:
+                print(f"Recibiste una multa porque {dccriatura.nombre} escapo")
+
+        for dccriatura in fiscalizaciones["multas por salud minima"]:
+            if dccriatura:
+                print(f"Recibiste una multa porque {dccriatura.nombre} llego a su salud minima")
+
+        # pagar a magizoologo e imprimir cantidad pagada:
+        print(f"El DCC te ha pagado {dcc.DCC.pagar_a_magizoologo(self.magizoologo)} sickles")
+        print(f"Se te han descontado {fiscalizaciones['total multas']} sickles en multas")
+        print(f"Tu saldo actual es: {self.magizoologo.sickles} sickles")
+
+        self.magizoologo.actualizar_archivo()
+        for dccriatura in self.magizoologo.dccriaturas_actuales:
+            dccriatura.actualizar_archivo()

@@ -21,19 +21,49 @@ class DCCriatura(ABC):
         self.prob_enf = pm.PARAMETROS_DCCRIATURAS[self.index][3]
         self.max_dias_sin_comer = pm.PARAMETROS_DCCRIATURAS[self.index][4]
         self.nivel_agresividad = pm.PARAMETROS_DCCRIATURAS[self.index][5] # nivel de agresividad
-        self.estado_salud = "False" # inicia sana
-        self.estado_escape = "False" # inicia sin escaparse
-        self.nivel_hambre = 0
-        self.dias_sin_comer = 0
+        self.estado_salud = pm.ESTADO_SALUD_INICIAL_DCCRIATURAS
+        self.estado_escape = pm.ESTADO_ESCAPE_INICIAL_DCCRIATURAS
+        self.nivel_hambre = pm.HAMBRE_INICIAL_DCCRIATURAS
+        self.dias_sin_comer = pm.DIAS_SIN_COMER_INICIAL_DCCRIATURAS
         self.tipo = ""
         self.nivel_clepto = 0
 
+
+    """
+    TO-DO:
+
+    - escaparse()
+
+    - enfermarse()
+    """
+
+    def modificar_parametros(self):
+        with open('criaturas.csv', 'r') as f:
+            for linea in f.readlines():
+                linea = linea.split(',')
+                if linea[0] == self.nombre:
+                    atributos = linea
+            f.close()
+
+        self.nivel_magico = int(atributos[2])
+        self.prob_esc = float(atributos[3])
+        self.prob_enf = float(atributos[4])
+        self.estado_salud = atributos[5]
+        self.estado_escape = atributos[6]
+        self.salud_total = int(atributos[7])
+        self.salud_actual = int(atributos[8])
+        self.nivel_hambre = atributos[9]
+        self.nivel_agresividad = atributos[10]
+        self.dias_sin_comer = int(atributos[11])
+        self.nivel_clepto = int(atributos[12])
 
     def actualizar_archivo(self):
         """
         Esta funcion actualiza los parametros de la dccriatura en
         el archivo criaturas.csv, reescribiendo el archivo con la dccriatura al
         final
+
+        TO-DO: documentar mejor, explicar funcionamiento
         """
 
         atributos_dccriatura = f"{self.nombre},{self.tipo},{self.nivel_magico}," \
@@ -64,10 +94,20 @@ class DCCriatura(ABC):
 
 
     def escaparse(self):
-        pass
+        escape = False
+        if self.estado_escape == "False":
+            if "escape":
+                escape = True
+
+        return escape
 
     def enfermarse(self):
-        pass
+        enferma = False
+        if self.estado_salud == "False":
+            if "enfermarse":
+                enferma = True
+
+        return enferma
 
 
 class Augurey(DCCriatura):
