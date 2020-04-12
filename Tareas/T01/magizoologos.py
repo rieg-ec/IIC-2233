@@ -17,7 +17,7 @@ class Magizoologo(ABC):
         self.nivel_magico = random.randint(*pm.PARAMETROS_MAGIZOOLOGOS[self.index][0])
         self.destreza = random.randint(*pm.PARAMETROS_MAGIZOOLOGOS[self.index][1])
         self.energia_total = random.randint(*pm.PARAMETROS_MAGIZOOLOGOS[self.index][2])
-        self.energia_actual = self.energia_total
+        self.__energia_actual = self.energia_total
         self.responsabilidad = random.randint(*pm.PARAMETROS_MAGIZOOLOGOS[self.index][3])
         self.habilidad_especial = pm.ESTADO_HABILIDAD_INICIAL
 
@@ -33,16 +33,27 @@ class Magizoologo(ABC):
 
     """
     TO-DO:
+    setter/getters:
+        - self.energia_actual
 
     - habilidad_especial()
-
-    - alimentar_dccriatura()
-
     - recuperar_dccriatura()
-
     - sanar_dccriatura()
 
     """
+
+    @property
+    def energia_actual(self):
+        return self.__energia_actual
+    @energia_actual.setter
+    def energia_actual(self, energia):
+        if energia > self.energia_total:
+            self.__energia_actual = self.energia_total
+        elif energia < 0:
+            self.__energia_actual = 0
+        else:
+            self.__energia_actual = energia
+
     @abstractmethod
     def habilidad_especial(self):
         pass
@@ -60,21 +71,24 @@ class Magizoologo(ABC):
         """
 
         dccriaturas_nombres = dccriaturas_nombres.split(";")
-        with open('criaturas.csv', 'r') as f:
-            for dccriatura_nombre in dccriaturas_nombres:
-                for i in f.readlines():
-                    i = i.strip().split(',')
+        file = open('criaturas.csv', 'r')
+        lineas = file.readlines()
+        file.close()
 
-                    if i[0] == dccriatura_nombre:
-                        if i[1] == "Niffler":
-                            dccriatura = dccriaturas.Niffler(dccriatura_nombre)
-                        elif i[1] == "Augurey":
-                            dccriatura = dccriaturas.Augurey(dccriatura_nombre)
-                        elif i[1] == "Erkling":
-                            dccriatura = dccriaturas.Erkling(dccriatura_nombre)
+        for dccriatura_nombre in dccriaturas_nombres:
+            for i in lineas:
+                i = i.strip().split(',')
 
-                        dccriatura.modificar_parametros()
-                        self.dccriaturas_actuales.append(dccriatura)
+                if i[0] == dccriatura_nombre:
+                    if i[1] == "Niffler":
+                        dccriatura = dccriaturas.Niffler(dccriatura_nombre, self)
+                    elif i[1] == "Augurey":
+                        dccriatura = dccriaturas.Augurey(dccriatura_nombre, self)
+                    elif i[1] == "Erkling":
+                        dccriatura = dccriaturas.Erkling(dccriatura_nombre, self)
+
+                    dccriatura.modificar_parametros()
+                    self.dccriaturas_actuales.append(dccriatura)
 
         self.sickles = int(sickles)
         self.alimentos = alimentos.split(";")
@@ -130,20 +144,46 @@ class Magizoologo(ABC):
             f.close()
 
     def alimentar_dccriatura(self):
-        """
-        TO-DO: alimentar a la dccriatura correspondiente, ocupando la instancia de la dccriatura creada
-        y modificando sus atributos correspondientemente
-        """
-        print("\nQue DCCriatura deseas alimentar :")
-        for index, dccriatura in enumerate(self.dccriaturas_nombres):
-            print(f"\n[{index}] {dccriatura}")
+        if self.energia_actual >= pm.COSTO_ENERGETICO_ALIMENTAR:
+            if len(self.alimentos) > 0:
+                print("\nQue DCCriatura deseas alimentar?: ")
+                print("")
+                for index, dccriatura in enumerate(self.dccriaturas_actuales):
+                    print(f"[{index}] {dccriatura.nombre} ({dccriatura.tipo})")
+                opcion_dccriatura = input(f"\nIndique su opcion: "
+                                          +f"({', '.join(str(i) for i in range(len(self.dccriaturas_actuales)))}): ")
 
-        opcion_dccriatura = input("\nIndique su opcion : ")
+                if opcion_dccriatura in [str(i) for i in range(len(self.dccriaturas_actuales))]:
 
-        print("\nQue alimento deseas darle :")
-        for index, alimento in enumerate(self.alimentos):
-            print(f"\n[{index}] {alimento}")
-        opcion_alimento = input("\nIndique su opcion : ")
+                    print("\nQue alimento desea darle?")
+                    print("")
+                    for index, alimento in enumerate(self.alimentos):
+                        print(f"[{index}] {alimento} (+{pm.ALIMENTOS[alimento]} de vida)")
+
+                    opcion_alimento = input(f"Indique su opcion ({', '.join(str(i) for i in range(len(self.alimentos)))}): ")
+
+                    if opcion_alimento in [str(i) for i in range(len(self.alimentos))]:
+                        alimento_seleccionado = self.alimentos[int(opcion_alimento)]
+                        dccriatura_seleccionada = self.dccriaturas_actuales[int(opcion_dccriatura)]
+
+                        self.alimentos.remove(alimento_seleccionado)
+                        dccriatura_seleccionada.alimentarse(alimento_seleccionado, self)
+                        dccriatura_seleccionada.actualizar_archivo()
+                        self.actualizar_archivo()
+
+
+                    else:
+                        print("\nOpcion invalida")
+                else:
+                    print("\nOpcion invalida")
+
+
+
+
+            else:
+                print("\nNo tienes alimentos")
+        else:
+            print("\nNo tienes energia suficiente")
 
     def recuperar_dccriatura(self):
         pass

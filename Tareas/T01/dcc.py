@@ -149,7 +149,7 @@ class DCC:
                         # descontar valor de dccriatura
                         magizoologo.sickles -= opciones[opcion][1]
                         # instanciar dccriatura comprada
-                        dccriatura = dccriaturas_clases[int(opcion)](nombre_dccriatura)
+                        dccriatura = dccriaturas_clases[int(opcion)](nombre_dccriatura, magizoologo)
                         # agregar dccriatura a dccriaturas del magizoologo
                         magizoologo.dccriaturas_actuales.append(dccriatura)
                         print(f"\nDCCriatura {dccriatura.tipo} {dccriatura.nombre} adoptada")

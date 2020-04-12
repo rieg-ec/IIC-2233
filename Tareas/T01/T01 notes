@@ -23,6 +23,11 @@ TO-DOOO:
 		- modelar perdida de salud por hambre o enfermedad (crear funcion en dccriatura
 		y llamar ahi)
 
+
+
+
+
+
 importante:
 	- ocupar clases y metodos abstractos
 	- ocupar getters y setters

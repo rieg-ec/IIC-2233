@@ -160,7 +160,7 @@ class LoginMenu:
                         # instanciar magizoologo
                         magizoologo = lista_magos[int(tipo_mago)](usuario)
                         # instanciar dccriatura
-                        dccriatura = lista_dccriaturas[int(tipo_dccriatura)](nombre_dccriatura)
+                        dccriatura = lista_dccriaturas[int(tipo_dccriatura)](nombre_dccriatura, magizoologo)
                         magizoologo.dccriaturas_actuales.append(dccriatura)
                         # guardar informacion de dccriatura en criaturas.csv
                         dccriatura.actualizar_archivo()
@@ -202,7 +202,6 @@ class MainMenu:
 
         elif opcion == "4":
             print(f"\nHasta luego {self.usuario}")
-            print(self.magizoologo)
 
         else:
             print("\nOpcion invalida")
