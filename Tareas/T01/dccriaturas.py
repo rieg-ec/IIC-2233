@@ -28,6 +28,7 @@ class DCCriatura(ABC):
         self.tipo = None
         self.nivel_clepto = 0
 
+        self.alimentada_hoy = False
         self.dueño = dueño
     """
     TO-DO:
@@ -117,21 +118,18 @@ class DCCriatura(ABC):
 
     def alimentarse(self, alimento, magizoologo):
 
-
+        alimentada = True
         # si el alimento es higado de dragon la criatura se sana
         if alimento == "Hígado de Dragón":
             self.estado_salud = "False"
-            self.nivel_hambre = "satisfecha"
-            self.salud_actual += pm.ALIMENTOS[alimento]
             print(f"{self.nombre} se ha alimentado con Higado de Dragón")
 
         # si el alimento es buñuelo de gusarajo la criatura podria atacar
         elif alimento == "Buñuelo de Gusarajo":
             if random.random() < pm.PROBABILIDAD_ATACAR_BUÑUELO:
                 print(f"\n{self.nombre} ha rechazado el alimento")
+                alimentada = False
             else:
-                self.nivel_hambre = "satisfecha"
-                self.salud_actual += pm.ALIMENTOS[alimento]
                 print(f"{self.nombre} se ha alimentado con Buñuelo de Gusarajo")
 
 
@@ -139,11 +137,14 @@ class DCCriatura(ABC):
             if self.tipo == "Niffler":
                 if random.random() < pm.PROBABILIDAD_DISMINUIR_AGRESIVIDAD_MELAZA:
                     self.agresividad = "inofensiva"
-
-            self.salud_actual += pm.ALIMENTOS[alimento]
-            self.nivel_hambre = "satisfecha"
             print(f"{self.nombre} se ha alimentado con Tarta de Melaza")
 
+
+        if alimentada:
+            self.nivel_hambre = "satisfecha"
+            self.dias_sin_comer = 0
+            self.alimentada_hoy = True
+            self.salud_actual += pm.ALIMENTOS[alimento]
 
 
         efecto_hambre = pm.EFECTO_HAMBRE[self.nivel_hambre]
@@ -154,8 +155,6 @@ class DCCriatura(ABC):
         if random.random() < probabilidad_ataque:
             ataque = magizoologo.nivel_magico - self.nivel_magico
             magizoologo.energia_actual -= ataque
-
-
 
     def escaparse(self):
         resp_magizoologo = self.dueño.responsabilidad

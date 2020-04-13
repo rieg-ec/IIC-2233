@@ -69,30 +69,33 @@ class DCC:
             fiscalizaciones["estado licencia"] = ["recupero", "alta aprobacion"]
 
 
-        # fiscalizar por escapes
-        for dccriatura in magizoologo.dccriaturas_escapadas_hoy:
-            n = random.random()
-            if n <= pm.PROBABILIDAD_MULTA_ESCAPE:
-                if magizoologo.sickles >= pm.MULTA_ESCAPE:
-                    magizoologo.sickles -= pm.MULTA_ESCAPE
-                    fiscalizaciones["multas por enfermedad"].append(dccriatura)
-
-                # si no hay dinero y el magizoologo tiene licencia se le quita
-                elif magizoologo.licencia == "True":
-                    magizoologo.licencia = "False"
-                    fiscalizaciones["estado licencia"] = ["perdio", "sin dinero para multa"]
-
         # fiscalizar por criaturas enfermas
         for dccriatura in magizoologo.dccriaturas_enfermas_hoy:
             n = random.random()
             if n <= pm.PROBABILIDAD_MULTA_ENFERMEDAD:
                 if magizoologo.sickles >= pm.MULTA_ENFERMEDAD:
                     magizoologo.sickles -= pm.MULTA_ENFERMEDAD
-                    fiscalizaciones["multas por escape"].append(dccriatura)
+                    fiscalizaciones["total multas"] += pm.MULTA_ENFERMEDAD
+                    fiscalizaciones["multas por enfermedad"].append(dccriatura)
                 # si no hay dinero y el magizoologo tiene licencia se le quita
                 elif magizoologo.licencia == "True":
                     magizoologo.licencia = "False"
                     fiscalizaciones["estado licencia"] = ["perdio", "sin dinero para multa"]
+
+        # fiscalizar por escapes
+        for dccriatura in magizoologo.dccriaturas_escapadas_hoy:
+            n = random.random()
+            if n <= pm.PROBABILIDAD_MULTA_ESCAPE:
+                if magizoologo.sickles >= pm.MULTA_ESCAPE:
+                    magizoologo.sickles -= pm.MULTA_ESCAPE
+                    fiscalizaciones["total multas"] += pm.MULTA_ESCAPE
+                    fiscalizaciones["multas por escape"].append(dccriatura)
+
+                # si no hay dinero y el magizoologo tiene licencia se le quita
+                elif magizoologo.licencia == "True":
+                    magizoologo.licencia = "False"
+                    fiscalizaciones["estado licencia"] = ["perdio", "sin dinero para multa"]
+
 
 
         # fiscalisar por criaturas que alcanzaron salud minima
@@ -101,6 +104,7 @@ class DCC:
             if n <= pm.PROBABILIDAD_MULTA_SALUD:
                 if magizoologo.sickles >= pm.MULTA_SALUD:
                     magizoologo.sickles -= pm.MULTA_SALUD
+                    fiscalizaciones["total multas"] += pm.MULTA_SALUD
                     fiscalizaciones["multas por salud minima"].append(dccriatura)
                 # si no hay dinero y el magizoologo tiene licencia se le quita
                 elif magizoologo.licencia == "True":
@@ -185,16 +189,20 @@ class DCC:
                 "2": ["Buñuelo de Gusarajo", pm.PRECIO_BUÑUELO_DE_GUSARAJO]
             }
 
-            # chequear que tenga sickles suficientes para el alimento comprado
-            if magizoologo.sickles >= opciones[opcion][1]:
-                magizoologo.sickles -= opciones[opcion][1]
-                magizoologo.alimentos.append(opciones[opcion][0])
-                # actualizar informacion en magizoologos.csv
-                magizoologo.actualizar_archivo()
-                print(f"\n{opciones[opcion][0]} comprado")
+            if opcion in opciones.keys():
 
+            # chequear que tenga sickles suficientes para el alimento comprado
+                if magizoologo.sickles >= opciones[opcion][1]:
+                    magizoologo.sickles -= opciones[opcion][1]
+                    magizoologo.alimentos.append(opciones[opcion][0])
+                    # actualizar informacion en magizoologos.csv
+                    magizoologo.actualizar_archivo()
+                    print(f"\n{opciones[opcion][0]} comprado")
+
+                else:
+                    print(f"\nNo tienes sickles suficientes para {opciones[opcion][0]}")
             else:
-                print(f"\nNo tienes sickles suficientes para {opciones[opcion][0]}")
+                print("\nOpcion invalida")
         else:
             print("\nNo tienes sickles suficientes para ningun alimento")
 
@@ -218,7 +226,10 @@ class DCC:
 
         print("\nAlimentos comprados restantes y puntos de salud que otorgan: ")
         for alimento in magizoologo.alimentos:
-            print(f"{alimento}: {pm.ALIMENTOS[alimento]}")
+            if alimento == "":
+                print("no quedan alimentos")
+            else:
+                print(f"{alimento}: {pm.ALIMENTOS[alimento]}")
 
         print("\nDCCriaturas: ")
         for dccriatura in magizoologo.dccriaturas_actuales:
@@ -227,5 +238,7 @@ class DCC:
                 +f"\nNivel magico: {dccriatura.nivel_magico}"
                 +f"\nPuntos de salud actuales: {dccriatura.salud_actual}"
                 +f"\nEstado de salud (enferma o no): {dccriatura.estado_salud}"
+                +f"\nEstado de escape (escapada o no): {dccriatura.estado_escape}"
                 +f"\nNivel de hambre: {dccriatura.nivel_hambre}"
+                +f"\nDias sin comer: {dccriatura.dias_sin_comer}"
                 +f"\nNivel de agresividad: {dccriatura.nivel_agresividad}")

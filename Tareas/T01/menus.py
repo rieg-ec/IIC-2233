@@ -49,7 +49,7 @@ class LoginMenu:
             self.log_in()
 
         elif opcion == "3":
-            pass
+            print(f"Sesion {self.usuario} cerrada")
 
         else:
             print("\nOpcion invalida")
@@ -257,14 +257,10 @@ class MainMenu:
     def pasar_al_dia_siguiente(self):
         """
         TO-DO:
-        # 1- imprimir criaturas que enfermaron --> se debe simular
-        # 2- imprimir criaturas que escaparon --> se debe simular
-        # 3- imprimir criaturas que estan hambrientas  --> informacion existente
+
         4- imprimir eventos de criaturas:
             1- cuales perdieron salud por hambre o por enfermedad
 
-        # 5- imprimir nivel de aprobacion
-        # 6- imprimir estado de licencia (si continua, si la pierde o si ya la habia perdido)
         # 7- imprimir multas --> DCC.fiscalizar retornara dict con esta info
         # 8- imprimir pago del DCC --> llamar a pagar_a_magizoologo
         # 9- imprimir pagos en multas --> DCC.fiscalizar retorna tambien esta info
@@ -280,6 +276,14 @@ class MainMenu:
 
         # simular eventos de DCCriaturas:
         for dccriatura in self.magizoologo.dccriaturas_actuales:
+            # verificar si la dccriatura fue alimentada hoy
+            if not dccriatura.alimentada_hoy:
+                dccriatura.dias_sin_comer += 1
+
+            # descontar salud si la criatura esta hambrienta
+            if dccriatura.nivel_hambre == "hambrienta":
+                dccriatura.salud_actual -= pm.SALUD_POR_DIA_SIN_COMER
+
             # retorna True si la dccriatura se escapa
             if dccriatura.escaparse():
                 self.magizoologo.dccriaturas_escapadas_hoy.append(dccriatura)
