@@ -30,12 +30,6 @@ class DCCriatura(ABC):
 
         self.alimentada_hoy = False
         self.dueño = dueño
-    """
-    TO-DO:
-    - escaparse()
-
-    - enfermarse()
-    """
 
     @property
     def dias_sin_comer(self):
@@ -116,7 +110,7 @@ class DCCriatura(ABC):
             f.write("\n")
             f.close()
 
-    def alimentarse(self, alimento, magizoologo):
+    def alimentarse(self, alimento):
 
         alimentada = True
         # si el alimento es higado de dragon la criatura se sana
@@ -153,8 +147,8 @@ class DCCriatura(ABC):
         probabilidad_ataque = (efecto_hambre + efecto_agresividad) / 100
 
         if random.random() < probabilidad_ataque:
-            ataque = magizoologo.nivel_magico - self.nivel_magico
-            magizoologo.energia_actual -= ataque
+            ataque = self.dueño.nivel_magico - self.nivel_magico
+            self.dueño.energia_actual -= ataque
 
     def escaparse(self):
         resp_magizoologo = self.dueño.responsabilidad
@@ -192,7 +186,11 @@ class Augurey(DCCriatura):
         self.tipo = "Augurey"
 
     def habilidad_especial(self):
-        pass
+        if self.nivel_hambre == "satisfecha" and self.estado_salud == "False" and \
+            self.salud_actual == self.salud_total:
+            alimento = random.choice([_ for _ in pm.ALIMENTOS.keys()])
+            self.dueño.alimentos.append(alimento)
+            print(f"\nAugurey {self.nombre} te ha regalado un {alimento}")
 
 class Niffler(DCCriatura):
     def __init__(self, nombre, dueño):
@@ -204,7 +202,12 @@ class Niffler(DCCriatura):
         self.nivel_clepto = random.randint(*pm.NIVEL_CLEPTO_NIFFLER)
 
     def habilidad_especial(self):
-        pass
+        sickles = self.nivel_clepto * 2
+        if self.nivel_hambre == "satisfecha":
+            self.dueño += sickles
+            print(f"\nNiffler {self.nombre} te ha regañadp {sickles} sickles")
+        else:
+            self.dueño -= sickles
 
 class Erkling(DCCriatura):
     def __init__(self, nombre, dueño):
@@ -215,4 +218,10 @@ class Erkling(DCCriatura):
         self.tipo = "Erkling"
 
     def habilidad_especial(self):
-        pass
+        if self.nivel_hambre == "hambrienta":
+            alimento_robado = random.choice(self.dueño.alimentos)
+            print(f"\nErkling {self.nombre} te ha robado {alimento_robado}")
+            self.nivel_hambre = "satisfecha"
+            self.salud_actual += pm.ALIMENTOS[alimento_robado]
+            if alimento_robado == "Hígado de Dragón":
+                self.estado_salud = "False"

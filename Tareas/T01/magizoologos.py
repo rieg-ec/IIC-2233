@@ -19,9 +19,9 @@ class Magizoologo(ABC):
         self.energia_total = random.randint(*pm.PARAMETROS_MAGIZOOLOGOS[self.index][2])
         self.__energia_actual = self.energia_total
         self.responsabilidad = random.randint(*pm.PARAMETROS_MAGIZOOLOGOS[self.index][3])
-        self.habilidad_especial = pm.ESTADO_HABILIDAD_INICIAL
+        self.hab_especial_disp = pm.ESTADO_HABILIDAD_INICIAL
 
-        self.dccriaturas_actuales = []
+        self.dccriaturas = []
 
         # las dccriaturas se agregaran aca cuando se llame a la funcion pasar_al_dia_siguiente()
         # donde por cada dccriatura del magizoologo se chequeara si sucede algun evento, y si sucede
@@ -30,17 +30,6 @@ class Magizoologo(ABC):
         self.dccriaturas_enfermas_hoy = []
         self.dccriaturas_salud_minima_hoy = []
 
-
-    """
-    TO-DO:
-    setter/getters:
-        - self.energia_actual
-
-    - habilidad_especial()
-    - recuperar_dccriatura()
-    - sanar_dccriatura()
-
-    """
 
     @property
     def energia_actual(self):
@@ -59,7 +48,7 @@ class Magizoologo(ABC):
         pass
 
     def modificar_parametros(self, sickles, dccriaturas_nombres, alimentos, licencia, nivel_magico, \
-                             destreza, energia_total, responsabilidad, habilidad_especial):
+                             destreza, energia_total, responsabilidad, hab_especial_disp):
         """
         Esta funcion modifica los parametros del magizoologo en caso de que se cree una instancia
         y se quieran ocupar argumentos distintos de los que se crean por defecto, que sucede en el
@@ -88,7 +77,7 @@ class Magizoologo(ABC):
                         dccriatura = dccriaturas.Erkling(dccriatura_nombre, self)
 
                     dccriatura.modificar_parametros()
-                    self.dccriaturas_actuales.append(dccriatura)
+                    self.dccriaturas.append(dccriatura)
 
         self.sickles = int(sickles)
         self.alimentos = alimentos.split(";")
@@ -98,7 +87,7 @@ class Magizoologo(ABC):
         self.energia_total = int(energia_total)
         self.energia_actual = self.energia_total
         self.responsabilidad = int(responsabilidad)
-        self.habilidad_especial = habilidad_especial
+        self.hab_especial_disp = hab_especial_disp
 
     def actualizar_archivo(self):
         """
@@ -112,11 +101,11 @@ class Magizoologo(ABC):
 
         # guardar atributos actuales para actualizar magizoologos.csv
         atributos_magizoologo = f"{self.nombre},{self.tipo},{self.sickles}," \
-                                +f"{';'.join(i.nombre for i in self.dccriaturas_actuales)}," \
+                                +f"{';'.join(i.nombre for i in self.dccriaturas)}," \
                                 +f"{';'.join(_ for _ in self.alimentos)}," \
                                 +f"{self.licencia},{self.nivel_magico},{self.destreza}," \
                                 +f"{self.energia_total},{self.responsabilidad}," \
-                                +f"{self.habilidad_especial}"
+                                +f"{self.hab_especial_disp}"
 
         # guardar estado actual de magizoologos.csv
         # y nombres de magizoologos
@@ -143,120 +132,43 @@ class Magizoologo(ABC):
             f.write("\n")
             f.close()
 
-    def alimentar_dccriatura(self):
-        if self.energia_actual >= pm.COSTO_ENERGETICO_ALIMENTAR:
-            if "" not in self.alimentos:
-                print("\nQue DCCriatura deseas alimentar?: ")
-                print("")
-                for index, dccriatura in enumerate(self.dccriaturas_actuales):
-                    print(f"[{index}] {dccriatura.nombre} ({dccriatura.tipo}): {dccriatura.nivel_hambre}")
-                opcion_dccriatura = input(f"\nIndique su opcion: "
-                                          +f"({', '.join(str(i) for i in range(len(self.dccriaturas_actuales)))}): ")
+    def alimentar_dccriatura(self, alimento, dccriatura):
 
-                if opcion_dccriatura in [str(i) for i in range(len(self.dccriaturas_actuales))]:
+        self.alimentos.remove(alimento)
+        self.energia_actual -= pm.COSTO_ENERGETICO_ALIMENTAR
+        dccriatura.alimentarse(alimento)
+        dccriatura.actualizar_archivo()
+        self.actualizar_archivo()
 
-                    if "" not in self.alimentos:
-                        print("\nQue alimento desea darle?")
-                        print("")
-                        for index, alimento in enumerate(self.alimentos):
-                            print(f"[{index}] {alimento} (+{pm.ALIMENTOS[alimento]} de vida)")
+    def recuperar_dccriatura(self, dccriatura):
 
-                        opcion_alimento = input(f"Indique su opcion ({', '.join(str(i) for i in range(len(self.alimentos)))}): ")
+            self.energia_actual -= pm.COSTO_ENERGETICO_RECUPERAR
+            prob_recuperar = (self.destreza + self.nivel_magico -
+                              dccriatura.nivel_magico) / (self.destreza +
+                                self.nivel_magico + dccriatura.nivel_magico)
 
-                        if opcion_alimento in [str(i) for i in range(len(self.alimentos))]:
-                            alimento_seleccionado = self.alimentos[int(opcion_alimento)]
-                            dccriatura_seleccionada = self.dccriaturas_actuales[int(opcion_dccriatura)]
-
-                            self.alimentos.remove(alimento_seleccionado)
-                            self.energia_actual -= pm.COSTO_ENERGETICO_ALIMENTAR
-                            dccriatura_seleccionada.alimentarse(alimento_seleccionado, self)
-                            dccriatura_seleccionada.actualizar_archivo()
-                            self.actualizar_archivo()
-
-                        else:
-                            print("\nOpcion invalida")
-
-                else:
-                    print("\nOpcion invalida")
-
-
-
-
+            if random.random() < prob_recuperar:
+                dccriatura.estado_escape = "False"
+                print("\nRecuperacion exitosa")
+                dccriatura.actualizar_archivo()
+                return True
             else:
-                print("\nNo tienes alimentos")
+                print("\nRecuperacion ha fallado")
+                return False
+
+
+    def sanar_dccriatura(self, dccriatura):
+        self.energia_actual -= pm.COSTO_ENERGETICO_SANAR
+        prob_sanar = (self.nivel_magico - dccriatura.salud_actual) / \
+                            (self.nivel_magico + dccriatura.salud_actual)
+
+        if random.random() < prob_sanar:
+            dccriatura.estado_salud = "False"
+            print("\nSanacion exitosa")
+            dccriatura.actualizar_archivo()
         else:
-            print("\nNo tienes energia suficiente")
+            print("\nSanacion ha fallado")
 
-    def recuperar_dccriatura(self):
-        if self.energia_actual >= pm.COSTO_ENERGETICO_RECUPERAR:
-
-            print("\nQue DCCriatura deseas recuperar?: ")
-            print("")
-            dccriaturas_escapadas = [i for i in self.dccriaturas_actuales if i.estado_escape == "True"]
-            if dccriaturas_escapadas:
-                for index, dccriatura in enumerate(dccriaturas_escapadas):
-                    if dccriatura != "":
-                        print(f"[{index}] {dccriatura.nombre} ({dccriatura.tipo})")
-                opcion_dccriatura = input(f"\nIndique su opcion: "
-                                          +f"({', '.join(str(i) for i in range(len(self.dccriaturas_actuales)))}): ")
-
-
-                if opcion_dccriatura in [str(i) for i in range(len(self.dccriaturas_actuales))]:
-                    dccriatura_seleccionada = self.dccriaturas_actuales[int(opcion_dccriatura)]
-                    if dccriatura_seleccionada.estado_escape == "True":
-
-                        self.energia_actual -= pm.COSTO_ENERGETICO_RECUPERAR
-                        prob_recuperar = (self.destreza + self.nivel_magico -
-                                          dccriatura_seleccionada.nivel_magico) / (self.destreza +
-                                            self.nivel_magico + dccriatura_seleccionada.nivel_magico)
-
-                        if random.random() < prob_recuperar:
-                            dccriatura_seleccionada.estado_escape = "False"
-                            print("\nRecuperacion exitosa")
-                            dccriatura_seleccionada.actualizar_archivo()
-                        else:
-                            print("\nRecuperacion ha fallado")
-
-                    else:
-                        print("\nEsta DCCriatura esta en cautiverio")
-                else:
-                    print("\nOpcion invalida")
-            else:
-                print("Todas las DCCcriaturas estan en cautiverio")
-
-    def sanar_dccriatura(self):
-        if self.energia_actual >= pm.COSTO_ENERGETICO_SANAR:
-
-            print("\nQue DCCriatura deseas sanar?: ")
-            print("")
-            dccriaturas_enfermas = [i for i in self.dccriaturas_actuales if i.estado_salud == "True"]
-            if dccriaturas_enfermas:
-                for index, dccriatura in enumerate(self.dccriaturas_actuales):
-                    print(f"[{index}] {dccriatura.nombre} ({dccriatura.tipo})")
-                opcion_dccriatura = input(f"\nIndique su opcion: "
-                                          +f"({', '.join(str(i) for i in range(len(self.dccriaturas_actuales)))}): ")
-
-                if opcion_dccriatura in [str(i) for i in range(len(self.dccriaturas_actuales))]:
-                    dccriatura_seleccionada = self.dccriaturas_actuales[int(opcion_dccriatura)]
-                    if dccriatura_seleccionada.estado_salud == "True":
-
-                        self.energia_actual -= pm.COSTO_ENERGETICO_SANAR
-                        prob_sanar = (self.nivel_magico - dccriatura_seleccionada.salud_actual) / \
-                                            (self.nivel_magico + dccriatura_seleccionada.salud_actual)
-
-                        if random.random() < prob_sanar:
-                            dccriatura_seleccionada.estado_salud = "False"
-                            print("\nSanacion exitosa")
-                            dccriatura_seleccionada.actualizar_archivo()
-                        else:
-                            print("\nSanacion ha fallado")
-
-                    else:
-                        print("\nEsta DCCriatura esta sana")
-                else:
-                    print("\nOpcion invalida")
-            else:
-                print("Todas las DCCriaturas estan sanas")
 
 
 
@@ -269,8 +181,30 @@ class Docencio(Magizoologo):
         self.tipo = "Docencio"
 
     def habilidad_especial(self):
-        self.habilidad_especial = False
+        if self.hab_especial_disp == "True":
+            if self.energia_actual >= pm.COSTO_ENERGETICO_HAB_ESPECIAL:
 
+                self.hab_especial_disp = "False"
+
+                for dccriatura in self.dccriaturas:
+                    dccriatura.nivel_hambre = "satisfecha"
+                    dccriatura.dias_sin_comer = 0
+                    dccriatura.actualizar_archivo()
+
+            else:
+                print("\nNo tienes energia suficiente para ocupar tu habilidad especial")
+        else:
+            print("\nYa ocupaste tu habilidad especial")
+
+    def alimentar_dccriatura(self, alimento, dccriatura):
+        super().alimentar_dccriatura(alimento, dccriatura)
+        dccriatura.salud_total += pm.AUMENTO_SALUD_TOTAL_ALIMENTAR_DOCENCIO
+        dccriatura.actualizar_archivo()
+
+    def recuperar_dccriatura(self, dccriaura):
+        if super().recuperar_dccriatura(dccriatura):
+            dccriatura.salud_actual -= pm.RESTAR_SALUD_TOT_CAPTURA_DOCENCIO
+            dccriatura.actualizar_archivo()
 
 class Tareo(Magizoologo):
 
@@ -281,7 +215,25 @@ class Tareo(Magizoologo):
         self.tipo = "Tareo"
 
     def habilidad_especial(self):
-        self.habilidad_especial = False
+        if self.hab_especial_disp == "True":
+            if self.energia_actual >= pm.COSTO_ENERGETICO_HAB_ESPECIAL:
+
+                self.hab_especial_disp = "False"
+
+                for dccriatura in self.dccriaturas:
+                    if dccriatura.estado_escape == "True":
+                        dccriatura.estado_escape = "False"
+                        dccriatura.actualizar_archivo()
+
+            else:
+                print("\nNo tienes energia suficiente para ocupar tu habilidad especial")
+        else:
+            print("\nYa ocupaste tu habilidad especial")
+    def alimentar_dccriatura(self, alimento, dccriatura):
+        super().alimentar_dccriatura(alimento, dccriatura)
+        if random.random() < pm.PROB_RECUPERAR_AL_ALIMENTAR_TAREO:
+            dccriatura.salud_actual = dccriatura.salud_total
+
 
 class Hibrido(Magizoologo):
 
@@ -292,4 +244,20 @@ class Hibrido(Magizoologo):
         self.tipo = "Híbrido"
 
     def habilidad_especial(self):
-        self.habilidad_especial = False
+        if self.hab_especial_disp == "True":
+            if self.energia_actual >= pm.COSTO_ENERGETICO_HAB_ESPECIAL:
+
+                self.hab_especial_disp = "False"
+
+                for dccriatura in self.dccriaturas:
+                    if dccriatura.estado_salud == "True":
+                        dccriatura.estado_salud = "False"
+
+            else:
+                print("\nNo tienes energia suficiente para ocupar tu habilidad especial")
+        else:
+            print("\nYa ocupaste tu habilidad especial")
+
+    def alimentar_dccriatura(self, alimento, dccriatura):
+        super().alimentar_dccriatura(alimento, dccriatura)
+        dccriatura.salud_actual += pm.SALUD_RECUPERADA_ALIMENTAR_HIBRIDO

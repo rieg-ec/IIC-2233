@@ -161,7 +161,7 @@ class LoginMenu:
                         magizoologo = lista_magos[int(tipo_mago)](usuario)
                         # instanciar dccriatura
                         dccriatura = lista_dccriaturas[int(tipo_dccriatura)](nombre_dccriatura, magizoologo)
-                        magizoologo.dccriaturas_actuales.append(dccriatura)
+                        magizoologo.dccriaturas.append(dccriatura)
                         # guardar informacion de dccriatura en criaturas.csv
                         dccriatura.actualizar_archivo()
                         # guardar informacion de magizoologo en magizoologos.csv
@@ -221,13 +221,96 @@ class MainMenu:
                        +"\nIndique su opcion (1, 2, 3, 4 o 5): ")
 
         if opcion == "1":
-            self.magizoologo.alimentar_dccriatura()
+            if self.magizoologo.energia_actual >= pm.COSTO_ENERGETICO_ALIMENTAR:
+                if "" not in self.magizoologo.alimentos:
+                    print("\nQue DCCriatura deseas alimentar?: ")
+                    print("")
+                    for index, dccriatura in enumerate(self.magizoologo.dccriaturas):
+                        print(f"[{index}] {dccriatura.nombre}"
+                              +f"({dccriatura.tipo}): {dccriatura.nivel_hambre}")
+
+                    opcion_dccriatura = input(f"\nIndique su opcion: "
+                                              +f"({', '.join(str(i) for i in range(len(self.magizoologo.dccriaturas)))}): ")
+                    if opcion_dccriatura in [str(i) for i in \
+                                             range(len(self.magizoologo.dccriaturas))]:
+
+                        if "" not in self.magizoologo.alimentos:
+                            print("\nQue alimento desea darle?")
+                            print("")
+                            for index, alimento in enumerate(self.magizoologo.alimentos):
+                                print(f"[{index}] {alimento} (+{pm.ALIMENTOS[alimento]} de vida)")
+
+                            opcion_alimento = input(f"Indique su opcion ({', '.join(str(i) for i in range(len(self.magizoologo.alimentos)))}): ")
+
+                            if opcion_alimento in [str(i) for i in \
+                                                   range(len(self.magizoologo.alimentos))]:
+
+                                alimento = self.magizoologo.alimentos[int(opcion_alimento)]
+                                dccriatura = self.magizoologo.dccriaturas[int(opcion_dccriatura)]
+
+                                self.magizoologo.alimentar_dccriatura(alimento, dccriatura)
+                            else:
+                                print("\nOpcion invalida")
+                    else:
+                        print("\nOpcion invalida")
+                else:
+                    print("\nNo tienes alimentos")
+            else:
+                print("\nNo tienes energia suficiente")
 
         elif opcion == "2":
-            self.magizoologo.recuperar_dccriatura()
+            if self.magizoologo.energia_actual >= pm.COSTO_ENERGETICO_RECUPERAR:
+
+                print("\nQue DCCriatura deseas recuperar?: ")
+                print("")
+                dccriaturas_escapadas = [i for i in self.magizoologo.dccriaturas if \
+                                                                i.estado_escape == "True"]
+                if dccriaturas_escapadas:
+                    for index, dccriatura in enumerate(dccriaturas_escapadas):
+                        if dccriatura != "":
+                            print(f"[{index}] {dccriatura.nombre} ({dccriatura.tipo})")
+                    opcion_dccriatura = input(f"\nIndique su opcion: "
+                                        +f"({', '.join(str(i) for i in range(len(self.magizoologo.dccriaturas)))}): ")
+
+
+                    if opcion_dccriatura in [str(i) for i in \
+                                             range(len(self.magizoologo.dccriaturas))]:
+
+                        dccriatura = self.magizoologo.dccriaturas[int(opcion_dccriatura)]
+                        if dccriatura.estado_escape == "True":
+                            self.magizoologo.recuperar(dccriatura)
+                        else:
+                            print("\nEsta DCCriatura esta en cautiverio")
+
+                    else:
+                        print("\nOpcion invalida")
+                else:
+                    print("Todas las DCCcriaturas estan en cautiverio")
 
         elif opcion == "3":
-            self.magizoologo.sanar_dccriatura()
+            if self.magizoologo.energia_actual >= pm.COSTO_ENERGETICO_SANAR:
+
+                print("\nQue DCCriatura deseas sanar?: ")
+                print("")
+                dccriaturas_enfermas = [i for i in self.magizoologo.dccriaturas if i.estado_salud == "True"]
+                if dccriaturas_enfermas:
+                    for index, dccriatura in enumerate(self.magizoologo.dccriaturas):
+                        print(f"[{index}] {dccriatura.nombre} ({dccriatura.tipo})")
+                    opcion_dccriatura = input(f"\nIndique su opcion: "
+                                              +f"({', '.join(str(i) for i in range(len(self.magizoologo.dccriaturas)))}): ")
+
+                    if opcion_dccriatura in [str(i) for i in range(len(self.magizoologo.dccriaturas))]:
+                        dccriatura = self.magizoologo.dccriaturas[int(opcion_dccriatura)]
+                        if dccriatura.estado_salud == "True":
+
+                            self.magizoologo.sanar_dccriatura(dccriatura)
+
+                        else:
+                            print("\nEsta DCCriatura esta sana")
+                    else:
+                        print("\nOpcion invalida")
+                else:
+                    print("Todas las DCCriaturas estan sanas")
 
         elif opcion == "4":
             self.magizoologo.habilidad_especial()
@@ -255,34 +338,37 @@ class MainMenu:
             pass
 
     def pasar_al_dia_siguiente(self):
-        """
-        TO-DO:
-
-        4- imprimir eventos de criaturas:
-            1- cuales perdieron salud por hambre o por enfermedad
-
-        # 7- imprimir multas --> DCC.fiscalizar retornara dict con esta info
-        # 8- imprimir pago del DCC --> llamar a pagar_a_magizoologo
-        # 9- imprimir pagos en multas --> DCC.fiscalizar retorna tambien esta info
-        # 10- imprimir saldo actual
-        """
 
         # resetear
         self.magizoologo.dccriaturas_escapadas_hoy = []
         self.magizoologo.dccriaturas_enfermas_hoy = []
         self.magizoologo.dccriaturas_salud_minima_hoy = []
 
-        DCCriaturas_hambrientas = [i for i in self.magizoologo.dccriaturas_actuales if i.nivel_hambre == "hambrienta"]
+        DCCriaturas_hambrientas = [i for i in self.magizoologo.dccriaturas if i.nivel_hambre == "hambrienta"]
 
+        print("\n***********************************************")
+        print("Has pasado al dia siguiente:")
+        print("***********************************************")
+        print("Resumen de los eventos de hoy:")
+        print("")
         # simular eventos de DCCriaturas:
-        for dccriatura in self.magizoologo.dccriaturas_actuales:
-            # verificar si la dccriatura fue alimentada hoy
-            if not dccriatura.alimentada_hoy:
-                dccriatura.dias_sin_comer += 1
+        for dccriatura in self.magizoologo.dccriaturas:
 
             # descontar salud si la criatura esta hambrienta
             if dccriatura.nivel_hambre == "hambrienta":
                 dccriatura.salud_actual -= pm.SALUD_POR_DIA_SIN_COMER
+                print(f"{dccriatura.nombre} perdio salud por estar hambrienta")
+
+            # verificar si la dccriatura fue alimentada hoy
+            if not dccriatura.alimentada_hoy:
+                dccriatura.dias_sin_comer += 1
+
+            if dccriatura.estado_salud == "True":
+                dccriatura.salud_actual -= pm.SALUD_POR_DIA_ENFERMA
+                print(f"{dccriatura.nombre} perdio salud por estar enferma")
+
+            if dccriatura.salud_actual <= pm.SALUD_MINIMA_DCCRIATURAS:
+                self.magizoologo.dccriaturas_salud_minima_hoy.append(dccriatura)
 
             # retorna True si la dccriatura se escapa
             if dccriatura.escaparse():
@@ -293,17 +379,14 @@ class MainMenu:
                 self.magizoologo.dccriaturas_enfermas_hoy.append(dccriatura)
 
 
-            if dccriatura.salud_actual <= pm.SALUD_MINIMA_DCCRIATURAS:
-                self.magizoologo.dccriaturas_salud_minima_hoy.append(dccriatura)
 
-        print("\nHas pasado al dia siguiente:")
-        print("***********************************************")
-        print("Resumen de los eventos de hoy:")
-        print("")
-        print(f"Criaturas que enfermaron: {[i.nombre for i in self.magizoologo.dccriaturas_enfermas_hoy]}")
-        print(f"Criaturas que escaparon: {[i.nombre for i in self.magizoologo.dccriaturas_escapadas_hoy]}")
+            dccriatura.habilidad_especial()
+
+        print(f"Criaturas que enfermaron hoy: {[i.nombre for i in self.magizoologo.dccriaturas_enfermas_hoy]}")
+        print(f"Criaturas que escaparon hoy: {[i.nombre for i in self.magizoologo.dccriaturas_escapadas_hoy]}")
+        print(f"Criaturas enfermas: {[i.nombre for i in self.magizoologo.dccriaturas if i.estado_salud == 'True']}")
+        print(f"Criaturas escapadas: {[i.nombre for i in self.magizoologo.dccriaturas if i.estado_escape == 'True']}")
         print(f"Criaturas hambrientas: {[i.nombre for i in DCCriaturas_hambrientas]}")
-        """TO-DO: mostrar criaturas que perdieron salud"""
         print("***********************************************")
         print(f"Nivel de aprobacion: {dcc.DCC.calcular_aprobacion(self.magizoologo)}")
         # fiscalizar al magizoologo y guardar la informacion de la fiscalizacion en
@@ -341,5 +424,5 @@ class MainMenu:
         print(f"Tu saldo actual es: {self.magizoologo.sickles} sickles")
 
         self.magizoologo.actualizar_archivo()
-        for dccriatura in self.magizoologo.dccriaturas_actuales:
+        for dccriatura in self.magizoologo.dccriaturas:
             dccriatura.actualizar_archivo()

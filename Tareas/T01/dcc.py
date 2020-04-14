@@ -20,8 +20,8 @@ class DCC:
     def calcular_aprobacion(magizoologo):
         n_dccriaturas_sanas = 0
         n_dccriaturas_retenidas = 0
-        n_dccriaturas_totales = len(magizoologo.dccriaturas_actuales)
-        for dccriatura in magizoologo.dccriaturas_actuales:
+        n_dccriaturas_totales = len(magizoologo.dccriaturas)
+        for dccriatura in magizoologo.dccriaturas:
             if dccriatura.estado_salud == "False":
                 n_dccriaturas_sanas += 1
             if dccriatura.estado_escape == "False":
@@ -122,7 +122,7 @@ class DCC:
         (2) revisa que el magizoologo tenga sickles para comprar la mascota que desea
         (3) una vez elegida la mascota, el usuario escoge el nombre
         (4) descuenta los sickles y crea el objeto dccriatura correspondiente y lo guarda en el
-        parametro dccriaturas_actuales del magizoologo correspondiente como un objeto
+        parametro dccriaturas del magizoologo correspondiente como un objeto
         (5) registra la nueva dccriatura en el archivo dccriaturas.csv y en magizoologos.csv con sus
         correspondientes parametros llamando a DCC.registrar_dccriatura()
         """
@@ -155,7 +155,7 @@ class DCC:
                         # instanciar dccriatura comprada
                         dccriatura = dccriaturas_clases[int(opcion)](nombre_dccriatura, magizoologo)
                         # agregar dccriatura a dccriaturas del magizoologo
-                        magizoologo.dccriaturas_actuales.append(dccriatura)
+                        magizoologo.dccriaturas.append(dccriatura)
                         print(f"\nDCCriatura {dccriatura.tipo} {dccriatura.nombre} adoptada")
                         # registrar en criaturas.csv
                         dccriatura.actualizar_archivo()
@@ -232,7 +232,7 @@ class DCC:
                 print(f"{alimento}: {pm.ALIMENTOS[alimento]}")
 
         print("\nDCCriaturas: ")
-        for dccriatura in magizoologo.dccriaturas_actuales:
+        for dccriatura in magizoologo.dccriaturas:
             print(f"\nTipo: {dccriatura.tipo}"
                 +f"\nNombre: {dccriatura.nombre}"
                 +f"\nNivel magico: {dccriatura.nivel_magico}"
