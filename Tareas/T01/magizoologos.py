@@ -12,7 +12,7 @@ class Magizoologo(ABC):
         self.tipo = "" # override en clases hijas
         self.nombre = nombre
         self.sickles = pm.SICKLES_INICIALES
-        self.alimentos = [random.choice([_ for _ in pm.ALIMENTOS.keys()])]
+        self.__alimentos = [random.choice([_ for _ in pm.ALIMENTOS.keys()])]
         self.licencia = pm.ESTADO_LICENCIA_INICIAL
         self.nivel_magico = random.randint(*pm.PARAMETROS_MAGIZOOLOGOS[self.index][0])
         self.destreza = random.randint(*pm.PARAMETROS_MAGIZOOLOGOS[self.index][1])
@@ -42,6 +42,20 @@ class Magizoologo(ABC):
             self.__energia_actual = 0
         else:
             self.__energia_actual = energia
+
+    @property
+    def alimentos(self):
+        if self.__alimentos == [] or self.__alimentos == [""]:
+            return False
+        else:
+            return [i for i in self.__alimentos if i != ""]
+
+    @alimentos.setter
+    def alimentos(self, alimento):
+        if alimento != "":
+            self.__alimento = alimento
+
+
 
     @abstractmethod
     def habilidad_especial(self):
@@ -99,10 +113,11 @@ class Magizoologo(ABC):
         - en caso de ser Tareo actualizar nivel_clepto
         """
 
+
         # guardar atributos actuales para actualizar magizoologos.csv
         atributos_magizoologo = f"{self.nombre},{self.tipo},{self.sickles}," \
                                 +f"{';'.join(i.nombre for i in self.dccriaturas)}," \
-                                +f"{';'.join(_ for _ in self.alimentos)}," \
+                                +f"{';'.join(i for i in self.alimentos if self.alimentos is not False)}," \
                                 +f"{self.licencia},{self.nivel_magico},{self.destreza}," \
                                 +f"{self.energia_total},{self.responsabilidad}," \
                                 +f"{self.hab_especial_disp}"
@@ -184,7 +199,9 @@ class Docencio(Magizoologo):
         if self.hab_especial_disp == "True":
             if self.energia_actual >= pm.COSTO_ENERGETICO_HAB_ESPECIAL:
 
+                self.energia_actual -= pm.COSTO_ENERGETICO_HAB_ESPECIAL
                 self.hab_especial_disp = "False"
+                print("\nHas ocupado tu habilidad especial")
 
                 for dccriatura in self.dccriaturas:
                     dccriatura.nivel_hambre = "satisfecha"
@@ -201,7 +218,7 @@ class Docencio(Magizoologo):
         dccriatura.salud_total += pm.AUMENTO_SALUD_TOTAL_ALIMENTAR_DOCENCIO
         dccriatura.actualizar_archivo()
 
-    def recuperar_dccriatura(self, dccriaura):
+    def recuperar_dccriatura(self, dccriatura):
         if super().recuperar_dccriatura(dccriatura):
             dccriatura.salud_actual -= pm.RESTAR_SALUD_TOT_CAPTURA_DOCENCIO
             dccriatura.actualizar_archivo()
@@ -219,6 +236,8 @@ class Tareo(Magizoologo):
             if self.energia_actual >= pm.COSTO_ENERGETICO_HAB_ESPECIAL:
 
                 self.hab_especial_disp = "False"
+                self.energia_actual -= pm.COSTO_ENERGETICO_HAB_ESPECIAL
+                print("\nHas ocupado tu habilidad especial")
 
                 for dccriatura in self.dccriaturas:
                     if dccriatura.estado_escape == "True":
@@ -229,6 +248,7 @@ class Tareo(Magizoologo):
                 print("\nNo tienes energia suficiente para ocupar tu habilidad especial")
         else:
             print("\nYa ocupaste tu habilidad especial")
+
     def alimentar_dccriatura(self, alimento, dccriatura):
         super().alimentar_dccriatura(alimento, dccriatura)
         if random.random() < pm.PROB_RECUPERAR_AL_ALIMENTAR_TAREO:
@@ -247,7 +267,9 @@ class Hibrido(Magizoologo):
         if self.hab_especial_disp == "True":
             if self.energia_actual >= pm.COSTO_ENERGETICO_HAB_ESPECIAL:
 
+                self.energia_actual -= pm.COSTO_ENERGETICO_HAB_ESPECIAL
                 self.hab_especial_disp = "False"
+                print("\nHas ocupado tu habilidad especial")
 
                 for dccriatura in self.dccriaturas:
                     if dccriatura.estado_salud == "True":

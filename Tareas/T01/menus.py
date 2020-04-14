@@ -222,35 +222,42 @@ class MainMenu:
 
         if opcion == "1":
             if self.magizoologo.energia_actual >= pm.COSTO_ENERGETICO_ALIMENTAR:
-                if "" not in self.magizoologo.alimentos:
+                # alimentos.getter retorna False si no hay alimentos:
+                if self.magizoologo.alimentos:
+
                     print("\nQue DCCriatura deseas alimentar?: ")
                     print("")
+
                     for index, dccriatura in enumerate(self.magizoologo.dccriaturas):
                         print(f"[{index}] {dccriatura.nombre}"
                               +f"({dccriatura.tipo}): {dccriatura.nivel_hambre}")
 
-                    opcion_dccriatura = input(f"\nIndique su opcion: "
-                                              +f"({', '.join(str(i) for i in range(len(self.magizoologo.dccriaturas)))}): ")
+
+                    opciones = ', '.join(str(i) for i in range(len(self.magizoologo.dccriaturas)))
+                    mensaje = f"\nIndique su opcion: ({opciones}): "
+                    opcion_dccriatura = input(mensaje)
+
                     if opcion_dccriatura in [str(i) for i in \
                                              range(len(self.magizoologo.dccriaturas))]:
 
-                        if "" not in self.magizoologo.alimentos:
-                            print("\nQue alimento desea darle?")
-                            print("")
-                            for index, alimento in enumerate(self.magizoologo.alimentos):
-                                print(f"[{index}] {alimento} (+{pm.ALIMENTOS[alimento]} de vida)")
+                        print("\nQue alimento desea darle?")
+                        print("")
+                        for index, alimento in enumerate(self.magizoologo.alimentos):
+                            print(f"[{index}] {alimento} (+{pm.ALIMENTOS[alimento]} de vida)")
 
-                            opcion_alimento = input(f"Indique su opcion ({', '.join(str(i) for i in range(len(self.magizoologo.alimentos)))}): ")
 
-                            if opcion_alimento in [str(i) for i in \
-                                                   range(len(self.magizoologo.alimentos))]:
+                        opciones = ', '.join(str(i) for i in range(len(self.magizoologo.alimentos)))
+                        mensaje = f"\nIndique su opcion ({opciones}): "
+                        opcion_alimento = input(mensaje)
 
-                                alimento = self.magizoologo.alimentos[int(opcion_alimento)]
-                                dccriatura = self.magizoologo.dccriaturas[int(opcion_dccriatura)]
+                        if opcion_alimento in [str(i) for i in \
+                                               range(len(self.magizoologo.alimentos))]:
 
-                                self.magizoologo.alimentar_dccriatura(alimento, dccriatura)
-                            else:
-                                print("\nOpcion invalida")
+                            alimento = self.magizoologo.alimentos[int(opcion_alimento)]
+                            dccriatura = self.magizoologo.dccriaturas[int(opcion_dccriatura)]
+                            self.magizoologo.alimentar_dccriatura(alimento, dccriatura)
+                        else:
+                            print("\nOpcion invalida")
                     else:
                         print("\nOpcion invalida")
                 else:
@@ -269,19 +276,19 @@ class MainMenu:
                     for index, dccriatura in enumerate(dccriaturas_escapadas):
                         if dccriatura != "":
                             print(f"[{index}] {dccriatura.nombre} ({dccriatura.tipo})")
-                    opcion_dccriatura = input(f"\nIndique su opcion: "
-                                        +f"({', '.join(str(i) for i in range(len(self.magizoologo.dccriaturas)))}): ")
 
+                    opciones = ', '.join(str(i) for i in range(len(self.magizoologo.dccriaturas)))
+                    mensaje = f"\nIndique su opcion ({opciones}): "
+                    opcion_dccriatura = input(mensaje)
 
                     if opcion_dccriatura in [str(i) for i in \
                                              range(len(self.magizoologo.dccriaturas))]:
 
                         dccriatura = self.magizoologo.dccriaturas[int(opcion_dccriatura)]
                         if dccriatura.estado_escape == "True":
-                            self.magizoologo.recuperar(dccriatura)
+                            self.magizoologo.recuperar_dccriatura(dccriatura)
                         else:
                             print("\nEsta DCCriatura esta en cautiverio")
-
                     else:
                         print("\nOpcion invalida")
                 else:
@@ -296,8 +303,10 @@ class MainMenu:
                 if dccriaturas_enfermas:
                     for index, dccriatura in enumerate(self.magizoologo.dccriaturas):
                         print(f"[{index}] {dccriatura.nombre} ({dccriatura.tipo})")
-                    opcion_dccriatura = input(f"\nIndique su opcion: "
-                                              +f"({', '.join(str(i) for i in range(len(self.magizoologo.dccriaturas)))}): ")
+
+                    opciones = ', '.join(str(i) for i in range(len(self.magizoologo.dccriaturas)))
+                    mensaje = f"\nIndique su opcion ({opciones}: "
+                    opcion_dccriatura = input(mensaje)
 
                     if opcion_dccriatura in [str(i) for i in range(len(self.magizoologo.dccriaturas))]:
                         dccriatura = self.magizoologo.dccriaturas[int(opcion_dccriatura)]

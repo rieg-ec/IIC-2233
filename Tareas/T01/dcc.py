@@ -225,11 +225,11 @@ class DCC:
               +"\n")
 
         print("\nAlimentos comprados restantes y puntos de salud que otorgan: ")
-        for alimento in magizoologo.alimentos:
-            if alimento == "":
-                print("no quedan alimentos")
-            else:
-                print(f"{alimento}: {pm.ALIMENTOS[alimento]}")
+        if magizoologo.alimentos != [""] and magizoologo.alimentos != []:
+            for alimento in magizoologo.alimentos:
+                    print(f"{alimento}: {pm.ALIMENTOS[alimento]}")
+        else:
+            print("\nNo tienes alimentos")
 
         print("\nDCCriaturas: ")
         for dccriatura in magizoologo.dccriaturas:

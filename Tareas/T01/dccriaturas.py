@@ -116,7 +116,7 @@ class DCCriatura(ABC):
         # si el alimento es higado de dragon la criatura se sana
         if alimento == "Hígado de Dragón":
             self.estado_salud = "False"
-            print(f"{self.nombre} se ha alimentado con Higado de Dragón")
+            print(f"\n{self.nombre} se ha alimentado con Higado de Dragón")
 
         # si el alimento es buñuelo de gusarajo la criatura podria atacar
         elif alimento == "Buñuelo de Gusarajo":
@@ -124,14 +124,14 @@ class DCCriatura(ABC):
                 print(f"\n{self.nombre} ha rechazado el alimento")
                 alimentada = False
             else:
-                print(f"{self.nombre} se ha alimentado con Buñuelo de Gusarajo")
+                print(f"\n{self.nombre} se ha alimentado con Buñuelo de Gusarajo")
 
 
         elif alimento == "Tarta de Melaza":
             if self.tipo == "Niffler":
                 if random.random() < pm.PROBABILIDAD_DISMINUIR_AGRESIVIDAD_MELAZA:
                     self.agresividad = "inofensiva"
-            print(f"{self.nombre} se ha alimentado con Tarta de Melaza")
+            print(f"\n{self.nombre} se ha alimentado con Tarta de Melaza")
 
 
         if alimentada:
@@ -220,6 +220,7 @@ class Erkling(DCCriatura):
     def habilidad_especial(self):
         if self.nivel_hambre == "hambrienta":
             alimento_robado = random.choice(self.dueño.alimentos)
+            self.dueño.alimentos.remove(alimento_robado)
             print(f"\nErkling {self.nombre} te ha robado {alimento_robado}")
             self.nivel_hambre = "satisfecha"
             self.salud_actual += pm.ALIMENTOS[alimento_robado]
