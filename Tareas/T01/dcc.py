@@ -3,12 +3,12 @@ import dccriaturas
 import random
 
 class DCC:
-    """
-    to-do: maybe improve documentation, fix bugs if any
-    """
 
     def dccriaturas_existentes():
-        # nombres de dccriaturas existentes
+        """
+        Esta funcion retorna los nombres de
+        dccriaturas ocupados
+        """
         with open('criaturas.csv', 'r') as f:
             nombres = []
             for i in f.readlines():
@@ -21,6 +21,7 @@ class DCC:
         n_dccriaturas_sanas = 0
         n_dccriaturas_retenidas = 0
         n_dccriaturas_totales = len(magizoologo.dccriaturas)
+
         for dccriatura in magizoologo.dccriaturas:
             if dccriatura.estado_salud == "False":
                 n_dccriaturas_sanas += 1
@@ -39,12 +40,13 @@ class DCC:
 
         cantidad_a_pagar = int(4*aprobacion + 15*cantidad_alimento + 3*nivel_magico)
         magizoologo.sickles += cantidad_a_pagar
+        # retorna la cantidad pagada en caso de necesitar la informacion
         return cantidad_a_pagar
 
 
     def fiscalizar(magizoologo):
 
-        # guardar eventos de fiscalizacion:
+        # guardar eventos de fiscalizaciones:
         fiscalizaciones = {
             "multas por enfermedad": [],
             "multas por escape": [],
@@ -53,7 +55,7 @@ class DCC:
             # si el magizoologo perdio o recupero la licencia en esta fiscalizacion,
             # "estado licencia" tomara como valor un bool que indica si la recupero o perdio,
             # y el motivo, el cual sera ocupado para indicarle al magizoologo la razon
-            "estado licencia": [False]
+            "estado licencia": [None]
         }
 
         if DCC.calcular_aprobacion(magizoologo) < pm.MINIMO_APROBACION_MAGIZOOLOGO and \
@@ -74,15 +76,19 @@ class DCC:
             n = random.random()
             if n <= pm.PROBABILIDAD_MULTA_ENFERMEDAD:
                 if magizoologo.sickles >= pm.MULTA_ENFERMEDAD:
+                    # descontar monto de la multa
                     magizoologo.sickles -= pm.MULTA_ENFERMEDAD
+                    # registrar el monto de la multa en fiscalizaciones
                     fiscalizaciones["total multas"] += pm.MULTA_ENFERMEDAD
+                    # registrar el tipo de multa
                     fiscalizaciones["multas por enfermedad"].append(dccriatura)
                 # si no hay dinero y el magizoologo tiene licencia se le quita
                 elif magizoologo.licencia == "True":
                     magizoologo.licencia = "False"
+                    # registrar perdida de licencia
                     fiscalizaciones["estado licencia"] = ["perdio", "sin dinero para multa"]
 
-        # fiscalizar por escapes
+        # fiscalizar por escapes de dccriaturas
         for dccriatura in magizoologo.dccriaturas_escapadas_hoy:
             n = random.random()
             if n <= pm.PROBABILIDAD_MULTA_ESCAPE:
@@ -98,7 +104,7 @@ class DCC:
 
 
 
-        # fiscalisar por criaturas que alcanzaron salud minima
+        # fiscalizar por criaturas que alcanzaron salud minima
         for dccriatura in magizoologo.dccriaturas_salud_minima_hoy:
             n = random.random()
             if n <= pm.PROBABILIDAD_MULTA_SALUD:
@@ -111,35 +117,33 @@ class DCC:
                     magizoologo.licencia = "False"
                     fiscalizaciones["estado licencia"] = ["perdio", "sin dinero para multa"]
 
-
+        # retornar informacion registrada de la fiscalizacion
         return fiscalizaciones
 
     def vender_dccriatura(magizoologo):
         """
-        Esta funcion hace:
-        (1) revisa que el magizoologo tenga sickles suficientes para comprar al menos la
-        mascota mas barata
-        (2) revisa que el magizoologo tenga sickles para comprar la mascota que desea
-        (3) una vez elegida la mascota, el usuario escoge el nombre
-        (4) descuenta los sickles y crea el objeto dccriatura correspondiente y lo guarda en el
-        parametro dccriaturas del magizoologo correspondiente como un objeto
-        (5) registra la nueva dccriatura en el archivo dccriaturas.csv y en magizoologos.csv con sus
-        correspondientes parametros llamando a DCC.registrar_dccriatura()
+        Esta funcion revisa que se cumplan los requisitos para comprar una dccriatura,
+        crea el objeto dccriatura, lo guarda en la lista magizoologo.dccriaturas
+        y llama al metodo actualizar_archivo() del magizoologo y dccriatura para registrar los
+        cambios en los archivos .csv
         """
-        if magizoologo.licencia == "True" \
-            and magizoologo.sickles >= min([pm.PRECIO_AUGUREY, pm.PRECIO_NIFFLER, pm.PRECIO_ERKLING]):
+        if magizoologo.licencia == "True" and \
+            magizoologo.sickles >= min([pm.PRECIO_AUGUREY, pm.PRECIO_NIFFLER, pm.PRECIO_ERKLING]):
             opcion = input("\nQue DCCriatura desea adoptar?"
                            +f"\n[0] Augurey: ${pm.PRECIO_AUGUREY} Sickles"
                            +f"\n[1] Niffler: ${pm.PRECIO_NIFFLER} Sickles"
                            +f"\n[2] Erkling: ${pm.PRECIO_ERKLING} Sickles"
                            +f"\n"
                            +f"\nIndique su opcion (0, 1 o 2): ")
+
+            # dict que ocupa el input como key
             opciones = {
                 "0": ["Augurey", pm.PRECIO_AUGUREY],
                 "1": ["Niffler", pm.PRECIO_NIFFLER],
                 "2": ["Erkling", pm.PRECIO_ERKLING]
             }
 
+            # clases de dccriaturas que ocupa el input como index
             dccriaturas_clases = (dccriaturas.Augurey, dccriaturas.Niffler, dccriaturas.Erkling)
 
             if opcion in opciones.keys():
@@ -148,8 +152,9 @@ class DCC:
                     nombre_dccriatura = input("\nComo deseas llamar a "
                                             +f"tu nueva DCCriatura {opciones[opcion][0]}?: ")
 
-
-                    if nombre_dccriatura not in DCC.dccriaturas_existentes():
+                    # chequea que el nombre no este ocupado
+                    if nombre_dccriatura not in DCC.dccriaturas_existentes() and \
+                                                    nombre_dccriatura.isalnum():
                         # descontar valor de dccriatura
                         magizoologo.sickles -= opciones[opcion][1]
                         # instanciar dccriatura comprada
@@ -162,8 +167,7 @@ class DCC:
                         # actualizar informacion del magizoologo en magizoologos.csv
                         magizoologo.actualizar_archivo()
                     else:
-                        print("\nNombre ya existente")
-
+                        print("\nNombre invalido o ya existente")
                 else:
                     print("\nNo te alcanza para esta mascota")
             else:
@@ -189,11 +193,14 @@ class DCC:
                 "2": ["Buñuelo de Gusarajo", pm.PRECIO_BUÑUELO_DE_GUSARAJO]
             }
 
+            # chequear que el input sea valido
             if opcion in opciones.keys():
 
-            # chequear que tenga sickles suficientes para el alimento comprado
+                # chequear que tenga sickles suficientes para el alimento comprado
                 if magizoologo.sickles >= opciones[opcion][1]:
+                    # descontar valor del alimento
                     magizoologo.sickles -= opciones[opcion][1]
+                    # agregar a la lista de alimentos
                     magizoologo.alimentos.append(opciones[opcion][0])
                     # actualizar informacion en magizoologos.csv
                     magizoologo.actualizar_archivo()
@@ -207,9 +214,6 @@ class DCC:
             print("\nNo tienes sickles suficientes para ningun alimento")
 
     def mostrar_estado(magizoologo):
-        """
-        DONE, maybe improve documentation
-        """
         print("\nEstado actual:"
               +"\n"
               +"\nValores de atributos relevantes:"

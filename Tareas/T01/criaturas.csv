@@ -37,4 +37,8 @@ Pjacebe,Erkling,34,0.5,0.3,False,False,59,33,satisfecha,peligrosa,0,0
 Hoke,Erkling,43,0.5,0.3,False,False,54,32,satisfecha,peligrosa,1,0
 Jokip,Niffler,12,0.3,0.2,False,False,21,17,satisfecha,arisca,0,5
 Bella,Erkling,31,0.5,0.3,True,False,50,26,hambrienta,peligrosa,3,0
-cristina,Augurey,21,0.2,0.3,False,False,176,171,satisfecha,inofensiva,0,0
+cristina,Augurey,21,0.2,0.3,True,True,35,1,hambrienta,inofensiva,29,0
+alberto fernandez,Augurey,23,0.2,0.3,True,True,42,1,hambrienta,inofensiva,28,0
+manguaco,Niffler,14,0.3,0.2,True,True,22,1,hambrienta,arisca,28,5
+tuviejita01,Erkling,39,0.5,0.3,True,True,55,1,hambrienta,peligrosa,28,0
+tuviejita03,Augurey,25,0.2,0.3,True,True,42,1,hambrienta,inofensiva,28,0

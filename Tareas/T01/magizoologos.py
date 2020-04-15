@@ -8,34 +8,39 @@ class Magizoologo(ABC):
 
     def __init__(self, nombre, index):
 
-        self.index = index # override en clases hijas
-        self.tipo = "" # override en clases hijas
+        # el parametro index se usa al llamar a la clase madre en las subclases, para
+        # llamar a las listas con los parametros de  cada magizoologo en parametros.py
+        # al llamar a modificar_parametros()
+        self.__index = index
+        self.tipo = None
         self.nombre = nombre
         self.sickles = pm.SICKLES_INICIALES
-        self.__alimentos = [random.choice([_ for _ in pm.ALIMENTOS.keys()])]
+        self.alimentos = [random.choice([_ for _ in pm.ALIMENTOS.keys()])]
         self.licencia = pm.ESTADO_LICENCIA_INICIAL
-        self.nivel_magico = random.randint(*pm.PARAMETROS_MAGIZOOLOGOS[self.index][0])
-        self.destreza = random.randint(*pm.PARAMETROS_MAGIZOOLOGOS[self.index][1])
-        self.energia_total = random.randint(*pm.PARAMETROS_MAGIZOOLOGOS[self.index][2])
+        self.nivel_magico = random.randint(*pm.PARAMETROS_MAGIZOOLOGOS[self.__index][0])
+        self.destreza = random.randint(*pm.PARAMETROS_MAGIZOOLOGOS[self.__index][1])
+        self.energia_total = random.randint(*pm.PARAMETROS_MAGIZOOLOGOS[self.__index][2])
         self.__energia_actual = self.energia_total
-        self.responsabilidad = random.randint(*pm.PARAMETROS_MAGIZOOLOGOS[self.index][3])
+        self.responsabilidad = random.randint(*pm.PARAMETROS_MAGIZOOLOGOS[self.__index][3])
         self.hab_especial_disp = pm.ESTADO_HABILIDAD_INICIAL
 
         self.dccriaturas = []
 
-        # las dccriaturas se agregaran aca cuando se llame a la funcion pasar_al_dia_siguiente()
-        # donde por cada dccriatura del magizoologo se chequeara si sucede algun evento, y si sucede
-        # se agregan aca
+        # las dccriaturas se agregaran en estas listas cuando se llame a la
+        # funcion pasar_al_dia_siguiente()  donde por cada dccriatura del magizoologo
+        # se chequeara si sucede alguno de los eventos, y si sucede se agregan aca
+        # y se fiscaliza correspondientemente
         self.dccriaturas_escapadas_hoy = []
         self.dccriaturas_enfermas_hoy = []
         self.dccriaturas_salud_minima_hoy = []
 
-
     @property
     def energia_actual(self):
         return self.__energia_actual
+
     @energia_actual.setter
     def energia_actual(self, energia):
+        # energia no puede ser mayor a energia_total
         if energia > self.energia_total:
             self.__energia_actual = self.energia_total
         elif energia < 0:
@@ -43,34 +48,18 @@ class Magizoologo(ABC):
         else:
             self.__energia_actual = energia
 
-    @property
-    def alimentos(self):
-        if self.__alimentos == [] or self.__alimentos == [""]:
-            return False
-        else:
-            return [i for i in self.__alimentos if i != ""]
-
-    @alimentos.setter
-    def alimentos(self, alimento):
-        if alimento != "":
-            self.__alimento = alimento
-
-
 
     @abstractmethod
     def habilidad_especial(self):
         pass
 
-    def modificar_parametros(self, sickles, dccriaturas_nombres, alimentos, licencia, nivel_magico, \
-                             destreza, energia_total, responsabilidad, hab_especial_disp):
+    def modificar_parametros(self, sickles, dccriaturas_nombres, \
+                             alimentos, licencia, nivel_magico, destreza, \
+                             energia_total, responsabilidad, hab_especial_disp):
         """
-        Esta funcion modifica los parametros del magizoologo en caso de que se cree una instancia
-        y se quieran ocupar argumentos distintos de los que se crean por defecto, que sucede en el
-        caso de iniciar sesion
-
-        TO-DO: explicar mejor funcionamiento y documentar mejor
-
-        automatizar --> no necesita argumentos, lee magizoologos.csv
+        Esta funcion modifica los parametros del magizoologo en caso de que se cree
+        una instancia y se quieran ocupar argumentos distintos de los que se crean
+        por defecto, que sucede en el  caso de iniciar sesion
         """
 
         dccriaturas_nombres = dccriaturas_nombres.split(";")
@@ -94,7 +83,7 @@ class Magizoologo(ABC):
                     self.dccriaturas.append(dccriatura)
 
         self.sickles = int(sickles)
-        self.alimentos = alimentos.split(";")
+        self.alimentos = [i for i in alimentos.split(";") if i != ""]
         self.licencia = licencia
         self.nivel_magico = int(nivel_magico)
         self.destreza = int(destreza)
@@ -103,21 +92,18 @@ class Magizoologo(ABC):
         self.responsabilidad = int(responsabilidad)
         self.hab_especial_disp = hab_especial_disp
 
+
     def actualizar_archivo(self):
         """
         Esta funcion modifica el archivo magizoologos.csv
         con los atributos e informacion del magizoologo actualizados
-
-        TO-DO:
-
-        - en caso de ser Tareo actualizar nivel_clepto
         """
 
 
         # guardar atributos actuales para actualizar magizoologos.csv
         atributos_magizoologo = f"{self.nombre},{self.tipo},{self.sickles}," \
                                 +f"{';'.join(i.nombre for i in self.dccriaturas)}," \
-                                +f"{';'.join(i for i in self.alimentos if self.alimentos is not False)}," \
+                                +f"{';'.join(i for i in self.alimentos)}," \
                                 +f"{self.licencia},{self.nivel_magico},{self.destreza}," \
                                 +f"{self.energia_total},{self.responsabilidad}," \
                                 +f"{self.hab_especial_disp}"
@@ -156,20 +142,23 @@ class Magizoologo(ABC):
         self.actualizar_archivo()
 
     def recuperar_dccriatura(self, dccriatura):
+        """
+        Este metodo retorna True o False si la recuperacion fue exitosa, para que cada
+        magizoologo pueda agregarle funcionalidad en caso de ser exitosa
+        """
+        self.energia_actual -= pm.COSTO_ENERGETICO_RECUPERAR
+        prob_recuperar = (self.destreza + self.nivel_magico -
+                          dccriatura.nivel_magico) / (self.destreza +
+                            self.nivel_magico + dccriatura.nivel_magico)
 
-            self.energia_actual -= pm.COSTO_ENERGETICO_RECUPERAR
-            prob_recuperar = (self.destreza + self.nivel_magico -
-                              dccriatura.nivel_magico) / (self.destreza +
-                                self.nivel_magico + dccriatura.nivel_magico)
-
-            if random.random() < prob_recuperar:
-                dccriatura.estado_escape = "False"
-                print("\nRecuperacion exitosa")
-                dccriatura.actualizar_archivo()
-                return True
-            else:
-                print("\nRecuperacion ha fallado")
-                return False
+        if random.random() < prob_recuperar:
+            dccriatura.estado_escape = "False"
+            print("\nRecuperacion exitosa")
+            dccriatura.actualizar_archivo()
+            return True
+        else:
+            print("\nRecuperacion ha fallado")
+            return False
 
 
     def sanar_dccriatura(self, dccriatura):
@@ -191,8 +180,8 @@ class Docencio(Magizoologo):
 
     def __init__(self, nombre):
 
-        self.index = 0
-        super().__init__(nombre, self.index)
+        self.__index = 0
+        super().__init__(nombre, self.__index)
         self.tipo = "Docencio"
 
     def habilidad_especial(self):
@@ -206,6 +195,7 @@ class Docencio(Magizoologo):
                 for dccriatura in self.dccriaturas:
                     dccriatura.nivel_hambre = "satisfecha"
                     dccriatura.dias_sin_comer = 0
+                    print(f"{dccriatura.nombre} se encuentra ahora satisfecha")
                     dccriatura.actualizar_archivo()
 
             else:
@@ -214,11 +204,19 @@ class Docencio(Magizoologo):
             print("\nYa ocupaste tu habilidad especial")
 
     def alimentar_dccriatura(self, alimento, dccriatura):
+        """
+        Ademas de la funcionalidad del metodo de la clase madre,
+        Docencio aumenta la salud de la dccriatura alimentada
+        """
         super().alimentar_dccriatura(alimento, dccriatura)
         dccriatura.salud_total += pm.AUMENTO_SALUD_TOTAL_ALIMENTAR_DOCENCIO
         dccriatura.actualizar_archivo()
 
     def recuperar_dccriatura(self, dccriatura):
+        """
+        Ademas de la funcionalidad del metodo de la clase madre,
+        Docencio quita salud de la dccriatura recuperada si logro recuperarla
+        """
         if super().recuperar_dccriatura(dccriatura):
             dccriatura.salud_actual -= pm.RESTAR_SALUD_TOT_CAPTURA_DOCENCIO
             dccriatura.actualizar_archivo()
@@ -226,9 +224,9 @@ class Docencio(Magizoologo):
 class Tareo(Magizoologo):
 
     def __init__(self, nombre):
-        self.index = 1
+        self.__index = 1
 
-        super().__init__(nombre, self.index)
+        super().__init__(nombre, self.__index)
         self.tipo = "Tareo"
 
     def habilidad_especial(self):
@@ -242,6 +240,7 @@ class Tareo(Magizoologo):
                 for dccriatura in self.dccriaturas:
                     if dccriatura.estado_escape == "True":
                         dccriatura.estado_escape = "False"
+                        print(f"Has recuperado a {dccriatura.nombre}")
                         dccriatura.actualizar_archivo()
 
             else:
@@ -250,6 +249,11 @@ class Tareo(Magizoologo):
             print("\nYa ocupaste tu habilidad especial")
 
     def alimentar_dccriatura(self, alimento, dccriatura):
+        """
+        Ademas de la funcionalidad del metodo de la clase madre,
+        Tareo tiene una probabilidad de recuperar el
+        maximo de salud de la dccriatura alimentada
+        """
         super().alimentar_dccriatura(alimento, dccriatura)
         if random.random() < pm.PROB_RECUPERAR_AL_ALIMENTAR_TAREO:
             dccriatura.salud_actual = dccriatura.salud_total
@@ -258,9 +262,9 @@ class Tareo(Magizoologo):
 class Hibrido(Magizoologo):
 
     def __init__(self, nombre):
-        self.index = 2
+        self.__index = 2
 
-        super().__init__(nombre, self.index)
+        super().__init__(nombre, self.__index)
         self.tipo = "Híbrido"
 
     def habilidad_especial(self):
@@ -274,6 +278,7 @@ class Hibrido(Magizoologo):
                 for dccriatura in self.dccriaturas:
                     if dccriatura.estado_salud == "True":
                         dccriatura.estado_salud = "False"
+                        print(f"{dccriatura.nombre} se ha sanado")
 
             else:
                 print("\nNo tienes energia suficiente para ocupar tu habilidad especial")
@@ -281,5 +286,9 @@ class Hibrido(Magizoologo):
             print("\nYa ocupaste tu habilidad especial")
 
     def alimentar_dccriatura(self, alimento, dccriatura):
+        """
+        Ademas de la funcionalidad del metodo de la clase madre,
+        Hibrido recupera salud a la dccriatura alimentada
+        """
         super().alimentar_dccriatura(alimento, dccriatura)
         dccriatura.salud_actual += pm.SALUD_RECUPERADA_ALIMENTAR_HIBRIDO
