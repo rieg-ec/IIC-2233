@@ -59,7 +59,6 @@ class LoginMenu:
         if opcion != "3":
             return self.interfaz()
 
-
     def log_in(self):
         """
         Esta funcion crea el objeto magizoologo asociado al nombre de

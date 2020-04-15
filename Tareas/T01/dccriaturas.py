@@ -163,6 +163,8 @@ class DCCriatura(ABC):
             ataque = self.dueño.nivel_magico - self.nivel_magico
             self.dueño.energia_actual -= ataque
 
+        return alimentada
+
     def escaparse(self):
         """
         Este metodo simula el escape de la dccriatura y retorna True o False

@@ -137,7 +137,12 @@ class Magizoologo(ABC):
 
         self.alimentos.remove(alimento)
         self.energia_actual -= pm.COSTO_ENERGETICO_ALIMENTAR
-        dccriatura.alimentarse(alimento)
+        # si la alimentacion fue exitosa o no, retornar True o False
+        # para en caso de ser exitosa agregarle funcionalidad en las subclases
+        if dccriatura.alimentarse(alimento):
+            return True
+        else:
+            return False
         dccriatura.actualizar_archivo()
         self.actualizar_archivo()
 
@@ -174,8 +179,6 @@ class Magizoologo(ABC):
             print("\nSanacion ha fallado")
 
 
-
-
 class Docencio(Magizoologo):
 
     def __init__(self, nombre):
@@ -208,9 +211,9 @@ class Docencio(Magizoologo):
         Ademas de la funcionalidad del metodo de la clase madre,
         Docencio aumenta la salud de la dccriatura alimentada
         """
-        super().alimentar_dccriatura(alimento, dccriatura)
-        dccriatura.salud_total += pm.AUMENTO_SALUD_TOTAL_ALIMENTAR_DOCENCIO
-        dccriatura.actualizar_archivo()
+        if super().alimentar_dccriatura(alimento, dccriatura):
+            dccriatura.salud_total += pm.AUMENTO_SALUD_TOTAL_ALIMENTAR_DOCENCIO
+            dccriatura.actualizar_archivo()
 
     def recuperar_dccriatura(self, dccriatura):
         """
@@ -254,10 +257,9 @@ class Tareo(Magizoologo):
         Tareo tiene una probabilidad de recuperar el
         maximo de salud de la dccriatura alimentada
         """
-        super().alimentar_dccriatura(alimento, dccriatura)
-        if random.random() < pm.PROB_RECUPERAR_AL_ALIMENTAR_TAREO:
-            dccriatura.salud_actual = dccriatura.salud_total
-
+        if super().alimentar_dccriatura(alimento, dccriatura):
+            if random.random() < pm.PROB_RECUPERAR_AL_ALIMENTAR_TAREO:
+                dccriatura.salud_actual = dccriatura.salud_total
 
 class Hibrido(Magizoologo):
 
@@ -290,5 +292,5 @@ class Hibrido(Magizoologo):
         Ademas de la funcionalidad del metodo de la clase madre,
         Hibrido recupera salud a la dccriatura alimentada
         """
-        super().alimentar_dccriatura(alimento, dccriatura)
-        dccriatura.salud_actual += pm.SALUD_RECUPERADA_ALIMENTAR_HIBRIDO
+        if super().alimentar_dccriatura(alimento, dccriatura):
+            dccriatura.salud_actual += pm.SALUD_RECUPERADA_ALIMENTAR_HIBRIDO
