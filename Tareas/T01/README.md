@@ -1,98 +1,56 @@
-# Tarea X: Nombre de la tarea :school_satchel:
+# Tarea 1: DCCriaturas Fantasticass :school_satchel:
 
 
-Un buen ```README.md``` puede marcar una gran diferencia en la facilidad con la que corregimos una tarea, y consecuentemente cómo funciona su programa, por lo en general, entre más ordenado y limpio sea éste, mejor será 
+## Consideraciones generales
+* El programa cumple con todas las funcionalidades propuestas en el enunciado, sin ningun bonus.
+* No niego la presencia de alguno que otro bug, he tratado de encontrar y solucionar todos los que pude, pero son cosas que pasan :sleep:
 
-Para nuestra suerte, GitHub soporta el formato [MarkDown](https://es.wikipedia.org/wiki/Markdown), el cual permite utilizar una amplia variedad de estilos de texto, tanto para resaltar cosas importantes como para separar ideas o poner código de manera ordenada ([pueden ver casi todas las funcionalidades que incluye aquí](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet))
 
-Un buen ```README.md``` no tiene por que ser muy extenso tampoco, hay que ser **concisos** (a menos que lo consideren necesario) pero **tampoco pueden** faltar cosas. Lo importante es que sea claro y limpio 
+### Cosas implementadas y no implementadas
 
-**Dejar claro lo que NO pudieron implementar y lo que no funciona a la perfección. Esto puede sonar innecesario pero permite que el ayudante se enfoque en lo que sí podría subir su puntaje.**
+* **Menus**
+  * **Menu de inicio** :heavy_check_mark:
+    * En el menu de inicio se pregunta si se desea cargar usuario existente, registrar nuevo usuario o
+    salir y terminar el programa. Todas las opciones cumplen con los requisitos del enunciado.
+  * **Menu de acciones**
+    * **Menu de cuidar DCCriaturas**:
+      * Se puede alimentar, recuperar y sanar una dccriatura, ademas de ocupar la habilidad especial, cumpliendo cada funcionalidad con los requisitos del enunciado.
+    * **Menu DCC**:
+      * Se puede adoptar una dccriatura, comprar alimentos o ver el estado actual del magizoologo y sus dccriaturas. Tambien todo de acuerdo a lo propuesto en el enunciado.
+    * **Pasar al dia siguiente**:
+      * La opcion pasar al dia siguiente simula un nuevo dia de acuerdo a lo propuesto en el enunciado.
 
-## Consideraciones generales :octocat:
-
-<Descripción de lo que hace y que **_no_** hace la tarea que entregaron junto
-con detalles de último minuto y consideraciones como por ejemplo cambiar algo
-en cierta línea del código o comentar una función>
-
-### Cosas implementadas y no implementadas :white_check_mark: :x:
-
-* <Nombre item pauta<sub>1</sub>>: Hecha completa
-* <Nombre item pauta<sub>2</sub>>: Me faltó hacer <insertar qué cosa faltó>
-    * <Nombre subitem pauta<sub>2.1</sub>>: Hecha completa 
-    * <Nombre subitem pauta<sub>2.2</sub>>: Me faltó hacer <insertar qué cosa faltó>
-    * ...
-* <Nombre item pauta<sub>3</sub>>: Me faltó hacer <insertar qué cosa faltó>
-* ...
-* <Nombre item pauta<sub>n</sub>>: Me faltó hacer <insertar qué cosa faltó>
+* **Entidades**
+  * La entidad magizoologo y DCCriatura son clases abstractas con metodos normales y metodos abstractos de las cuales heredan los/las distintas dccriaturas y magizoologos respectivamente.
+  * El dcc es una clase que contiene las funciones que realiza el DCC. Esta no se instancia, es decir es estatica.
 
 ## Ejecución :computer:
-El módulo principal de la tarea a ejecutar es  ```archivo.py```. Además se debe crear los siguientes archivos y directorios adicionales:
-1. ```archivo.ext``` en ```ubicación```
-2. ```directorio``` en ```ubicación```
-3. ...
+El módulo principal de la tarea a ejecutar es  ```main.py```. Además se debe crear los siguientes archivos y directorios adicionales:
+1. ```criaturas.csv``` en el mismo directorio que main.py
+2. ```magizoologos.csv``` en el mismo directorio que main.py
 
 
 ## Librerías :books:
 ### Librerías externas utilizadas
 La lista de librerías externas que utilicé fue la siguiente:
 
-1. ```librería_1```: ```función() / módulo```
-2. ```librería_2```: ```función() / módulo``` (debe instalarse)
-3. ...
+1. ```random```: ```randint() / choice()```
+2. ```abc```: ```ABC / abstractmethod```
 
 ### Librerías propias
 Por otro lado, los módulos que fueron creados fueron los siguientes:
 
-1. ```librería_1```: Contiene a ```ClaseA```, ```ClaseB```, (ser general, tampoco es necesario especificar cada una)...
-2. ```librería_2```: Hecha para <insertar descripción **breve** de lo que hace o qué contiene>
-3. ...
+1. ```dcc.py```: Contiene a ```DCC```
+2. ```dccriaturas.py```: Contiene la clases abstracta ```DCCriatura``` y las clases ```Erkling```, ```Niffler``` y ```Augurey``` que heredan de ella.
+3. ```loginmenu.py``` Contiene la clase ```LoginMenu``` con las funcionalidades del menu de inicio de sesion
+4. ```mainmenu.py``` Contiene a ```MainMenu``` con las funcionalidades del menu de acciones
+5. ```parametros.py``` contiene todos los parametros del juego
 
 ## Supuestos y consideraciones adicionales :thinking:
 Los supuestos que realicé durante la tarea son los siguientes:
 
-1. <Descripción/consideración 1 y justificación del por qué es válido/a> 
-2. <Descripción/consideración 2 y justificación del por qué es válido/a>
-3. ...
+1. Un magizoologo sin licencia igual debe pagar multas, pues en el caso de que se le quite la multa al fiscalizarlo por no tener dinero para pagar no se especifica si queda exento de multas hasta recuperar la licencia. Esto se revisa en la issue ```#408```
 
-PD: <una última consideración (de ser necesaria) o comentario hecho anteriormente que se quiera **recalcar**>
-
+* El enunciado estaba super detallado, por lo que no tuve que realizar más supuestos.
 
 -------
-
-
-
-**EXTRA:** si van a explicar qué hace específicamente un método, no lo coloquen en el README mismo. Pueden hacerlo directamente comentando el método en su archivo. Por ejemplo:
-
-```python
-class Corrector:
-
-    def __init__(self):
-          pass
-
-    # Este método coloca un 6 en las tareas que recibe
-    def corregir(self, tarea):
-        tarea.nota  = 6
-        return tarea
-```
-
-Si quieren ser más formales, pueden usar alguna convención de documentación. Google tiene la suya, Python tiene otra y hay muchas más. La de Python es la [PEP287, conocida como reST](https://www.python.org/dev/peps/pep-0287/). Lo más básico es documentar así:
-
-```python
-def funcion(argumento):
-    """
-    Mi función hace X con el argumento
-    """
-    return argumento_modificado
-```
-Lo importante es que expliquen qué hace la función y que si saben que alguna parte puede quedar complicada de entender o tienen alguna función mágica usen los comentarios/documentación para que el ayudante entienda sus intenciones.
-
-## Referencias de código externo :book:
-
-Para realizar mi tarea saqué código de:
-1. \<link de código>: este hace \<lo que hace> y está implementado en el archivo <nombre.py> en las líneas <número de líneas> y hace <explicación breve de que hace>
-
-
-
-## Descuentos
-La guía de descuentos se encuentra [link](https://github.com/IIC2233/syllabus/blob/master/Tareas/Descuentos.md).

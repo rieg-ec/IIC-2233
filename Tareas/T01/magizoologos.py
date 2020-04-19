@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from collections import defaultdict
 import parametros as pm
 import random
 import dccriaturas

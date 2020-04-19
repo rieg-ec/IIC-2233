@@ -51,7 +51,8 @@ class LoginMenu:
             self.log_in()
 
         elif opcion == "3":
-            print(f"Sesion {self.usuario} cerrada")
+            # terminar programa
+            pass
 
         else:
             print("\nOpcion invalida")
@@ -103,7 +104,6 @@ class LoginMenu:
 
         else:
             print("\nUsuario inexistente")
-            return self.interfaz()
 
     def sign_up(self):
         """
@@ -117,12 +117,16 @@ class LoginMenu:
         usuario = input("\nNombre de usuario : ")
 
         # chequear que sea alfanumerico
-        if usuario.isalnum() == False:
+        while usuario.isalnum() is False:
             print("\nNombre de usuario no valido")
+            # volver a pedir input
+            usuario = input("\nEscoja un nombre de usuario valido: ")
 
         # chequear que no este ocupado
-        elif usuario.lower() in usuarios_registrados:
+        while usuario.lower() in usuarios_registrados:
             print("\nUsuario existente")
+            # volver al menu de registro de usuario
+            usuario = input("\nIngrese un nombre de usuario que no exista: ")
 
         else:
             tipo_mago = input("\nQue tipo de magizoologo desea ser:"
@@ -141,26 +145,29 @@ class LoginMenu:
                                    +"\nIndique su opcion (0, 1 o 2): ")
                 if tipo_dccriatura in ["0", "1", "2"]:
                     nombre_dccriatura = input("\nComo deseas llamar a tu DCCriatura?: ")
-                    if nombre_dccriatura not in dcc.DCC.dccriaturas_existentes():
-
-                        lista_dccriaturas = (dccriaturas.Augurey, \
-                                             dccriaturas.Niffler, dccriaturas.Erkling)
-                        lista_magos = (magizoologos.Docencio, magizoologos.Tareo, \
-                                        magizoologos.Hibrido)
-
-                        # instanciar magizoologo
-                        magizoologo = lista_magos[int(tipo_mago)](usuario)
-                        # instanciar dccriatura
-                        dccriatura = lista_dccriaturas[int(tipo_dccriatura)](nombre_dccriatura, \
-                                                                                    magizoologo)
-                        magizoologo.dccriaturas.append(dccriatura)
-                        # guardar informacion de dccriatura en criaturas.csv
-                        dccriatura.actualizar_archivo()
-                        # guardar informacion de magizoologo en magizoologos.csv
-                        magizoologo.actualizar_archivo()
-
-                        print(f"\nUsuario {magizoologo.nombre} creado!")
-                    else:
+                    while nombre_dccriatura.lower() in dcc.DCC.dccriaturas_existentes():
                         print("\nNombre de DCCriatura ocupado")
+                        nombre_dccriatura = input("\nEscoge un nuevo nombre: ")
+
+
+                    lista_dccriaturas = (dccriaturas.Augurey, \
+                                         dccriaturas.Niffler, dccriaturas.Erkling)
+                    lista_magos = (magizoologos.Docencio, magizoologos.Tareo, \
+                                    magizoologos.Hibrido)
+
+                    # instanciar magizoologo
+                    magizoologo = lista_magos[int(tipo_mago)](usuario)
+                    # instanciar dccriatura
+                    dccriatura = lista_dccriaturas[int(tipo_dccriatura)](nombre_dccriatura, \
+                                                                                magizoologo)
+                    magizoologo.dccriaturas.append(dccriatura)
+                    # guardar informacion de dccriatura en criaturas.csv
+                    dccriatura.actualizar_archivo()
+                    # guardar informacion de magizoologo en magizoologos.csv
+                    magizoologo.actualizar_archivo()
+
+                    print(f"\nUsuario {magizoologo.nombre} creado!")
+                else:
+                    print("\nOpcion invalida")
             else:
                 print("\nOpcion invalida")

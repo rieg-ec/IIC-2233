@@ -13,7 +13,7 @@ class DCC:
             nombres = []
             for i in f.readlines():
                 i = i.strip().split(',')
-                nombres.append(i[0])
+                nombres.append(i[0].lower())
 
             return nombres
 
@@ -153,21 +153,23 @@ class DCC:
                                             +f"tu nueva DCCriatura {opciones[opcion][0]}?: ")
 
                     # chequea que el nombre no este ocupado
-                    if nombre_dccriatura not in DCC.dccriaturas_existentes() and \
-                                                    nombre_dccriatura.isalnum():
-                        # descontar valor de dccriatura
-                        magizoologo.sickles -= opciones[opcion][1]
-                        # instanciar dccriatura comprada
-                        dccriatura = dccriaturas_clases[int(opcion)](nombre_dccriatura, magizoologo)
-                        # agregar dccriatura a dccriaturas del magizoologo
-                        magizoologo.dccriaturas.append(dccriatura)
-                        print(f"\nDCCriatura {dccriatura.tipo} {dccriatura.nombre} adoptada")
-                        # registrar en criaturas.csv
-                        dccriatura.actualizar_archivo()
-                        # actualizar informacion del magizoologo en magizoologos.csv
-                        magizoologo.actualizar_archivo()
-                    else:
-                        print("\nNombre invalido o ya existente")
+                    while nombre_dccriatura.lower() in DCC.dccriaturas_existentes():
+                        nombre_dccriatura = input("\nNombre existente, escoge otro: ")
+
+                    while nombre_dccriatura.isalnum() is False:
+                        nombre_dccriatura = input("\nEscoge un nombre alfanumerico: ")
+                    # descontar valor de dccriatura
+                    magizoologo.sickles -= opciones[opcion][1]
+                    # instanciar dccriatura comprada
+                    dccriatura = dccriaturas_clases[int(opcion)](nombre_dccriatura, magizoologo)
+                    # agregar dccriatura a dccriaturas del magizoologo
+                    magizoologo.dccriaturas.append(dccriatura)
+                    print(f"\nDCCriatura {dccriatura.tipo} {dccriatura.nombre} adoptada")
+                    # registrar en criaturas.csv
+                    dccriatura.actualizar_archivo()
+                    # actualizar informacion del magizoologo en magizoologos.csv
+                    magizoologo.actualizar_archivo()
+    
                 else:
                     print("\nNo te alcanza para esta mascota")
             else:
