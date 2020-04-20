@@ -12,7 +12,7 @@
   * **Menú de inicio** :heavy_check_mark:
     * En el menu de inicio se pregunta si se desea cargar usuario existente, registrar nuevo usuario o
     salir y terminar el programa. Todas las opciones cumplen con los requisitos del enunciado.
-  * **Menú de acciones**
+  * **Menú de acciones** :heavy_check_mark:
     * **Menú de cuidar DCCriaturas**:
       * Se puede alimentar, recuperar y sanar una dccriatura, además de ocupar la habilidad especial, cumpliendo cada funcionalidad con los requisitos del enunciado.
     * **Menú DCC**:
@@ -20,7 +20,7 @@
     * **Pasar al dia siguiente**:
       * La opción pasar al dia siguiente simula un nuevo dia de acuerdo a lo propuesto en el enunciado.
 
-* **Entidades**
+* **Entidades** :heavy_check_mark:
   * La entidad magizoologo y DCCriatura son clases abstractas con métodos normales y métodos abstractos de las cuales heredan los/las distintas dccriaturas y magizoologos respectivamente.
   * El dcc es una clase que contiene las funciones que realiza el DCC. Esta no se instancia, es decir es estática.
 
