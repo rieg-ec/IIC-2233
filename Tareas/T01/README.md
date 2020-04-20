@@ -26,7 +26,7 @@
 
 
 * **Draw.io** :heavy_check_mark:
-* No subí ningún draw.io para el avance de la tarea, por lo que cualquier feedback sería apreciado. Este se encuentra en el directorio T01
+  * No subí ningún draw.io para el avance de la tarea, por lo que cualquier feedback sería apreciado. Este se encuentra en el directorio T01
 
 ## Ejecución :computer:
 El módulo principal de la tarea a ejecutar es  ```main.py```. Además se debe crear los siguientes archivos y directorios adicionales:
