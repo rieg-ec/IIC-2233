@@ -1,4 +1,4 @@
-# Tarea 1: DCCriaturas Fantasticass :school_satchel:
+# Tarea 1: DCCriaturas Fantásticas :school_satchel:
 
 
 ## Consideraciones generales
@@ -24,6 +24,10 @@
   * La entidad magizoologo y DCCriatura son clases abstractas con métodos normales y métodos abstractos de las cuales heredan los/las distintas dccriaturas y magizoologos respectivamente.
   * El dcc es una clase que contiene las funciones que realiza el DCC. Esta no se instancia, es decir es estática.
 
+
+* **Draw.io** :heavy_check_mark:
+* No subí ningún draw.io para el avance de la tarea, por lo que cualquier feedback sería apreciado. Este se encuentra en el directorio T01
+
 ## Ejecución :computer:
 El módulo principal de la tarea a ejecutar es  ```main.py```. Además se debe crear los siguientes archivos y directorios adicionales:
 1. ```criaturas.csv``` en el mismo directorio que main.py
@@ -38,7 +42,7 @@ La lista de librerías externas que utilicé fue la siguiente:
 2. ```abc```: ```ABC / abstractmethod```
 
 ### Librerías propias
-Por otro lado, los módulos que fueron creados fueron los siguientes:
+Por otro lado, los módulos que fueron creados son los siguientes:
 
 1. ```dcc.py```: Contiene a ```DCC```
 2. ```dccriaturas.py```: Contiene las clases abstracta ```DCCriatura``` y las clases ```Erkling```, ```Niffler``` y ```Augurey``` que heredan de ella.
