@@ -8,11 +8,11 @@
 
 ### Cosas implementadas y no implementadas
 
-* **Menús**
-  * **Menú de inicio** :heavy_check_mark:
+* **Menús** :heavy_check_mark:
+  * **Menú de inicio**
     * En el menu de inicio se pregunta si se desea cargar usuario existente, registrar nuevo usuario o
     salir y terminar el programa. Todas las opciones cumplen con los requisitos del enunciado.
-  * **Menú de acciones** :heavy_check_mark:
+  * **Menú de acciones**
     * **Menú de cuidar DCCriaturas**:
       * Se puede alimentar, recuperar y sanar una dccriatura, además de ocupar la habilidad especial, cumpliendo cada funcionalidad con los requisitos del enunciado.
     * **Menú DCC**:
