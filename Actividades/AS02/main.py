@@ -5,6 +5,12 @@ import os
 
 # Cargar datos
 
+# funcion auxiliar
+def limpiar_linea(linea):
+    linea = linea.strip().split(",")
+    linea[2] = linea[2].split(";")
+    return linea
+
 def cargar_encriptados(ruta_clientes):
     clientes = []
     with open(ruta_clientes, "rt", encoding="utf-8") as archivo:
@@ -17,7 +23,10 @@ def cargar_encriptados(ruta_clientes):
 
 
 def cargar_bonus(ruta_clientes):
-    pass
+    with open(ruta_clientes, "rt", encoding="utf-8") as archivo:
+        archivo.readline()
+        clientes = map(lambda x: limpiar_linea(x), archivo)
+        return list(clientes)
 
 
 def cargar_productos(ruta_productos):
@@ -35,9 +44,8 @@ def cargar_productos(ruta_productos):
 if __name__ == "__main__":
 
     # Se cargan clientes encriptados
-    encriptados = cargar_encriptados(os.path.join("data", "clientes_encriptados.csv"))
-    # encriptados = cargar_bonus(os.path.join("data", "clientes_encriptados.csv"))
-
+    # encriptados = cargar_encriptados(os.path.join("data", "clientes_encriptados.csv"))
+    encriptados = cargar_bonus(os.path.join("data", "clientes_encriptados.csv"))
     # Se cargan productos
     productos = cargar_productos(os.path.join("data", "productos.csv"))
 
