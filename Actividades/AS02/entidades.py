@@ -26,17 +26,22 @@ class IterableOfertones:
         self.productos = productos
 
     def __iter__(self):
-        return IteradorOfertones(self)
+        return IteradorOfertones(self.productos)
 
 
 class IteradorOfertones:
     def __init__(self, iterable):
-        self.iterable = copy(iterable)
+        self.iterable = sorted(copy(iterable), key=lambda x: x.descuento_oferta,
+                               reverse=True)
+        self.n = 0
 
     def __iter__(self):
-        # Completar
-        pass
+        return self
 
     def __next__(self):
-        # Completar
-        pass
+        if self.n >= len(self.iterable):
+            raise StopIteration()
+        else:
+            max_oferta = self.iterable[self.n]
+            self.n += 1
+            return max_oferta
