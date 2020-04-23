@@ -40,5 +40,7 @@ def calcular_precio(productos):
 
 
 def generar_productos_disponibles(clientes):
-    # Completar
-    pass
+    for cliente in clientes:
+        for producto in cliente.carrito:
+            if producto.disponible:
+                yield (cliente, producto)
