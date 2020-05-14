@@ -100,7 +100,6 @@ class VentanaPrincipal(QWidget):
             'E': 'artilleria'
         }
         if evento.text() in ['q', 'w', 'e']:
-            print('si')
             carta_usuario = {
                 'tipo': cartas[evento.text().capitalize()],
                 'valor': None
