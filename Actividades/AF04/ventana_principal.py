@@ -101,8 +101,8 @@ class VentanaPrincipal(QWidget):
         }
         if evento.text() in ['q', 'w', 'e']:
             carta_usuario = {
-                'tipo': cartas[evento.text().capitalize()],
-                'valor': None
+                'ruta': cartas[evento.text().capitalize()],
+                'valor': None # no supe que poner :(
             }
             self.senal_enviar_jugada.emit(carta_usuario)
             self.hide()
