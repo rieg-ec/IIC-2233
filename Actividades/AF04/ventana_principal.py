@@ -94,13 +94,13 @@ class VentanaPrincipal(QWidget):
         self.show()
 
     def keyPressEvent(self, evento):
-        print(evento.text())
         cartas = {
             'Q': 'infanteria',
             'W': 'rango',
             'E': 'artilleria'
         }
-        if evento.key() in ['q', 'w', 'e']:
+        if evento.text() in ['q', 'w', 'e']:
+            print('si')
             carta_usuario = {
                 'tipo': cartas[evento.text().capitalize()],
                 'valor': None
