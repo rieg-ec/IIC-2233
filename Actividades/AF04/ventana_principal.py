@@ -1,6 +1,8 @@
 import os
 import sys
 from random import choice
+from logica import Logica
+from ventana_final import VentanaFinal
 
 from PyQt5.QtWidgets import QLabel, QWidget, QLineEdit, \
     QHBoxLayout, QVBoxLayout, QPushButton
@@ -17,7 +19,6 @@ class VentanaPrincipal(QWidget):
     def __init__(self, *args):
         super().__init__(*args)
         self.crear_pantalla()
-
 
     def crear_pantalla(self):
         # Aquí deben crear la ventana vacia.
@@ -82,7 +83,7 @@ class VentanaPrincipal(QWidget):
             pixmap = QPixmap(datos[carta]['ruta'])
             self.labels[carta].setPixmap(pixmap)
 
-        self.labels['nombre_usuario'].setText(datos['usuario'])
+        self.labels['nombre_usuario'].setText(f'nombre de usuario: {datos["usuario"]}')
         self.labels['victorias'].setText(f'victorias: {datos["victorias"]}')
         self.labels['derrotas'].setText(f'derrotas: {datos["derrotas"]}')
 
@@ -93,9 +94,19 @@ class VentanaPrincipal(QWidget):
         self.show()
 
     def keyPressEvent(self, evento):
-        # Aquí debes capturar la techa apretara,
-        # y enviar la carta que es elegida
-        pass
+        print(evento.text())
+        cartas = {
+            'Q': 'infanteria',
+            'W': 'rango',
+            'E': 'artilleria'
+        }
+        if evento.key() in ['q', 'w', 'e']:
+            carta_usuario = {
+                'tipo': cartas[evento.text().capitalize()],
+                'valor': None
+            }
+            self.senal_enviar_jugada.emit(carta_usuario)
+            self.hide()
 
 
 class VentanaCombate(QWidget):

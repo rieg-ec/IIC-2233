@@ -9,12 +9,12 @@ from ventana_final import VentanaFinal
 
 
 if __name__ == "__main__":
-    
+
     def hook(type, value, traceback):
         print(type)
         print(traceback)
     sys.__excepthook__ = hook
-    
+
     # Se genera la aplicación
     a = QApplication(sys.argv)
 
@@ -24,10 +24,10 @@ if __name__ == "__main__":
     # Se instancia la ventana inicial
     ventana_inicial = VentanaInicial()
 
-    # Se conectan las señales de Ventana Inicial y back-end 
+    # Se conectan las señales de Ventana Inicial y back-end
     ventana_inicial.senal_revisar_nombre.connect(logica_dccuent.verificar_nombre)
     logica_dccuent.senal_resultado_verificacion.connect(ventana_inicial.recibir_revision)
-    
+
     # Se instancia resto de ventanas
     ventana_principal = VentanaPrincipal()
     ventana_combate = VentanaCombate()
@@ -35,10 +35,14 @@ if __name__ == "__main__":
 
     # ---- Completa y conecta el resto de las señales aquí...
     logica_dccuent.senal_comenzar_juego.connect(ventana_principal.actualizar)
-    
-    
-    
+    ventana_principal.senal_enviar_jugada.connect(logica_dccuent.jugar_carta)
+    logica_dccuent.senal_enviar_resultado_ronda.connect(ventana_principal.actualizar)
+    ventana_combate.senal_regresar.connect(ventana_principal.actualizar)
+    ventana_combate.senal_abrir_ventana_final.connect(ventana_final.crear_pantalla)
+
+
+
     # -------------------
-    
+
     ventana_inicial.show()
     sys.exit(a.exec())
