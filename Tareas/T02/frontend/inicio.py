@@ -1,28 +1,33 @@
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QPushButton,
-    QWidget, QLabel
+    QLabel, QMainWindow, QProgressBar, QLCDNumber
 )
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, QEvent
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout)
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QPaintEvent
+
+from PARAMETROS import (
+    GM_VENTANA_INICIO, GM_VENTANA_JUEGO, GM_LOGO_DCCAFE_INICIO
+)
 
 ## ventana de inicio
 
 class VentanaInicio(QWidget):
 
-    senal_main_window = pyqtSignal()
+    senal_nuevo_juego = pyqtSignal()
+    senal_resumir_juego = pyqtSignal()
 
-    def __init__(self, ):
-        super().__init__()
-        self.init_gui()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.initUI()
 
-    def init_gui(self):
+    def initUI(self):
 
         self.labels = {}
         pixmap_dccafe = QPixmap('sprites/otros/logo_blanco.png')
         self.labels['dccafe_icon'] = QLabel(self)
-        self.labels['dccafe_icon'].setGeometry(0, 0, 400, 200)
+        self.labels['dccafe_icon'].setGeometry(*GM_LOGO_DCCAFE_INICIO)
         self.labels['dccafe_icon'].setAlignment(QtCore.Qt.AlignCenter)
         self.labels['dccafe_icon'].setPixmap(pixmap_dccafe.scaled(
                                             self.labels['dccafe_icon'].width(),
@@ -65,20 +70,11 @@ class VentanaInicio(QWidget):
         self.setLayout(vbox)
 
         self.setWindowTitle('Bienvenido a DCCafe!')
-        self.setGeometry(300, 300, 600, 800)
-        self.setStyleSheet(
-            'background-color: grey'
-        )
+        self.setGeometry(*GM_VENTANA_INICIO)
         self.show()
 
     def resumir_juego(self):
-        print('resumir')
+        self.senal_resumir_juego.emit()
 
     def empezar_nuevo_juego(self):
-        print('nuevo')
-
-if __name__ == '__main__':
-    import sys
-    app = QApplication([])
-    window = VentanaInicio()
-    sys.exit(app.exec_())
+        self.senal_nuevo_juego.emit()

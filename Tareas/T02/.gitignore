@@ -4,3 +4,4 @@ sprites
 .DS_Store
 venv
 *.txt
+*__pycache__
