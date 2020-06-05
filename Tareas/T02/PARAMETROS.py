@@ -1,7 +1,7 @@
 
 ### MiuEnzo ###
-VEL_MOVIMIENTO = 3
-TIMER_INTERVAL = 10 # los FPS de movimiento seran 1000/TIMER_INTERVAL
+VEL_MOVIMIENTO = 4
+TIMER_INTERVAL = 20 # los FPS de movimiento seran 1000/TIMER_INTERVAL
 
 
 ### Ventana inicio ###
@@ -28,4 +28,25 @@ PLATOS_INTERMEDIO = 4
 PLATOS_EXPERTO = 10
 
 ### Reloj ###
-RAPIDEZ_RELOJ = 0.1
+RAPIDEZ_RELOJ = 0.05 # ponderador contra tiempo real -> para acelerar procesos,
+                    # multiplicar por < 1
+
+### Bocadillos ###
+PRECIO_BOCADILLO = 100
+
+### Clientes ###
+LLEGADA_CLIENTES = 5000
+PROPINA = PRECIO_BOCADILLO // 10
+
+TIEMPO_ESPERA_APURADO = 3000 * RAPIDEZ_RELOJ
+PROB_APURADO = 0.5
+
+TIEMPO_ESPERA_RELAJADO = 5000 * RAPIDEZ_RELOJ
+
+### DCCafe ###
+DINERO_INICIAL = 2000
+REPUTACION_INICIAL = 5
+REPUTACION_TOTAL = 5
+CHEFS_INICIALES = 3
+MESAS_INICIALES = 4
+CLIENTES_INICIALES = 6

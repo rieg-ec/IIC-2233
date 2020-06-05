@@ -5,3 +5,5 @@ sprites
 venv
 *.txt
 *__pycache__
+sprites_propios
+test.py

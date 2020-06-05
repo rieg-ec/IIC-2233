@@ -19,6 +19,11 @@ from PARAMETROS import GM_VENTANA_RESUMEN
 
 
 class VentanaResumen(QWidget):
+
+    senal_continuar = pyqtSignal()
+    senal_guardar = pyqtSignal()
+    senal_salir = pyqtSignal()
+
     def __init__(self, ronda, clientes_perdidos, clientes_atendidos,
                     dinero, reputacion, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -29,7 +34,6 @@ class VentanaResumen(QWidget):
         self.dinero = dinero
         self.reputacion = reputacion
         self.initUI()
-
 
     def initUI(self):
         self.setGeometry(*GM_VENTANA_RESUMEN)
@@ -42,7 +46,7 @@ class VentanaResumen(QWidget):
         hboxs['clientes-perdidos'] = QHBoxLayout()
         hboxs['clientes-perdidos'].addStretch(2)
         label_clientes_perdidos = QLabel('CLIENTES PERDIDOS')
-        label_nro_clientes_perdidos = QLCDNumber(self)
+        label_nro_clientes_perdidos = QLabel(f'{self.clientes_perdidos}', self)
         hboxs['clientes-perdidos'].addWidget(label_clientes_perdidos, 2)
         hboxs['clientes-perdidos'].addStretch(0.1)
         hboxs['clientes-perdidos'].addWidget(label_nro_clientes_perdidos, 1)
@@ -51,7 +55,7 @@ class VentanaResumen(QWidget):
         hboxs['clientes-atendidos'] = QHBoxLayout()
         hboxs['clientes-atendidos'].addStretch(2)
         label_clientes_atendidos = QLabel('CLIENTES ATENDIDOS')
-        label_nro_clientes_atendidos = QLCDNumber(self)
+        label_nro_clientes_atendidos = QLabel(f'{self.clientes_atendidos}', self)
         hboxs['clientes-atendidos'].addWidget(label_clientes_atendidos, 2)
         hboxs['clientes-atendidos'].addStretch(0.1)
         hboxs['clientes-atendidos'].addWidget(label_nro_clientes_atendidos, 1)
@@ -60,7 +64,7 @@ class VentanaResumen(QWidget):
         hboxs['dinero-acumulado'] = QHBoxLayout()
         hboxs['dinero-acumulado'].addStretch(2)
         label_dinero_acumulado = QLabel('DINERO ACUMULADO')
-        label_nro_dinero_acumulado = QLCDNumber(self)
+        label_nro_dinero_acumulado = QLabel(f'{self.dinero}', self)
         hboxs['dinero-acumulado'].addWidget(label_dinero_acumulado, 2)
         hboxs['dinero-acumulado'].addStretch(0.1)
         hboxs['dinero-acumulado'].addWidget(label_nro_dinero_acumulado, 1)
@@ -69,7 +73,7 @@ class VentanaResumen(QWidget):
         hboxs['reputacion'] = QHBoxLayout()
         hboxs['reputacion'].addStretch(2)
         label_reputacion = QLabel('REPUTACION')
-        label_nro_reputacion = QLCDNumber(self)
+        label_nro_reputacion = QLabel(f'{self.reputacion}/5', self)
         hboxs['reputacion'].addWidget(label_reputacion, 2)
         hboxs['reputacion'].addStretch(0.1)
         hboxs['reputacion'].addWidget(label_nro_reputacion, 1)
@@ -77,16 +81,21 @@ class VentanaResumen(QWidget):
 
         hbox_botones = QHBoxLayout()
         hbox_botones.addStretch(2)
-        botones = {
-            'salir': QPushButton('Salir', self),
-            'guardar': QPushButton('Guardar', self),
-            'continuar': QPushButton('Continuar', self)
-        }
+
+        boton_salir = QPushButton('Salir', self)
+        boton_salir.clicked.connect(self.salir)
+        hbox_botones.addWidget(boton_salir)
         hbox_botones.addStretch(0.5)
-        for boton in botones:
-            hbox_botones.addWidget(botones[boton])
-            hbox_botones.addStretch(0.5)
-        hbox_botones.addStretch(2)
+
+        boton_guardar = QPushButton('Guardar', self)
+        boton_guardar.clicked.connect(self.guardar)
+        hbox_botones.addWidget(boton_guardar)
+        hbox_botones.addStretch(0.5)
+
+        boton_continuar = QPushButton('Continuar', self)
+        boton_continuar.clicked.connect(self.continuar)
+        hbox_botones.addWidget(boton_continuar)
+        hbox_botones.addStretch(0.5)
 
         vbox = QVBoxLayout()
         vbox.addWidget(label_resumen_ronda)
@@ -100,3 +109,12 @@ class VentanaResumen(QWidget):
         vbox.addLayout(hbox_botones)
 
         self.setLayout(vbox)
+
+    def continuar(self):
+        self.senal_continuar.emit()
+
+    def guardar(self):
+        self.senal_guardar.emit()
+
+    def salir(self):
+        self.senal_salir.emit()
