@@ -376,7 +376,6 @@ class VentanaTienda(QWidget):
         self.label_chef.setPixmap(pixmap_chef)
         self.label_chef.resize(pixmap_chef.width(), pixmap_chef.height())
         self.label_chef.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_chef.setEnabled(False)
 
         label_precio_mesa = QLabel(f'{PRECIO_MESA} $')
         label_precio_mesa.setAlignment(QtCore.Qt.AlignCenter)
@@ -385,7 +384,6 @@ class VentanaTienda(QWidget):
         self.label_mesa = DragLabel('mesa', self)
         self.label_mesa.setPixmap(pixmap_mesa)
         self.label_mesa.setAlignment(QtCore.Qt.AlignCenter)
-        self.label_mesa.setEnabled(False)
 
         vbox = QVBoxLayout()
         vbox.addWidget(label_tienda)
@@ -397,14 +395,8 @@ class VentanaTienda(QWidget):
         vbox.addWidget(label_precio_mesa)
         vbox.addStretch(2)
         self.setLayout(vbox)
-
+        self.setEnabled(False) # comienza deshabilitada
         self.setStyleSheet('background-color: red;')
-
-    def habilitar(self, bool):
-        # al terminar/comenzar la pre-ronda debemos habilitar o deshabilitar
-        # respectivamente la tienda
-        self.label_mesa.setEnabled(bool)
-        self.label_chef.setEnabled(bool)
 
 
 class VentanaJuego(QWidget):
@@ -453,7 +445,8 @@ class VentanaJuego(QWidget):
         ''' Etapa de pre-ronda '''
         self.mapa.activar_pre_ronda(True)
         self.estadisticas.activar_pre_ronda()
-        self.tienda.habilitar(True)
+        self.tienda.setEnabled(True)
+        print(self.tienda.isEnabled())
 
     def nuevo_juego(self):
         ''' Esta funcion se diferencia de comenzar en que
@@ -461,6 +454,7 @@ class VentanaJuego(QWidget):
         (2) SI esta encargada de la transicion entre la ventana de inicio y el
         comienzo del juego en la etapa ronda '''
         # senal que llama a la funcion nuevo_juego() en Logica
+        self.setEnabled(True)
         self.senal_nuevo_juego.emit()
 
     def pausar(self, bool):
@@ -471,7 +465,7 @@ class VentanaJuego(QWidget):
     def comenzar(self):
         ''' Esta funcion esta asociada al boton comenzar en la ventana de estadisticas
         y es llamada cuando el jugador decide comenzar luego de la pre-ronda '''
-        self.tienda.habilitar(False) # deshabilitamos la tienda
+        self.tienda.setEnabled(False) # deshabilitamos la tienda
         self.mapa.activar_pre_ronda(False)
         # mandamos senal al backend para comenzar al ronda:
         self.senal_comenzar.emit()

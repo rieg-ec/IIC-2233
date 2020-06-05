@@ -61,7 +61,7 @@ class DCCafe(QObject):
     def guardar_datos(self):
         with open('datos.csv', 'w') as file:
             file.write(f'{self.dinero},{self.reputacion},{self.rondas_terminadas}')
-            file.write(','.join(_ for _ in self.chefs)) # key: platos preparados
+            file.write(f'\n{",".join(key for key in self.chefs)}') # key: platos preparados
             file.close()
 
         with open('mapa.csv', 'w') as file:
@@ -69,7 +69,8 @@ class DCCafe(QObject):
             for mesa in self.mesas:
                 file.write(f'\nmesa,{mesa[0]},{mesa[1]}')
             for chef in self.chefs:
-                file.write(f'\nchef,{chef[0]},{chef[1]}')
+                # self.chefs es un diccionario
+                file.write(f'\nchef,{self.chefs[chef][0]},{self.chefs[chef][1]}')
             file.close()
 
     def cargar_datos(self):
@@ -88,7 +89,7 @@ class DCCafe(QObject):
                 tipo, x, y = line.split(',')
                 tipo, x, y = tipo.replace('\n', ''),  int(x), int(y.replace('\n', ''))
                 if tipo == 'chef':
-                    self.chefs[platos_preparados.pop()] = [x, y]
+                    self.chefs[platos_preparados.pop().replace('\n', '')] = [x, y]
                 elif tipo == 'mesa':
                     self.mesas.append([x, y])
                 elif tipo == 'mesero':

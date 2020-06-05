@@ -48,7 +48,7 @@ class Controller:
 
     def nuevo_juego(self):
         self.ventana_inicio.hide()
-        self.logica.nuevo_juego()
+        self.ventana_juego.nuevo_juego()
         self.ventana_juego.show()
 
     def resumir_juego(self):
@@ -64,7 +64,7 @@ class Controller:
         self.ventana_resumen.senal_guardar.connect(self.guardar_ronda)
         self.ventana_resumen.senal_salir.connect(self.salir_juego)
         self.ventana_resumen.show()
-        self.ventana_juego.mapa.setDisabled(True)
+        self.ventana_juego.setEnabled(False)
         # actualizamos la informacion en ventana estadisticas en caso de que
         # se continue jugando
         self.ventana_juego.estadisticas.actualizar_reputacion(rep)
@@ -75,9 +75,12 @@ class Controller:
         self.ventana_inicio.deleteLater()
 
     def continuar_ronda(self):
-        self.ventana_juego.mapa.setDisabled(False)
+        self.ventana_juego.setEnabled(True)
         self.ventana_juego.activar_pre_ronda()
         self.ventana_resumen.deleteLater()
 
     def guardar_ronda(self):
-        print('todo guardado master')
+        self.logica.dccafe.guardar_datos()
+        self.ventana_resumen.deleteLater()
+        self.ventana_juego.hide()
+        self.ventana_inicio.show()
