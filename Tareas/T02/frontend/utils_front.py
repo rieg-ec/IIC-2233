@@ -1,14 +1,14 @@
 
 from PyQt5.QtWidgets import QLabel
-
-from PyQt5.QtCore import Qt, QMimeData, QThread, pyqtSignal, QTimer, QObject
-from PyQt5.QtGui import QDrag, QPixmap, QMovie
+from PyQt5.QtCore import Qt, QMimeData, pyqtSignal, QTimer, QObject
+from PyQt5.QtGui import QDrag, QPixmap
 from PyQt5.QtWidgets import QPushButton, QWidget, QApplication
 from PARAMETROS import (
     VEL_MOVIMIENTO, TIMER_INTERVAL, PLATOS_EXPERTO, PLATOS_INTERMEDIO,
     TIEMPO_ESPERA_APURADO, TIEMPO_ESPERA_RELAJADO
 )
 from random import randint
+import os
 
 # implementacion simple de un QLabel que se puede dragear
 class DragLabel(QLabel):
@@ -70,32 +70,31 @@ class MiuEnzo(QLabel):
             self.__direccion = 3
 
     def cargar_pixmaps(self):
-        path = 'sprites/mesero/'
         self.qpixmaps = [
-                    [[QPixmap(path + 'down_01.png'),
-                    QPixmap(path + 'down_03.png'),
-                    QPixmap(path + 'down_02.png')],
-                    [QPixmap(path + 'down_snack_01.png'),
-                    QPixmap(path + 'down_snack_03.png'),
-                    QPixmap(path + 'down_snack_02.png')]],
-                    [[QPixmap(path + 'up_01.png'),
-                    QPixmap(path + 'up_03.png'),
-                    QPixmap(path + 'up_02.png')],
-                    [QPixmap(path + 'up_snack_01.png'),
-                    QPixmap(path + 'up_snack_03.png'),
-                    QPixmap(path + 'up_snack_02.png')]],
-                    [[QPixmap(path + 'right_01.png'),
-                    QPixmap(path + 'right_03.png'),
-                    QPixmap(path + 'right_02.png')],
-                    [QPixmap(path + 'right_snack_01.png'),
-                    QPixmap(path + 'right_snack_03.png'),
-                    QPixmap(path + 'right_snack_02.png')]],
-                    [[QPixmap(path + 'left_01.png'),
-                    QPixmap(path + 'left_03.png'),
-                    QPixmap(path + 'left_02.png')],
-                    [QPixmap(path + 'left_snack_01.png'),
-                    QPixmap(path + 'left_snack_03.png'),
-                    QPixmap(path + 'left_snack_02.png')]]
+            [[QPixmap(os.path.join('sprites', 'mesero', 'down_01.png')),
+            QPixmap(os.path.join('sprites', 'mesero', 'down_03.png')),
+            QPixmap(os.path.join('sprites', 'mesero', 'down_02.png'))],
+            [QPixmap(os.path.join('sprites', 'mesero', 'down_snack_01.png')),
+            QPixmap(os.path.join('sprites', 'mesero', 'down_snack_03.png')),
+            QPixmap(os.path.join('sprites', 'mesero', 'down_snack_02.png'))]],
+            [[QPixmap(os.path.join('sprites', 'mesero', 'up_01.png')),
+            QPixmap(os.path.join('sprites', 'mesero', 'up_03.png')),
+            QPixmap(os.path.join('sprites', 'mesero', 'up_02.png'))],
+            [QPixmap(os.path.join('sprites', 'mesero', 'up_snack_01.png')),
+            QPixmap(os.path.join('sprites', 'mesero', 'up_snack_03.png')),
+            QPixmap(os.path.join('sprites', 'mesero', 'up_snack_02.png'))]],
+            [[QPixmap(os.path.join('sprites', 'mesero', 'right_01.png')),
+            QPixmap(os.path.join('sprites', 'mesero', 'right_03.png')),
+            QPixmap(os.path.join('sprites', 'mesero', 'right_02.png'))],
+            [QPixmap(os.path.join('sprites', 'mesero', 'right_snack_01.png')),
+            QPixmap(os.path.join('sprites', 'mesero', 'right_snack_03.png')),
+            QPixmap(os.path.join('sprites', 'mesero', 'right_snack_02.png'))]],
+            [[QPixmap(os.path.join('sprites', 'mesero', 'left_01.png')),
+            QPixmap(os.path.join('sprites', 'mesero', 'left_03.png')),
+            QPixmap(os.path.join('sprites', 'mesero', 'left_02.png'))],
+            [QPixmap(os.path.join('sprites', 'mesero', 'left_snack_01.png')),
+            QPixmap(os.path.join('sprites', 'mesero', 'left_snack_03.png')),
+            QPixmap(os.path.join('sprites', 'mesero', 'left_snack_02.png'))]]
                 ]
 
     def actualizar_pixmaps(self):
@@ -119,7 +118,6 @@ class MiuEnzo(QLabel):
     def agarrar_bocadillo(self, bocadillo):
         self.ocupado = 1
         self.bocadillo = bocadillo
-        print('bocadillo agarrado')
 
     def soltar_bocadillo(self):
         self.ocupado = 0
@@ -166,15 +164,14 @@ class Chef(QLabel):
             self.__fase_animacion = 0
 
     def cargar_pixmaps(self):
-        path = 'sprites/chef/'
         self.qpixmaps = {
-            'esperando': QPixmap(path + 'meson_01.png'),
-            'listo': QPixmap(path + 'meson_16.png'),
-            'cocinando': [QPixmap(path + 'meson_13.png'),
-                        QPixmap(path + 'meson_15.png'),
-                        QPixmap(path + 'meson_14.png'),
-                        QPixmap(path + 'meson_15.png'),
-                        QPixmap(path + 'meson_13.png')]
+            'esperando': QPixmap(os.path.join('sprites', 'chef', 'meson_01.png')),
+            'listo': QPixmap(os.path.join('sprites', 'chef', 'meson_16.png')),
+            'cocinando': [QPixmap(os.path.join('sprites', 'chef', 'meson_13.png')),
+                        QPixmap(os.path.join('sprites', 'chef', 'meson_15.png')),
+                        QPixmap(os.path.join('sprites', 'chef', 'meson_14.png')),
+                        QPixmap(os.path.join('sprites', 'chef', 'meson_15.png')),
+                        QPixmap(os.path.join('sprites', 'chef', 'meson_13.png'))]
         }
 
     def initUI(self):
@@ -209,7 +206,7 @@ class Chef(QLabel):
 
     def terminar_bocadillo(self):
         self.cocinando = 2 # bocadillo listo
-        self.bocadillo = 'bocadillo :)' '''cambiar a Bocadillo()'''
+        self.bocadillo = 'bocadillo :)' # no alcance a modelar el bocadillo :(
         self.timer.stop()
         self.setPixmap(self.qpixmaps['listo'])
         self.platos_preparados += 1
@@ -244,10 +241,10 @@ class Mesa(QLabel):
                 self.__cliente.deleteLater()
             self.__cliente = None
             self.ocupado = False
-            print('eliminando pixmap de mesa')
 
     def initUI(self):
-        self.pixmap = QPixmap('sprites/mapa/accesorios/silla_mesa_roja.png')
+        self.pixmap = QPixmap(os.path.join('sprites', 'mapa', 'accesorios',
+                                        'silla_mesa_roja.png'))
         self.setPixmap(self.pixmap)
         # los valores en move() los saque experimentalmente, son los que mejor
         # aproximan el lugar correcto donde el usuario hace drop:
@@ -266,7 +263,7 @@ class Mesa(QLabel):
 
 class Cliente(QLabel):
 
-    scale = [40, 40] # pixmap scale
+    scale = [30, 30] # pixmap scale
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -276,19 +273,20 @@ class Cliente(QLabel):
         self.initUI()
 
     def cargar_pixmaps(self):
-        path = 'sprites/clientes/'
-        self.qpixmaps = [[QPixmap(path + 'hamster/hamster_01.png'),
-                        QPixmap(path + 'hamster/hamster_19.png'),
-                        QPixmap(path + 'hamster/hamster_39.png')],
-                        [QPixmap(path + 'hamster/hamster_02.png'),
-                        QPixmap(path + 'hamster/hamster_20.png'),
-                        QPixmap(path + 'hamster/hamster_35.png')],
-                        [QPixmap(path + 'perro/perro_01.png'),
-                        QPixmap(path + 'perro/perro_14.png'),
-                        QPixmap(path + 'perro/perro_10.png')],
-                        [QPixmap(path + 'perro/perro_02.png'),
-                        QPixmap(path + 'perro/perro_15.png'),
-                        QPixmap(path + 'perro/perro_12.png')]]
+        self.qpixmaps = [
+            [QPixmap(os.path.join('sprites', 'clientes', 'hamster', 'hamster_01.png')),
+            QPixmap(os.path.join('sprites', 'clientes', 'hamster', 'hamster_19.png')),
+            QPixmap(os.path.join('sprites', 'clientes', 'hamster', 'hamster_39.png'))],
+            [QPixmap(os.path.join('sprites', 'clientes', 'hamster', 'hamster_02.png')),
+            QPixmap(os.path.join('sprites', 'clientes', 'hamster', 'hamster_20.png')),
+            QPixmap(os.path.join('sprites', 'clientes', 'hamster', 'hamster_35.png'))],
+            [QPixmap(os.path.join('sprites', 'clientes', 'perro', 'perro_01.png')),
+            QPixmap(os.path.join('sprites', 'clientes', 'perro', 'perro_14.png')),
+            QPixmap(os.path.join('sprites', 'clientes', 'perro', 'perro_10.png'))],
+            [QPixmap(os.path.join('sprites', 'clientes', 'perro', 'perro_02.png')),
+            QPixmap(os.path.join('sprites', 'clientes', 'perro', 'perro_15.png')),
+            QPixmap(os.path.join('sprites', 'clientes', 'perro', 'perro_12.png'))]
+                ]
 
     def initUI(self):
         self.cargar_pixmaps()

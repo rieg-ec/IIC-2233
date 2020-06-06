@@ -1,11 +1,5 @@
-from PyQt5.QtWidgets import (
-    QApplication, QWidget, QPushButton,
-    QLabel, QProgressBar, QLCDNumber
-)
-from PyQt5.QtCore import (
-    pyqtSignal, QEvent, QMimeData, QTimer,
-    QRect
-)
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
+from PyQt5.QtCore import pyqtSignal, QMimeData, QTimer, QRect
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout
 from PyQt5.QtGui import QPixmap, QDropEvent
@@ -13,6 +7,7 @@ from frontend.utils_front import Chef, Mesa, MiuEnzo, DragLabel, Cliente
 
 from PARAMETROS import *
 from random import choice
+import os
 
 
 class VentanaMapa(QWidget):
@@ -49,7 +44,8 @@ class VentanaMapa(QWidget):
         self.labels_entidades = []
         self.clientes = []
 
-        pixmap_mapa = QPixmap('sprites/mapa/mapa_sin_borde_2.png')
+        pixmap_mapa = QPixmap(os.path.join('sprites', 'mapa',
+                                'mapa_sin_borde_2.png'))
         self.label_mapa = QLabel(self)
         self.label_mapa.setAlignment(QtCore.Qt.AlignCenter)
         self.label_mapa.setPixmap(pixmap_mapa.scaled(
@@ -74,9 +70,6 @@ class VentanaMapa(QWidget):
         self.label_miuenzo = MiuEnzo('', self)
 
         self.setFixedSize(self.size())
-
-        ''' sacar '''
-        self.setStyleSheet('background-color: red;')
 
     def sprites_nuevo_juego(self, miuenzo, mesas, chefs):
         self.label_miuenzo.move(miuenzo[0], miuenzo[1])
@@ -217,7 +210,6 @@ class VentanaMapa(QWidget):
         self.clientes.append(cliente)
 
         mesa.cliente = cliente
-        print(mesa, cliente)
 
         tmp_enojarse.timeout.connect(cliente.enojarse)
         tmp_enojarse.setInterval(cliente.tiempo_espera)
@@ -234,8 +226,6 @@ class VentanaMapa(QWidget):
                     label.__class__.__name__ == 'Mesa']:
 
             if mesa.cliente == cliente:
-                print(mesa, cliente)
-                ''' se elimina cliente? o debo eliminarlo de mapa tambien? '''
                 mesa.cliente = None
 
 
@@ -255,7 +245,7 @@ class VentanaEstadisticas(QWidget):
         self.labels = {}
         vboxs = {}
 
-        pixmap_dccafe = QPixmap('sprites/otros/logo_negro.png')
+        pixmap_dccafe = QPixmap(os.path.join('sprites', 'otros', 'logo_negro.png'))
         self.labels['dccafe_icon'] = QLabel(self)
         self.labels['dccafe_icon'].setAlignment(QtCore.Qt.AlignCenter)
         self.labels['dccafe_icon'].setPixmap(pixmap_dccafe.scaled(
@@ -329,7 +319,6 @@ class VentanaEstadisticas(QWidget):
         hbox.addLayout(vboxs['pausar-salir'])
 
         self.setLayout(hbox)
-        self.setStyleSheet('background-color: red;')
 
     def actualizar_dinero(self, dinero):
         self.labels['dinero-display'].setText(f'{dinero}')
@@ -370,7 +359,7 @@ class VentanaTienda(QWidget):
 
         label_precio_chef = QLabel(f'{PRECIO_CHEF} $', self)
         label_precio_chef.setAlignment(QtCore.Qt.AlignCenter)
-        pixmap_chef = QPixmap('sprites/chef/meson_01.png')
+        pixmap_chef = QPixmap(os.path.join('sprites', 'chef', 'meson_01.png'))
         # Override de QLabel para hacerlo drageable
         self.label_chef = DragLabel('chef', self)
         self.label_chef.setPixmap(pixmap_chef)
@@ -379,7 +368,7 @@ class VentanaTienda(QWidget):
 
         label_precio_mesa = QLabel(f'{PRECIO_MESA} $')
         label_precio_mesa.setAlignment(QtCore.Qt.AlignCenter)
-        pixmap_mesa = QPixmap('sprites/mapa/accesorios/silla_mesa_roja.png')
+        pixmap_mesa = QPixmap(os.path.join('sprites', 'mapa', 'accesorios', 'silla_mesa_roja.png'))
         # Override de QLabel para hacerlo drageable
         self.label_mesa = DragLabel('mesa', self)
         self.label_mesa.setPixmap(pixmap_mesa)
@@ -396,7 +385,6 @@ class VentanaTienda(QWidget):
         vbox.addStretch(2)
         self.setLayout(vbox)
         self.setEnabled(False) # comienza deshabilitada
-        self.setStyleSheet('background-color: red;')
 
 
 class VentanaJuego(QWidget):
@@ -439,14 +427,12 @@ class VentanaJuego(QWidget):
         self.setLayout(vbox)
 
         self.setFixedSize(self.size())
-        self.setStyleSheet('background-color: green;')
 
     def activar_pre_ronda(self):
         ''' Etapa de pre-ronda '''
         self.mapa.activar_pre_ronda(True)
         self.estadisticas.activar_pre_ronda()
         self.tienda.setEnabled(True)
-        print(self.tienda.isEnabled())
 
     def nuevo_juego(self):
         ''' Esta funcion se diferencia de comenzar en que

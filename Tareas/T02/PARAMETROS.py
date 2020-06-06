@@ -28,7 +28,7 @@ PLATOS_INTERMEDIO = 4
 PLATOS_EXPERTO = 10
 
 ### Reloj ###
-RAPIDEZ_RELOJ = 0.05 # ponderador contra tiempo real -> para acelerar procesos,
+RAPIDEZ_RELOJ = 1 # ponderador contra tiempo real -> para acelerar procesos,
                     # multiplicar por < 1
 
 ### Bocadillos ###
@@ -38,10 +38,10 @@ PRECIO_BOCADILLO = 100
 LLEGADA_CLIENTES = 5000
 PROPINA = PRECIO_BOCADILLO // 10
 
-TIEMPO_ESPERA_APURADO = 3000 * RAPIDEZ_RELOJ
+TIEMPO_ESPERA_APURADO = 4000 * RAPIDEZ_RELOJ
 PROB_APURADO = 0.5
 
-TIEMPO_ESPERA_RELAJADO = 5000 * RAPIDEZ_RELOJ
+TIEMPO_ESPERA_RELAJADO = 7000 * RAPIDEZ_RELOJ
 
 ### DCCafe ###
 DINERO_INICIAL = 2000

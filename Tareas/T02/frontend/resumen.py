@@ -1,22 +1,8 @@
-from PyQt5.QtWidgets import (
-    QApplication, QWidget, QPushButton,
-    QLabel, QProgressBar, QLCDNumber
-)
 from PyQt5.QtCore import pyqtSignal, QEvent
 from PyQt5 import QtCore
-from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout)
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import (
-    QApplication, QWidget, QPushButton,
-    QLabel, QProgressBar, QLCDNumber
-)
-from PyQt5.QtCore import pyqtSignal, QEvent
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import (QHBoxLayout, QVBoxLayout)
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
+from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout
 from PARAMETROS import GM_VENTANA_RESUMEN
-
-
 
 class VentanaResumen(QWidget):
 
