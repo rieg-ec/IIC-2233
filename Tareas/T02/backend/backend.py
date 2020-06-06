@@ -1,6 +1,6 @@
 from PyQt5.QtCore import pyqtSignal, QObject, QRect, QTimer
 from PyQt5.QtWidgets import QLabel
-from PARAMETROS import VEL_MOVIMIENTO, PRECIO_CHEF, PRECIO_MESA
+from PARAMETROS import VEL_MOVIMIENTO, PRECIO_CHEF, PRECIO_MESA, PROPINA
 from backend.reloj import Reloj
 from backend.utils_backend import DCCafe
 
@@ -157,7 +157,6 @@ class Logica(QObject):
 
                 tmp_enojarse, tmp_irse = self.reloj.temporizador_cliente()
                 # temporizadores que pertenecen a la instancia de reloj
-                print('cliente llegando: ', self.dccafe.mesas_ocupadas, self.dccafe.mesas)
                 self.senal_llegada_cliente.emit(tmp_enojarse, tmp_irse)
                 self.dccafe.mesas_ocupadas += 1
             # actualizamos clientes que han llegado en esta ronda:
@@ -179,10 +178,9 @@ class Logica(QObject):
         if cliente.estado != 1:
             self.dccafe.pedidos_exitosos += 1
         self.dccafe.mesas_ocupadas -= 1
-        if cliente.estado == 1:
-            print('cliente se fue enojado')
-        else:
-            print('cliente se fue contento')
+        if cliente.estado != 1:
+            # si el cliente no se fue enojado es porque recibio bocadillo
+            self.dccafe.dinero += PROPINA
 
     def acabar_ronda(self):
         ronda = self.dccafe.ronda

@@ -1,108 +1,54 @@
-# Tarea X: Nombre de la tarea :school_satchel:
+# Tarea 02: DCCafé :coffee:
 
 
-Un buen ```README.md``` puede marcar una gran diferencia en la facilidad con la que corregimos una tarea, y consecuentemente cómo funciona su programa, por lo en general, entre más ordenado y limpio sea éste, mejor será
-
-Para nuestra suerte, GitHub soporta el formato [MarkDown](https://es.wikipedia.org/wiki/Markdown), el cual permite utilizar una amplia variedad de estilos de texto, tanto para resaltar cosas importantes como para separar ideas o poner código de manera ordenada ([pueden ver casi todas las funcionalidades que incluye aquí](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet))
-
-Un buen ```README.md``` no tiene por que ser muy extenso tampoco, hay que ser **concisos** (a menos que lo consideren necesario) pero **tampoco pueden** faltar cosas. Lo importante es que sea claro y limpio
-
-**Dejar claro lo que NO pudieron implementar y lo que no funciona a la perfección. Esto puede sonar innecesario pero permite que el ayudante se enfoque en lo que sí podría subir su puntaje.**
 
 ## Consideraciones generales :octocat:
 
-<Descripción de lo que hace y que **_no_** hace la tarea que entregaron junto
-con detalles de último minuto y consideraciones como por ejemplo cambiar algo
-en cierta línea del código o comentar una función>
+La version entregada es funcional (es decir se puede jugar el juego, a pesar de que no esté completo).
 
 ### Cosas implementadas y no implementadas :white_check_mark: :x:
 
-* <Nombre item pauta<sub>1</sub>>: Hecha completa
-* <Nombre item pauta<sub>2</sub>>: Me faltó hacer <insertar qué cosa faltó>
-    * <Nombre subitem pauta<sub>2.1</sub>>: Hecha completa
-    * <Nombre subitem pauta<sub>2.2</sub>>: Me faltó hacer <insertar qué cosa faltó>
-    * ...
-* <Nombre item pauta<sub>3</sub>>: Me faltó hacer <insertar qué cosa faltó>
-* ...
-* <Nombre item pauta<sub>n</sub>>: Me faltó hacer <insertar qué cosa faltó>
+* **Ventana de Inicio**:
+	* **Seguir jugando**: no implementado. Solo se puede usar el boton de Comenzar de nuevo (sin embargo, si despues de una ronda se guardan los resultados, Comenzar de nuevo usará los datos guardados).
+
+	* **Comenzar de nuevo**: ocupa la funcionalidad de 'seguir jugando', o sea los datos guardados en los archivos .csv serán los que se ocupen.
+
+* **Ventana de Juego**:
+	* **Ventana de pre-ronda**: Funciona correctamente, luego de terminada la ronda si el jugador desde continuar, este entrará en la pre-ronda y solamente podrá comprar mesas y chefs (no podrá eliminarlos haciendo click). Al presionar el boton comenzar se entrará en la ronda.
+
+	* **Ventana de ronda**: No implementé el mecanismo de bocadillos, por lo que los clientes no recibiran su bocadillo al impactar MiuEnzo con la mesa de manera visual, ni tampoco hay un mecanismo que calcule la calidad de los pedidos, sin embargo los clientes dejarán propina siempre que reciban bocadillo. Tampoco implementé las teclas especiales. Se puede pausar, pero al reanudar el juego los QTimers parten de 0 en lugar del momento en donde fueron pausados, por lo que si por ejemplo se pausa el juego a 1 segundo de que un Chef termine su bocadillo, al reanudar este empezará desde el segundo 0. Así mismo con todos los otros timers. Intenté solucionarlo pero al parecer era un problema frecuente de usuarios de Qt (el metodo stop pausa el reloj, y el único método de esa clase para reanudarlo es start(), el cual lo inicia desde 0) con QTimers y no tuve tiempo de inventar una solución.
+
+	* **Ventana de post-ronda**: El resumen del juego funciona bien (a pesar de que el diseño sea horrible), y las opciones de continuar, guardar y salir funcionan correctamente.
+
+
+
 
 ## Ejecución :computer:
-El módulo principal de la tarea a ejecutar es  ```archivo.py```. Además se debe crear los siguientes archivos y directorios adicionales:
-1. ```archivo.ext``` en ```ubicación```
-2. ```directorio``` en ```ubicación```
-3. ...
+El módulo principal de la tarea a ejecutar es  ```main.py```. Además se debe crear los siguientes archivos y directorios adicionales:
+1. ```sprites``` en el mismo directorio que ```main.py```, ahí van las carpetas de sprites ```bocadillos```, ```chef```, ```clientes```, ```mapa```, ```mesero```. (```bonus```y ```otros``` no son necesarios)
+2. ```datos.csv``` en el mismo directorio que main.py
+3. ```mapa.csv``` en el mismo directorio de main.py
 
 
 ## Librerías :books:
 ### Librerías externas utilizadas
 La lista de librerías externas que utilicé fue la siguiente:
 
-1. ```librería_1```: ```función() / módulo```
-2. ```librería_2```: ```función() / módulo``` (debe instalarse)
-3. ...
+1. ```PyQt5``` con los modulos ```QtCore```, ```QtWidgets``` y ```QtGui```
+2. ```sys``` y ```os```
 
 ### Librerías propias
-Por otro lado, los módulos que fueron creados fueron los siguientes:
+Por otro lado, los módulos que fueron creados los siguientes:
 
-1. ```librería_1```: Contiene a ```ClaseA```, ```ClaseB```, (ser general, tampoco es necesario especificar cada una)...
-2. ```librería_2```: Hecha para <insertar descripción **breve** de lo que hace o qué contiene>
-3. ...
+1. ```utils_backend.py```: Contiene a ```DCCafe```
+2. ```reloj.py```: contiene a ```Reloj```, la clase que administra todos los QTimers en el backend y ```ChefTimer``` que hereda de ```QObject```y es ocupada como temporizador para los chefs al cocinar.
+3. ```backend.py``` procesos de lógica
+4. ```inicio.py``` con la clase de la ventana inicial
+5. ```resumen.py```con la clase de la ventana de post ronda
+6. ```utils_front.py```con la clase ```DragLabel``` usada para poder hacer Drag and Drop, la clase ```Miuenzo```, la clase ```Chef```, la clase ```Mesa```, la clase ```Cliente``` y la clase incompleta ```Bocadillo```.
+7. ```ventana_juego.py``` Ventana de la etapa de pre-ronda y ronda, con el QWidget del mapa, de la tienda y la ventana de estadisticas.
+8. ```controller.py``` con la clase ```Controller.py```usada para conectar las señales y administrar los procesos de cambio de ventana
+9. ```main.py```modulo ejecutable
 
-## Supuestos y consideraciones adicionales :thinking:
-Los supuestos que realicé durante la tarea son los siguientes:
-
-1. <Descripción/consideración 1 y justificación del por qué es válido/a>
-2. <Descripción/consideración 2 y justificación del por qué es válido/a>
-3. ...
-
-PD: <una última consideración (de ser necesaria) o comentario hecho anteriormente que se quiera **recalcar**>
-
-
--------
-
-
-
-**EXTRA:** si van a explicar qué hace específicamente un método, no lo coloquen en el README mismo. Pueden hacerlo directamente comentando el método en su archivo. Por ejemplo:
-
-```python
-class Corrector:
-
-    def __init__(self):
-          pass
-
-    # Este método coloca un 6 en las tareas que recibe
-    def corregir(self, tarea):
-        tarea.nota  = 6
-        return tarea
-```
-
-Si quieren ser más formales, pueden usar alguna convención de documentación. Google tiene la suya, Python tiene otra y hay muchas más. La de Python es la [PEP287, conocida como reST](https://www.python.org/dev/peps/pep-0287/). Lo más básico es documentar así:
-
-```python
-def funcion(argumento):
-    """
-    Mi función hace X con el argumento
-    """
-    return argumento_modificado
-```
-Lo importante es que expliquen qué hace la función y que si saben que alguna parte puede quedar complicada de entender o tienen alguna función mágica usen los comentarios/documentación para que el ayudante entienda sus intenciones.
-
-## Referencias de código externo :book:
-
-Para realizar mi tarea saqué código de:
-1. \<link de código>: este hace \<lo que hace> y está implementado en el archivo <nombre.py> en las líneas <número de líneas> y hace <explicación breve de que hace>
-
-
-
-## Descuentos
-La guía de descuentos se encuentra [link](https://github.com/IIC2233/syllabus/blob/master/Tareas/Descuentos.md).
-
-
-## Preguntas:
-
-- Para implementar el movimiento de miuenzo, lo que hice fue en una funcion revisar si el estado de las teclas es True (presionada), y mientras la tecla no se suelte enviar una senal con el estado de las teclas (para saber en que direccion mover a miuenzo) la posicion de miuenzo (para saber si colisiona con algo), y todos los objetos del mapa para saber que clase son (chef, meson), y que instancia en especifico (cual de todos los chefs por ej.) y la senal que envio de vuelta desde el backend tambien contiene el mismo objeto. Mi pregunta es si envio el objeto en la senal, python guarda como una "referencia" al objeto, y en caso de querer acceder a sus atributos este va y busca el objeto en la memoria, o en cambio al enviar esas senales estoy haciendo al computador procesar todos los atributos de este (que en el caso del juego son no menores, por ejemplo los pixeles de la imagen asociada) por cada objeto y senal que envio 🤔
-
-mi pregunta es si esta manera califica como "buena" o es en si super poco eficiente, porque en caso de ser esto ultimo, entonces lo logico seria mejor crear un ID y un atributo ```tipo = "chef"``` en cada instancia, y manejar esos en las senales para identificar a los objetos?
-
-update: por lo que estuve revisando, cuando imprimo el objeto que envio en la senal sale esto:
-<frontend.utils_front.Mesa object at 0x10a3da798>, lo cual se me hace que es una referencia al objeto que en terminos de performance equivaldria a mandar una variable? en ese caso, no deberia haber mucha diferencia en ambas implementaciones?
+### Errores cometidos :(
+* LLegó un momento en que pasaba harto tiempo solamente en entender cómo implementé algunos procesos, y cuando ya iba más avanzado se volvió significativamente más complejo seguir implementando nuevos mecanismos. Intenté mantener el backend separado del frontend, pero no sabía si era buena práctica usar un montón de señales (pues había veces que el frontend debía mandar una señal al backend, luego este mandar otra al front end, y solo para un proceso como apretar un botón necesitaba 3 funciones distintas y las señales correspondientes, haciendo bastante confuso el orden de eventos al día siguiente cuando leo mi código), o tratar de reutilizar señales y funciones pero en ese caso se volvía mas compleja cada función y señal. También al haber tantas funciones se me olvidaba el orden en que ocurrían y debía estar un buen tiempo solo entendiendo en que orden ocurrían los eventos y qué señales iban con qué funciones. Todo tip/comentario respecto a como hacer este tipo de programas mas escalables es bienvenido (también no ayudó que no sabia ocupar Qt al iniciar la tarea, por lo que tener un modelo mental de cómo iba a programar el juego era dificil, pero quizas teniendo buenas prácticas en terminos de arquitectura hubiera ayudado bastante).

@@ -4,6 +4,7 @@ from frontend.inicio import VentanaInicio
 from frontend.ventanajuego import VentanaJuego, VentanaMapa
 from frontend.resumen import VentanaResumen
 from backend.backend import Logica
+import sys
 
 class Controller:
 
@@ -71,8 +72,9 @@ class Controller:
         self.ventana_juego.estadisticas.actualizar_dinero(dinero)
 
     def salir_juego(self):
-        self.ventana_juego.deleteLater()
-        self.ventana_inicio.deleteLater()
+        sys.exit()
+        # self.ventana_juego.deleteLater()
+        # self.ventana_inicio.deleteLater()
 
     def continuar_ronda(self):
         self.ventana_juego.setEnabled(True)
