@@ -7,7 +7,7 @@ from PARAMETROS import (
     VEL_MOVIMIENTO, TIMER_INTERVAL, PLATOS_EXPERTO, PLATOS_INTERMEDIO,
     TIEMPO_ESPERA_APURADO, TIEMPO_ESPERA_RELAJADO
 )
-from random import randint
+from random import randint, choice
 import os
 
 # implementacion simple de un QLabel que se puede dragear
@@ -269,7 +269,7 @@ class Cliente(QLabel):
         super().__init__(parent)
         # estados: normal (0), enojado (1), feliz (2)
         self.estado = 0 # normal
-        self.tipo = 'apurado' '''sacar hardcode'''
+        self.tipo = choice(['apurado', 'relajado'])
         self.initUI()
 
     def cargar_pixmaps(self):
