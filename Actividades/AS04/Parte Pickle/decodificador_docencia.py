@@ -9,14 +9,13 @@ class EquipoDocencia:
 
     # Aquí se filtra la lista del objeto al deserializarlo
     def __setstate__(self, estado):
-        # Completar
+        self.ayudantes_normales = []
+        self.ayudante_jefe = None
         for ayudante in estado['ayudantes_normales']:
             if ayudante.cargo == 'Jefe':
-                estado.update({'ayudante_jefe': ayudante})
+                self.ayudante_jefe = ayudante
             else:
-                estado.update(['ayudantes_normales'].append(ayudante))
-        self.__dict__ = estado
-
+                self.ayudantes_normales.append(ayudante)
 
 # Aquí se carga la instancia de EquipoDocencia
 def cargar_instancia(ruta):
