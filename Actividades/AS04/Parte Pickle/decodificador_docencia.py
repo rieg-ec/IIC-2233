@@ -53,5 +53,7 @@ class AyudanteJefe(Ayudante):
 # Aquí se guarda instancia de EquipoDocencia
 def guardar_instancia(ruta, instancia_equipo_docencia):
     # Completar
-
-    pass
+    with open(ruta, 'wb') as file:
+        serializado = pickle.dumps(instancia_equipo_docencia)
+        file.write(bytes(serializado))
+    return True
