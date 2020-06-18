@@ -31,7 +31,7 @@ class Servidor:
 
         # Si se implementa el método conectar_varios_clientes, cambiar este
         # valor a False para recibir múltiples clientes.
-        self.un_cliente = True
+        self.un_cliente = False
 
         # El servidor verifica automáticamente si se aceptará uno o
         # varios clientes y ejecuta la función correspondiente en un Thread.
@@ -143,8 +143,18 @@ class Servidor:
         Este método solo se usa en el caso de múltiples clientes.
         """
         # ============================= COMPLETAR =============================
-
-        pass
+        cliente_id = 0
+        while True:
+            socket_cliente, _ = self.socket_server.accept()
+            if socket_cliente:
+                id = cliente_id
+                self.sockets_clientes[id] = socket_cliente
+                cliente_id += 1
+                print(f'connexion con {socket_cliente}')
+                thread = threading.Thread(
+                    target=self.escuchar_cliente,
+                    daemon=True, args=(socket_cliente, id))
+                thread.start()
 
         # =====================================================================
 
