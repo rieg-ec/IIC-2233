@@ -86,7 +86,7 @@ class Servidor:
                     if 'pintar' in dict_response['comando']:
                         self.canvas.pintar_pixel(dict_response)
                         respuesta = self.canvas.obtener_tablero()
-                        self.enviar(socket_cliente, respuesta)
+                        self.enviar_respuesta(socket_cliente, respuesta)
                     elif 'cerrar' in dict_response['comando']:
                         break
 
@@ -168,6 +168,7 @@ class Servidor:
         ids_cliente = list(self.sockets_clientes.keys())
         for id_cliente in ids_cliente:
             try:
+                print('enviando a todos')
                 self.enviar(self.sockets_clientes[id_cliente], mensaje)
             except ConnectionResetError:
                 print(f"El cliente {id_cliente} ha sido desconectado! (enviar_a_todos)")
