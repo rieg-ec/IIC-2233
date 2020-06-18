@@ -168,7 +168,6 @@ class Servidor:
         ids_cliente = list(self.sockets_clientes.keys())
         for id_cliente in ids_cliente:
             try:
-                print('enviando a todos')
                 self.enviar(self.sockets_clientes[id_cliente], mensaje)
             except ConnectionResetError:
                 print(f"El cliente {id_cliente} ha sido desconectado! (enviar_a_todos)")
