@@ -40,10 +40,11 @@ class Logic(QObject):
             """
             player = args.pop(0)
             # signal connected to window_room.show()
+            # send already connected player so the window can show them
             self.username_valid_signal.emit(player, args)
 
         elif key == 'INVALID_USERNAME' or key == 'FULL':
-            ''' TO-DO: split into 2 cases ''' 
+            # TODO: split into 2 cases
             self.username_invalid_signal.emit()
 
         elif 'NEW_PLAYER' in message:

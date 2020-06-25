@@ -16,7 +16,7 @@ class Server:
         self.socket_server.bind((self.host, self.port))
         self.socket_server.listen()
         self.accept_connections()
-        self.clients = defaultdict(None)
+        self.players = defaultdict(None) # validated users
         self.parameters = parameters
         # =========== LOG ===========
         sep = ' ' * 6
@@ -65,18 +65,14 @@ class Server:
             else:
                 break
 
-        with self.lock: # acquire a lock to read/write to self.clients
-            if client_socket in self.clients:
-                # if not in self.clients means user hasn't authenticated
+        with self.lock: # acquire a lock to read/write to self.players
+            if client_socket in self.players:
+                # if not in self.players means user hasn't authenticated
                 # in login window
-                user = self.clients[client_socket]
-                command = "USER_LEFT"
-                msg_to_all = {"USER_LEFT": user}
-                del self.clients[client_socket]
-
+                user = self.players[client_socket]
+                msg_to_all = {"PLAYER_LEFT": user}
+                del self.players[client_socket]
                 self.send_to_all(msg_to_all)
-            else:
-                command = user = None
 
         client_socket.close()
 
@@ -96,29 +92,14 @@ class Server:
         print('{:<15s} {:^15s} {:>15s}'.format(
             'server', 'send', json.dumps(msg)))
 
-    def send_to_all(self, msg, to_players=False):
+    def send_to_all(self, msg):
         """
-        Method to send a message to all clients connected or only
-        to clients that are playing, depending on to_players argument
+        Method to send a message to all players connected or only
+        to players that are playing, depending on to_players argument
         """
-        with self.lock: # acquire lock to read/write to self.clients
-            if not to_players:
-                for client in self.clients:
-                    try:
-                        self.send(msg, client)
-                    except ConnectionError:
-                        del self.clients[client]
-                        command = {"USER_LEFT": client}
-                        self.send_to_all(command)
-            else:
-                for player in self.players:
-                    try:
-                        self.send(msg, player)
-                    except ConnectionError:
-                        del self.players[player]
-                        del self.clients[player] # remove from clients also
-                        command = {"USER_LEFT": client}
-                        self.send_to_all(command)
+        with self.lock: # acquire lock to read/write to self.players
+            for player in self.players:
+                self.send(msg, player)
 
     def send_cards(self):
         """
@@ -131,34 +112,34 @@ class Server:
         check if username is valid:
         1. if room is not full,
         2. if name is not used,
-        then join socket to self.clients with username as value and
+        then join socket to self.players with username as value and
         socket as key, and send NEW_USER: username command to existing players
         """
         # room is not full:
-        with self.lock: # acquire a lock to read/write to self.clients
-            if len(self.clients) >= self.parameters['clients']:
+        with self.lock: # acquire a lock to read/write to self.players
+            if len(self.players) >= self.parameters['players']:
                 response = {"FULL": None}
-            elif username in [i for i in self.clients.values()]:
+            elif username in [i for i in self.players.values()]:
                 response = {"INVALID_USERNAME": username}
             else:
                 # send the player in the first element and the rest of existing
                 # players in subsequent elements
-                opponents = [i for i in self.clients.values()]
+                opponents = [i for i in self.players.values()]
                 response = {"VALID_USERNAME": [username, *opponents]}
-                # update existing clients about new player:
+                # update existing players about new player:
                 update = {"NEW_PLAYER": username}
                 self.send_to_all(update)
                 # append new player to existing players
-                self.clients[client_socket] = username
+                self.players[client_socket] = username
                 # check if room is complete
-                if len(self.clients) == self.parameters['clients']:
+                if len(self.players) == self.parameters['players']:
                     # notify new user about valid username:
                     self.send(response, client_socket)
                     # send START command to everyone
                     start = {"START": None}
                     self.send_to_all(start)
                     return # break
-        self.send(response, client_socket)
+            self.send(response, client_socket)
 
         def start_game(self):
             """
@@ -168,15 +149,7 @@ class Server:
                 dict[socket] = {'name': name,
                                 'cards': [card_1, card_2.. card_n]}
             """
-            command = {"START": None}
-            self.players = dict()
-            for client in self.clients:
-                self.players[client] = {
-                    'name': self.clients[client],
-                    'cards': ['ace_1', 'spades_2']
-                    }
-
-
+            pass
 
 
 if __name__ == '__main__':
