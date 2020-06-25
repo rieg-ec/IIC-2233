@@ -38,10 +38,12 @@ class Logic(QObject):
             username_valid_signal is connected to room_window.show()
             and login_window.close()
             """
-            player = args.pop(0)
+            self.name = args.pop(0) # store our name
+            self.opponents = {name: None for name in args} # store opponents
+                                                        # names and number of cards
             # signal connected to window_room.show()
             # send already connected player so the window can show them
-            self.username_valid_signal.emit(player, args)
+            self.username_valid_signal.emit(self.name, args)
 
         elif key == 'INVALID_USERNAME' or key == 'FULL':
             # TODO: split into 2 cases
@@ -49,6 +51,8 @@ class Logic(QObject):
 
         elif 'NEW_PLAYER' in message:
             self.new_player_signal.emit(args, True)
+            self.opponents[args] = None # store new opponent name
+
         elif 'PLAYER_LEFT' in message:
             self.new_player_signal.emit(args, False)
 
