@@ -44,37 +44,42 @@ class Server:
         One thread per client constantly listening.
         message will always be a json with the key 'command'
         """
-        while True:
-            # first 5 bytes are response length
-            request_bytes_length = client_socket.recv(5)
-            request_length = int.from_bytes(
-                request_bytes_length, byteorder='big')
-            request = bytearray()
-            # the rest of bytes are the response in json
-            while len(request) < request_length:
-                read_length = min(4096, request_length - len(request))
-                request.extend(client_socket.recv(read_length))
+        try:
+            while True:
+                # first 5 bytes are response length
+                request_bytes_length = client_socket.recv(5)
+                request_length = int.from_bytes(
+                    request_bytes_length, byteorder='big')
+                request = bytearray()
+                # the rest of bytes are the response in json
+                while len(request) < request_length:
+                    read_length = min(4096, request_length - len(request))
+                    request.extend(client_socket.recv(read_length))
 
-            if request != b'':
-                data = request.decode('utf-8')
-                # ================ LOG ================
-                print('{:<15s} {:^15s} {:>15s}'.format(
-                    'client', 'send', data))
-                # ================ END ================
-                self.process_request(data, client_socket)
-            else:
-                break
+                if request != b'':
+                    data = request.decode('utf-8')
+                    # ================ LOG ================
+                    print('{:<15s} {:^15s} {:>15s}'.format(
+                        'client', 'send', data))
+                    # ================ END ================
+                    self.process_request(data, client_socket)
+                else:
+                    break
 
-        with self.lock: # acquire a lock to read/write to self.players
-            if client_socket in self.players:
-                # if not in self.players means user hasn't authenticated
-                # in login window
-                user = self.players[client_socket]
-                msg_to_all = {"PLAYER_LEFT": user}
-                del self.players[client_socket]
-                self.send_to_all(msg_to_all)
+        except (ConnectionError, BrokenPipeError):
+            # ============== LOG ==============
+            print('{:<15s} {:^15s} {:>15s}'.format(
+                'server', 'send ', 'error'))
+            # ============== LOG ==============
 
-        client_socket.close()
+        finally:
+            with self.lock: # acquire a lock to read/write to self.players
+                if client_socket in self.players:
+                    user = self.players[client_socket]
+                    msg_to_all = {"PLAYER_LEFT": user}
+                    del self.players[client_socket]
+                    self.send_to_all(msg_to_all)
+                client_socket.close()
 
     def process_request(self, request, client_socket):
         dict_request = json.loads(request)
@@ -83,14 +88,25 @@ class Server:
             self.check_username(client_socket,
                 dict_request['CHECK_USERNAME'])
 
+        elif 'CHAT_MESSAGE' in dict_request:
+            # TODO: use CHAT_MESSAGE command to display players actions in
+            # game chat
+            response = {
+                "CHAT_MESSAGE": [
+                    self.players[client_socket], # author
+                    dict_request["CHAT_MESSAGE"] # message
+                ]}
+            self.send_to_all(response)
 
     def send(self, msg, client_socket):
         msg_bytes = json.dumps(msg).encode('utf-8')
         msg_length = len(msg_bytes).to_bytes(5, byteorder='big')
         client_socket.sendall(msg_length + msg_bytes)
+
         # ============== LOG ==============
         print('{:<15s} {:^15s} {:>15s}'.format(
             'server', 'send', json.dumps(msg)))
+        # ============== LOG ==============
 
     def send_to_all(self, msg):
         """
@@ -136,6 +152,10 @@ class Server:
                     # notify new user about valid username:
                     self.send(response, client_socket)
                     # send START command to everyone
+                    # TODO: transform below command to a function that
+                    # sends START command to each player with its corresponding
+                    # face up cards, plus each opponent number of face down
+                    # cards and the face down card sprite
                     start = {"START": None}
                     self.send_to_all(start)
                     return # break

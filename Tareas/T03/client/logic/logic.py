@@ -11,6 +11,8 @@ class Logic(QObject):
     new_player_signal = pyqtSignal(str, bool)
     # all players joined:
     start_game_signal = pyqtSignal()
+    # chat signal: author, message
+    chat_message_signal = pyqtSignal(str, str)
 
     def __init__(self, parameters):
         super().__init__()
@@ -24,6 +26,11 @@ class Logic(QObject):
 
     def check_username(self, name):
         message = {"CHECK_USERNAME": name}
+        self.client.send(message)
+
+    def send_chat_message(self, chat_message):
+        """ Sends a chat message to the server """
+        message = {"CHAT_MESSAGE": chat_message}
         self.client.send(message)
 
     def server_message(self, message):
@@ -49,12 +56,16 @@ class Logic(QObject):
             # TODO: split into 2 cases
             self.username_invalid_signal.emit()
 
-        elif 'NEW_PLAYER' in message:
+        elif key == 'NEW_PLAYER':
             self.new_player_signal.emit(args, True)
             self.opponents[args] = None # store new opponent name
 
-        elif 'PLAYER_LEFT' in message:
+        elif key == 'PLAYER_LEFT':
             self.new_player_signal.emit(args, False)
 
-        elif 'START' in message:
+        elif key == 'START':
             self.start_game_signal.emit()
+
+        elif key == 'CHAT_MESSAGE':
+            author, message = args
+            self.chat_message_signal.emit(author, message)

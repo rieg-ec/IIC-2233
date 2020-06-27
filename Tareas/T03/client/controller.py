@@ -45,3 +45,7 @@ class Controller:
         # connect signal to show() and close()
         self.logic.start_game_signal.connect(
             self.game_window.show)
+        self.game_window.text_signal.connect(
+            self.logic.send_chat_message)
+        self.logic.chat_message_signal.connect(
+            self.game_window.receive_message)
