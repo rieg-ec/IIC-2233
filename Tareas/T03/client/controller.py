@@ -49,3 +49,13 @@ class Controller:
             self.logic.send_chat_message)
         self.logic.chat_message_signal.connect(
             self.game_window.receive_message)
+        self.logic.player_turn_signal.connect(
+            self.game_window.change_turn)
+        self.logic.face_down_sprite_signal.connect(
+            self.game_window.store_facedown_sprite)
+        self.logic.opponent_card_signal.connect(
+            self.game_window.update_opponent_hand)
+        self.logic.discard_pile_signal.connect(
+            self.game_window.update_discard_pile)
+        self.logic.hand_card_signal.connect(
+            self.game_window.update_player_card)
