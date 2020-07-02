@@ -21,8 +21,18 @@ class Logic(QObject):
     face_down_sprite_signal = pyqtSignal(bytearray)
     # update hand signal:
     hand_card_signal = pyqtSignal(bytearray, tuple)
+    # remove a hand card signal:
+    remove_hand_signal = pyqtSignal(int)
     # update discard pile signal:
-    discard_pile_signal = pyqtSignal(bytearray)
+    discard_pile_signal = pyqtSignal(bytearray, tuple)
+    # choose color signal:
+    choose_color_signal = pyqtSignal(int)
+    # signal when player looses:
+    lost_signal = pyqtSignal()
+    # signal when an opponent looses:
+    opponent_lost_signal = pyqtSignal(str)
+    # signal when game ends:
+    end_game_signal = pyqtSignal(str) # winner as argument
 
     def __init__(self, parameters):
         super().__init__()
@@ -44,6 +54,18 @@ class Logic(QObject):
         message = {"CHAT_MESSAGE": chat_message}
         self.client.send(message)
 
+    def play_card(self, id, card_tuple):
+        message = {"PLAY_CARD": [id, card_tuple]}
+        self.client.send(message)
+
+    def draw_card(self):
+        message = {"DRAW_CARD": None}
+        self.client.send(message)
+
+    def shout_dccuatro(self):
+        message = {"SHOUT_DCCUATRO": None}
+        self.client.send(message)
+
     def server_message(self, message):
         """
         This method handles the commands sent from the server
@@ -63,6 +85,7 @@ class Logic(QObject):
 
         elif key == 'INVALID_USERNAME' or key == 'FULL':
             # TODO: split into 2 cases
+            # TODO: notify user about what happened
             self.username_invalid_signal.emit()
 
         elif key == 'NEW_PLAYER':
@@ -87,13 +110,22 @@ class Logic(QObject):
             # True means gained, False means lost
             self.opponent_card_signal.emit(args[0], args[1]) # args = [opponent, bool]
 
-        elif key == 'VALID_CARD':
-            # TODO: args is the card tuple
-            pass
-
         elif key == 'PLAYER_CARD':
-            # TODO: deserialize bytearray
-            pass
+            # sent to remove card from hand
+            self.remove_hand_signal.emit(args) # card id
+
+        elif key == 'CHOOSE_COLOR':
+            card_id = args
+            self.choose_color_signal.emit(card_id)
+
+        elif key == 'LOST':
+            self.lost_signal.emit()
+
+        elif key == 'OPPONENT_LOST':
+            self.opponent_lost_signal.emit(args)
+
+        elif key == 'END':
+            self.end_game_signal.emit(args)
 
     def server_image(self, list_):
         destination, card_tuple, sprite = list_
@@ -101,6 +133,6 @@ class Logic(QObject):
         if destination == '0':
             self.hand_card_signal.emit(sprite, card_tuple)
         elif destination == '1':
-            self.discard_pile_signal.emit(sprite)
+            self.discard_pile_signal.emit(sprite, card_tuple)
         elif destination == '2':
             self.face_down_sprite_signal.emit(sprite)

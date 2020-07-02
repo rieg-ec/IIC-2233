@@ -1,6 +1,7 @@
 from server import Server
-from utils import json_hook
 import json
+from utils import json_hook
+
 
 if __name__ == '__main__':
     with open('parameters.json', 'r') as file:

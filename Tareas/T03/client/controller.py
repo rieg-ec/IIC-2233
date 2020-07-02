@@ -43,19 +43,25 @@ class Controller:
     def connect_game(self):
         self.game_window = GameWindow(self.parameters)
         # connect signal to show() and close()
-        self.logic.start_game_signal.connect(
-            self.game_window.show)
-        self.game_window.text_signal.connect(
-            self.logic.send_chat_message)
-        self.logic.chat_message_signal.connect(
-            self.game_window.receive_message)
-        self.logic.player_turn_signal.connect(
-            self.game_window.change_turn)
+        self.logic.start_game_signal.connect(self.game_window.show)
+        self.game_window.text_signal.connect(self.logic.send_chat_message)
+        self.logic.chat_message_signal.connect(self.game_window.receive_message)
+        self.logic.player_turn_signal.connect(self.game_window.change_turn)
         self.logic.face_down_sprite_signal.connect(
             self.game_window.store_facedown_sprite)
         self.logic.opponent_card_signal.connect(
             self.game_window.update_opponent_hand)
         self.logic.discard_pile_signal.connect(
             self.game_window.update_discard_pile)
-        self.logic.hand_card_signal.connect(
-            self.game_window.update_player_card)
+        self.logic.hand_card_signal.connect(self.game_window.update_player_card)
+        self.game_window.play_card_signal.connect(self.logic.play_card)
+        self.game_window.draw_card_signal.connect(self.logic.draw_card)
+        self.game_window.shout_signal.connect(self.logic.shout_dccuatro)
+        self.logic.remove_hand_signal.connect(
+            self.game_window.remove_player_card)
+        self.logic.choose_color_signal.connect(
+            self.game_window.choose_color_popup)
+        self.logic.lost_signal.connect(self.game_window.loose)
+        self.logic.opponent_lost_signal.connect(self.game_window.opponent_lost)
+        self.logic.end_game_signal.connect(self.game_window.end_game)
+        self.game_window.back_to_login_signal.connect(self.login_window.show)

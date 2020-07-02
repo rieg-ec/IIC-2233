@@ -63,7 +63,7 @@ class RoomWindow(QWidget):
             self.players_labels[name] = QLabel(name, self)
             self.players_vbox.addWidget(self.players_labels[name])
         else:
-            self.players_vbox.removeWidget(self.players_labels[name])
+            self.players_labels[name].deleteLater()
 
     def room_full(self):
         """

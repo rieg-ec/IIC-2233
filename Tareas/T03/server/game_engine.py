@@ -4,10 +4,6 @@ from random import shuffle, choice
 from utils import json_hook
 import json
 
-# TODO: try to improve play_card method to be more readable and efficient
-
-
-
 class GameEngine:
 
     class Player:
@@ -38,7 +34,7 @@ class GameEngine:
     @turn.setter
     def turn(self, value):
         self.__turn = value
-        if self.__turn > len(self.players):
+        if self.__turn > len(self.players) - 1:
             self.__turn = 0
         elif self.__turn < 0:
             self.__turn = len(self.players) - 1
@@ -57,12 +53,14 @@ class GameEngine:
         self.deck = generate_deck(self.parameters['deck_size'])
         for player in self.players:
             for _ in range(self.parameters['initial_hand']):
-                card = self.deck.pop(0)
+                card_tuple = self.deck.pop(0)
                 # TODO: draw regular cards until ther is 1 regular left
-                player.cards.append(card)
+                player.cards.append(card_tuple)
 
-        self.discard_pile = choice([i for i in self.deck if i[0]
-                        not in ('color', '+2', 'sentido')])
+        self.discard_pile = self.deck.pop(0)
+        while self.discard_pile[0] in ['color', '+2', 'sentido']:
+            self.discard_pile = self.deck.pop(0)
+
         self.accumulated_draw = 0
         self.game_active = True
 
@@ -71,37 +69,40 @@ class GameEngine:
             return True
         return False
 
-    def valid_card(self, card, player):
+    def valid_card(self, card_tuple, player):
         """
-        Checking just the card is not enough as sometimes the card itself is
-        valid but the player cannot play it even if valid_turn returns True,
-        e.g. when last player played a +2 card and current player wants to
-        play something else than +2
+        returns True if the player can play the card
         """
         if self.valid_turn(player):
-            if not card[0] == '+2':
-                if self.players[self.turn].must_draw:
+            if not card_tuple[0] == '+2':
+                if self.players[self.turn].must_pass:
                     return False
-            if card[0] == self.discard_pile[0] or card[0] == 'color':
+
+            if card_tuple[0] == '+2' and self.players[self.turn].must_draw:
+                # has already started drawing, cannot play anything
+                return False
+
+            if card_tuple[0] == self.discard_pile[0] or card_tuple[0] == 'color':
                 # same type of card or special color card
                 return True
-            elif card[1] == self.discard_pile[1]:
+            elif card_tuple[1] == self.discard_pile[1]:
                 # same color of card
                 return True
         return False
 
-    def play_card(self, card, player):
+    def play_card(self, card_tuple, player):
         # minimum conditions:
-        if self.valid_card(card, player):
-            if card[0] == '+2' and not self.players[self.turn].must_draw:
+        if self.valid_card(card_tuple, player):
+            if card_tuple[0] == '+2' and not self.players[self.turn].must_draw:
                 # * if must_draw is set to True, it means the player has
                 # already draw 1 card and cannot play a card
                 self.deck.append(self.discard_pile)
-                self.discard_pile = card
-                self.players[self.turn].cards.remove(card)
+                self.discard_pile = card_tuple
+                self.players[self.turn].cards.remove(card_tuple)
 
                 if not self.players[self.turn].cards:
                     self.game_active = False
+                    self.winner = player
 
                 self.accumulated_draw += 2
                 self.players[self.turn].end_turn()
@@ -112,10 +113,10 @@ class GameEngine:
 
             elif not self.players[self.turn].must_pass:
                 self.deck.append(self.discard_pile)
-                self.discard_pile = card
-                if card[0] == 'sentido':
+                self.discard_pile = card_tuple
+                if card_tuple[0] == 'sentido':
                     self.direction *= -1
-                elif card[0] == 'color':
+                elif card_tuple[0] == 'color':
                     # since after playing a color change card the user changes
                     # its color, remove(card) throws valueError, the fix is
                     # to just remove a random color card from his hand since
@@ -123,74 +124,87 @@ class GameEngine:
                     # as the user will change it anyway
                     color_cards = [i for i in self.players[self.turn].cards
                                     if i[0] == 'color']
-                    color_card = choice(color_cards)
+                    color_card = color_cards.pop(0)
                     self.players[self.turn].cards.remove(color_card)
                     if not self.players[self.turn].cards:
                         self.game_active = False
+                        self.winner = player
                     self.players[self.turn].end_turn()
                     self.turn += self.direction
                     return True
-                self.players[self.turn].cards.remove(card)
+                self.players[self.turn].cards.remove(card_tuple)
                 if not self.players[self.turn].cards:
                     self.game_active = False
+                    self.winner = player
+
                 self.players[self.turn].end_turn()
                 self.turn += self.direction
                 return True
 
         return False
 
-    def draw(self, player):
+    def draw_card(self, player):
         """
         Implements validations for all posible cases, which in a case being
-        valid then calls the draw_card function which asssumes the drawing
+        valid then calls the draw function which asssumes the drawing
         is valid
         """
         if self.valid_turn(player):
-            if self.accumulated_draw:
+            if self.accumulated_draw > 0:
                 # if accumulated_draw != 0 means last card was +2,
                 # in which case if player starts drawing he cannot play +2 again:
                 self.players[self.turn].must_draw = True
-                card = self.draw_card(player)
+                card_tuple = self.draw(player)
                 self.accumulated_draw -= 1
+
                 if not self.is_playing(player):
-                    # player lost, accumulated_draw must reset to 0
+                    # player lost when drawing, accumulated_draw must reset to 0
                     self.accumulated_draw = 0
-                    return card
+                    return card_tuple
+
                 if self.accumulated_draw == 0:
                     self.players[self.turn].end_turn()
                     self.turn += self.direction
-                return card
+
+                return card_tuple
 
             else:
                 # player is drawing for the first time in its turn, therefore
                 # must draw 1 and pass
-                card = self.draw_card(player)
+                card_tuple = self.draw(player)
                 if self.is_playing(player):
                     self.players[self.turn].end_turn()
                     self.turn += self.direction
-                return card
+
+                return card_tuple
 
         return False
 
-    def draw_card(self, player):
+    def draw(self, player_name):
         """
         Assuming the draw is valid, draws a card and checks if
         player looses in which case it is removed from self.players
         """
-        card = self.deck.pop(0)
-        self.players[self.turn].cards.append(card)
-        if len(self.players[self.turn].cards) >\
+        card_tuple = self.deck.pop(0)
+        for p in self.players:
+            if p.name == player_name:
+                player = p
+
+        player.cards.append(card_tuple)
+        if len(player.cards) >\
                 self.parameters['card_limit']:
-            del self.players[self.turn]
+            self.players.remove(player)
             # if turn direction is to the left, turn index currently
             # returns the player on the right, fix is to substract 1
             if len(self.players) == 1:
                 self.game_active = False
+                self.winner = self.players[0].name
+
             elif self.direction == -1:
                 self.turn -= 1
-        return card
+        return card_tuple
 
-    def shout_dccuatro(self, player):
+    def shout_dccuatro(self, player_name):
         """
         possible cases:
         player A has 1 card and shouts DCCuatro:
@@ -206,31 +220,49 @@ class GameEngine:
         This method validates shouting DCCuatro and returns False if no one
         has to draw otherwise returns (player name, drawed cards)
         """
-        if player in self.players: # inactive players cannot use this mechanic
-            player_idx = self.players.index(player)
-            if len(self.players[player_idx].cards) == 1:
-                if not self.players[player_idx].shouted:
-                    self.players[player_idx].shouted = True # case (1)
-                    return False # no one drawed anything
+        names = [i.name for i in self.players]
+        if player_name in names:
+            # inactive players cannot use this mechanic
+            for p in self.players:
+                if p.name == player_name:
+                    player = p
+
+            if len(player.cards) == 1:
+                if not player.shouted:
+                    player.shouted = True # case (1)
+                    return False, False # no one drawed anything
 
             must_draw = True
-            for opponent in [i for i in self.players
-                if i.name != player]:
-                if len(opponent.cards) == 1 and not opponent.shouted:
-                    must_draw = False
-                    drawed_cards = [self.deck.pop(0) for _
-                        in range(self.parameters['penalty'])]
-                    opponent.cards.extend(drawed_cards)
-                    return opponent, drawed_cards # case (4)
-            if must_draw:
-                drawed_cards = [self.deck.pop(0) for _
-                    in range(self.parameters['penalty'])]
-                self.players[player_idx].cards.extend(drawed_cards)
-                return self.players[player_idx], drawed_cards
 
-        return False
+            for opponent in [i for i in self.players
+                if i.name != player_name]:
+                if len(opponent.cards) == 1 and not opponent.shouted:  # case (4)
+                    drawed_cards = []
+                    for _ in range(self.parameters['penalty']):
+                        if self.is_playing(opponent.name):
+                            drawed_card = self.draw(opponent.name)
+                            drawed_cards.append(drawed_card)
+                    return opponent.name, drawed_cards
+
+            if must_draw: # case (2) and (3)
+                drawed_cards = []
+                for _ in range(self.parameters['penalty']):
+                    if self.is_playing(player_name):
+                        drawed_card = self.draw(player_name)
+                        drawed_cards.append(drawed_card)
+                    else:
+                        self.turn += self.direction
+                        self.accumulated_draw = 0
+                        return player_name, drawed_cards
+                # if player wrong shouted in his turn, must pass:
+                if player == self.players[self.turn]:
+                    self.accumulated_draw = 0
+                    self.turn += self.direction
+                return player_name, drawed_cards
+
+        return False, False
 
     def is_playing(self, player):
-        if player in self.players:
+        if player in [i.name for i in self.players]:
             return True
         return False

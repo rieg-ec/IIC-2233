@@ -1,8 +1,6 @@
 import threading
 import socket
-import time
 import json
-from collections import defaultdict
 from game_engine import GameEngine
 from os import path
 
@@ -30,7 +28,7 @@ class Server:
         self.socket_server.bind((self.host, self.port))
         self.socket_server.listen()
         self.accept_connections()
-        self.players = defaultdict(None) # validated users
+        self.players = dict() # validated users
         self.parameters = parameters
         # =========== LOG ===========
         sep = ' ' * 6
@@ -73,8 +71,11 @@ class Server:
                 if request != b'':
                     data = request.decode('utf-8')
                     # ================ LOG ================
+                    client = 'client'
+                    if client_socket in self.players:
+                        client = self.players[client_socket]
                     print('{:<15s} {:^15s} {:>15s}'.format(
-                        'client', 'send', data))
+                        client, 'send', data))
                     # ================ END ================
                     self.process_request(data, client_socket)
                 else:
@@ -97,20 +98,31 @@ class Server:
 
     def process_request(self, request, client_socket):
         dict_request = json.loads(request)
+        key, args = *dict_request.keys(), *dict_request.values()
         with self.lock:
-            if 'CHECK_USERNAME' in dict_request:
-                self.check_username(client_socket,
-                    dict_request['CHECK_USERNAME'])
+            if key == 'CHECK_USERNAME':
+                self.check_username(client_socket, args)
 
-            elif 'CHAT_MESSAGE' in dict_request:
-                # TODO: use CHAT_MESSAGE command to display players actions in
-                # game chat
-                response = {
-                    "CHAT_MESSAGE": [
-                        self.players[client_socket], # author
-                        dict_request["CHAT_MESSAGE"] # message
-                    ]}
-                self.send_to_all(response)
+            elif key == 'CHAT_MESSAGE':
+                if client_socket in self.players:
+                    response = {
+                        "CHAT_MESSAGE": [self.players[client_socket], args]
+                        }
+                    self.send_to_all(response)
+
+            elif key == 'DRAW_CARD':
+                if client_socket in self.players:
+                    self.draw_card(client_socket)
+
+            elif key == 'PLAY_CARD':
+                if client_socket in self.players:
+                    card_id, card_tuple = args[0], tuple(args[1])
+                    self.play_card(client_socket, card_id, card_tuple)
+
+            elif key == 'SHOUT_DCCUATRO':
+                if client_socket in self.players:
+                    self.shout_dccuatro(client_socket)
+
 
     def send(self, msg, client_socket):
         prefix = '0'.encode('utf-8') # 0 means we are sending a normal message
@@ -199,10 +211,10 @@ class Server:
                     message = {"OPPONENT_CARD": [player_name, True]}
                     self.send(message, opponent_sock)
 
-    def send_card(self, card, destination, client_socket=False, folder='simple'):
-        """ can send a card to a particular socket unless no socket is
-            passed in which case sends cards to every connected socket """
-
+    def send_card(self, card_tuple, destination, client_socket=False, folder='simple'):
+        """
+        can send a card to a particular socket unless no socket is
+        passed in which case sends cards to every connected socket """
         """
         card: tuple like ('1', 'azul')
         destination: whether it belongs to discard pile or to the player hand
@@ -213,7 +225,8 @@ class Server:
         prefix = '1'.encode('utf-8') # 1 means we are sending a card
 
         dir_path = path.join('sprites', folder)
-        type, color = card
+        # color cards may have a color assigned from playing it, must ignore:
+        type, color = ('color', '') if card_tuple[0] == 'color' else card_tuple
         underscore = '' if type in ['reverso', 'color'] else '_'
         card_name = f'{type}{underscore}{color}.png'
         card_path = path.join(dir_path, card_name)
@@ -221,7 +234,21 @@ class Server:
         with open(card_path, 'rb') as file:
             image_data = file.read()
 
-        type_bytes, color_bytes = type.encode('utf-8'), color.encode('utf-8')
+        type_bytes = type.encode('utf-8')
+        """
+        when a player draws a color card, it must reset its color att. to '',
+        so the server can send a COLOR_CHANGE command if player plays that card
+        based on the att. being ''. else, if the player plays a color card with
+        an att. that is not '', it means the color was already picked,
+        in which case it must keep it.
+        """
+        if destination == '0':
+            # if it goes to the player hand, reset color to ''
+            color_bytes = color.encode('utf-8')
+        else:
+            # if it goes to the discard pile, keep color
+            color_bytes = card_tuple[1].encode('utf-8')
+
 
         type_length = len(type_bytes).to_bytes(4, byteorder='little')
         color_length = len(color_bytes).to_bytes(4, byteorder='little')
@@ -244,8 +271,131 @@ class Server:
         # ============== LOG ==============
         receiver = 'All' if not client_socket else self.players[client_socket]
         print('{:<15s} {:^20s} {:>20s}'.format(
-            'server', f'send ({receiver}): image ', f'{card}: {destination}'))
+            'server', f'send ({receiver}): image ', f'{card_tuple}: {destination}'))
         # ============== LOG ==============
+
+    def draw_card(self, client_socket):
+        """ sends drawed card and updates the game if game engine
+        returns a card, else the draw was invalid """
+
+        player = self.players[client_socket]
+        drawed_card = self.game_engine.draw_card(player)
+        if drawed_card: # returns False if draw as invalid
+            # update opponents about the draw
+            for socket, name in self.players.items():
+                if name != player:
+                    self.send({"OPPONENT_CARD": [player, True]}, socket)
+            # log action in chat:
+            self.send_to_all({"CHAT_MESSAGE": [f'{player}',
+                                                'ha robado una carta']})
+            # update turn:
+            player_turn = self.game_engine.players[self.game_engine.turn].name
+            self.send_to_all({"TURN": player_turn})
+            # send drawed card to player hand:
+            self.send_card(drawed_card, '0', client_socket=client_socket)
+            self.check_winner(player)
+
+    def play_card(self, client_socket, card_id, card_tuple):
+        """ if game engine returns True, removes card from hand and updates
+        the game """
+        player = self.players[client_socket]
+        if card_tuple == ('color', '') and\
+            self.game_engine.valid_card(card_tuple, player):
+            # player should pick a color
+            self.send({"CHOOSE_COLOR": card_id}, client_socket)
+        else:
+            if self.game_engine.play_card(card_tuple, player): # play succeed
+                # send card id so client can delete it:
+                self.send({"PLAYER_CARD": card_id}, client_socket)
+                # send command to opponents to delete an opponent card
+                for socket, name in self.players.items():
+                    if name != player:
+                        self.send({"OPPONENT_CARD": [player, False]}, socket)
+
+                chat_message = [f'{player}',
+                                f'ha jugado {card_tuple[0]} {card_tuple[1]}']
+                self.send_to_all({"CHAT_MESSAGE": chat_message})
+                # update turn:
+                player_turn = self.game_engine.players[self.game_engine.turn].name
+                self.send_to_all({"TURN": player_turn})
+                # update discard pile:
+                self.send_card(self.game_engine.discard_pile, '1')
+                # in case someone throwed +2, notify users in the chat:
+                if self.game_engine.players[self.game_engine.turn].must_pass:
+                    draws = self.game_engine.accumulated_draw
+                    chat_message = [f'{player_turn}', f'debe robar {draws} cartas']
+                    self.send_to_all({"CHAT_MESSAGE": chat_message})
+
+                self.check_winner(player)
+
+            else:
+                # ============== LOG ==============
+                print('{:<15s} {:^15s} {:>15s}'.format(
+                    'server', 'play', f'error: {player}, {card_tuple}'))
+                # ============== LOG ==============
+
+
+    def shout_dccuatro(self, client_socket):
+        """ if game engine returns False, no one had to draw,
+        else it returns the player that mistakenly shouted or
+        had to draw and the cards it drawed """
+        shouter = self.players[client_socket]
+        drawer, drawed_cards = self.game_engine.shout_dccuatro(shouter)
+        if drawed_cards:
+            for card in drawed_cards:
+                for socket, name in self.players.items():
+                    if name == drawer:
+                        self.send_card(card, '0', client_socket=socket)
+                    else:
+                        # update opponents view of player hand
+                        self.send({"OPPONENT_CARD": [drawer, True]}, socket)
+            if drawer == shouter:
+                chat_message = [
+                    f'{drawer}',
+                    f'ha robado {len(drawed_cards)} cartas por haber gritado '
+                    +'DCCuatro erroneamente'
+                ]
+            else:
+                chat_message = [
+                    f'{drawer}',
+                    f'ha robado {len(drawed_cards)} cartas por que {shouter} '
+                    +'ha gritado DCCuatro'
+                ]
+            self.send_to_all({"CHAT_MESSAGE": chat_message})
+            # update turn in case there was a change:
+            player_turn = self.game_engine.players[self.game_engine.turn].name
+            self.send_to_all({"TURN": player_turn})
+            self.check_winner(drawer)
+        else:
+            chat_message = [f'{shouter}', 'ha gritado DCCuatro']
+            self.send_to_all({"CHAT_MESSAGE": chat_message})
+
+
+
+    def check_winner(self, player):
+        """ checks if player is still playing. Also checks if game is active """
+
+        if not self.game_engine.game_active:
+            self.send_to_all({"END": self.game_engine.winner})
+            self.players = dict()
+            return
+
+        if player not in [i.name for i in self.game_engine.players]:
+            print('LOST SDFSDFSDFSDFSDFSDFSDFSDFSDFSDFSDFSD')
+
+            for socket, name in self.players.items():
+                if name == player:
+                    self.send({"LOST": None}, socket)
+                else:
+                    self.send({"OPPONENT_LOST": player}, socket)
+            self.send_to_all({"CHAT_MESSAGE": [f'{player}', 'ha perdido']})
+
+        if len(self.players) == 1:
+            _, player = *self.players.keys(), *self.players.values()
+            self.send_to_all({"END": player})
+            self.players = dict()
+            return
+
 
 
 if __name__ == '__main__':
