@@ -5,11 +5,21 @@ from PyQt5.QtWidgets import (
     QHBoxLayout, QVBoxLayout, QTextEdit, QLineEdit,
     QFrame
 )
-from PyQt5.QtGui import QPixmap
-from os import path
+from PyQt5.QtGui import QPixmap, QTransform
 from ui.utils import ColorDialog, EndGameDialog
 
+from os import path
+import sys, json
+
+sys.path.append('..')
+from client.utils import json_hook
+
+
 class GameWindow(QWidget):
+
+    with open('parameters.json', 'r') as file:
+        parameters = json.loads(file.read(), object_hook=json_hook)
+
 
     class QHLine(QFrame):
         """ Horizontal line separator """
@@ -27,10 +37,11 @@ class GameWindow(QWidget):
 
     class NamedQHBoxLayout(QHBoxLayout):
         """ Has name attribute to be identified by name """
-        def __init__(self, orientation):
+        def __init__(self, rotation):
             super().__init__()
             self.name = None
             self.cards = []
+            self.rotation = rotation
 
         def addWidget(self, widget):
             super().addWidget(widget)
@@ -44,10 +55,12 @@ class GameWindow(QWidget):
 
     class NamedQVBoxLayout(QVBoxLayout):
         """ Has name attribute to be identified by name """
-        def __init__(self, orientation):
+        def __init__(self, rotation):
             super().__init__()
             self.name = None
             self.cards = []
+            self.rotation = rotation
+
         def addWidget(self, widget):
             super().addWidget(widget)
             self.cards.append(widget)
@@ -72,6 +85,7 @@ class GameWindow(QWidget):
             self.opponent = opponent
             self.draw = draw
             self.player = player
+            self.setMinimumWidth(100)
 
         def mousePressEvent(self, e):
             """ sends a signal depending on which card it is """
@@ -96,9 +110,8 @@ class GameWindow(QWidget):
     draw_card_signal = pyqtSignal()
     back_to_login_signal = pyqtSignal()
 
-    def __init__(self, parameters):
+    def __init__(self):
         super().__init__()
-        self.parameters = parameters
         self.initUI()
 
     def initUI(self):
@@ -112,8 +125,8 @@ class GameWindow(QWidget):
         self.hand_layouts = dict()
         self.hand_layouts['top'] = self.NamedQHBoxLayout(180) # contains top opponent cards
         self.hand_layouts['self'] = self.NamedQHBoxLayout(0) # contains player cards
-        self.hand_layouts['right'] = self.NamedQVBoxLayout(90) # contains right side opponent cards
-        self.hand_layouts['left'] = self.NamedQVBoxLayout(270) # contains left side opponent cards
+        self.hand_layouts['right'] = self.NamedQVBoxLayout(270) # contains right side opponent cards
+        self.hand_layouts['left'] = self.NamedQVBoxLayout(90) # contains left side opponent cards
 
         # ========== LEFT OPPONENTS CARDS ==========
         self.hand_layouts['left'].setAlignment(Qt.AlignCenter | Qt.AlignLeft)
@@ -224,7 +237,6 @@ class GameWindow(QWidget):
         super().show()
 
     def receive_message(self, author, message):
-        # TODO: set author in bold colored text
         history = self.text_output.toPlainText()
         new = f'{author}: {message}'
         self.text_output.setPlainText(history + f'\n{new}\n')
@@ -245,13 +257,9 @@ class GameWindow(QWidget):
         """ store face down card sprite """
         self.face_down = QPixmap()
         self.face_down.loadFromData(sprite, 'PNG')
-        # TODO: assign face_down sprite to exising opponent labels
-        #        and draw pile
+
         self.draw_card_label.setPixmap(self.face_down.scaled(
             self.draw_card_label.width(), self.draw_card_label.height()))
-        for key in self.hand_layouts: # TODO: should assign facedown to opponents
-            if key != 'self':
-                pass
 
     def update_opponent_hand(self, opponent, bool):
         """ add/remove face down card label to an opponent hand """
@@ -261,16 +269,17 @@ class GameWindow(QWidget):
         if bool:
             # add facedown card to an opponent hand
             card = self.CardLabel(self, opponent=True)
-            card.setPixmap(self.face_down.scaled(card.width(), card.height()))
+            transform = QTransform()
+            transform.rotate(layout.rotation)
+            card.setPixmap(self.face_down.transformed(
+                transform).scaled(card.width(), card.height()))
             layout.addWidget(card)
-            # TODO: FIX BORDER COLLAPSE
         else:
             card = layout.cards[0]
             layout.removeWidget(card)
 
     def update_player_card(self, sprite, card_tuple):
         """ add a card to player hand """
-        # TODO: another method for removing? or better pass a bool/command
         pixmap = QPixmap()
         pixmap.loadFromData(sprite, 'PNG')
         card_label = self.CardLabel(self, player=True)
@@ -281,8 +290,6 @@ class GameWindow(QWidget):
         self.hand_layouts['self'].addWidget(card_label)
 
     def remove_player_card(self, id):
-        # TODO: does deleteLater removes from a list? or do i also have to
-        # remove item from list?
         for label in self.player_card_labels:
             if label.id == id:
                 self.player_card_labels.remove(label)

@@ -1,7 +1,7 @@
 {
   "host": "localhost",
-  "port": "9898",
-  "players": "3",
+  "port": "9899",
+  "players": "2",
   "initial_hand": "4",
   "deck_size": "100",
   "penalty": "4",

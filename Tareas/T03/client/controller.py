@@ -9,16 +9,15 @@ class Controller:
     Class responsible for managing communications between the ui's and
     the backend as well as connecting the signals
     """
-    def __init__(self, parameters):
-        self.parameters = parameters
-        self.logic = Logic(self.parameters)
+    def __init__(self):
+        self.logic = Logic()
         self.connect_login()
         self.connect_room()
         self.connect_game()
         self.login_window.show()
 
     def connect_login(self):
-        self.login_window = LoginWindow(self.parameters)
+        self.login_window = LoginWindow()
         self.login_window.username_signal.connect(
             self.logic.check_username)
         # valid username signal:
@@ -29,7 +28,7 @@ class Controller:
             self.login_window.invalid_username)
 
     def connect_room(self):
-        self.room_window = RoomWindow(self.parameters)
+        self.room_window = RoomWindow()
         # signal emitted when username is valid in login_window
         self.logic.username_valid_signal.connect(
             self.room_window.show)
@@ -41,7 +40,7 @@ class Controller:
             self.room_window.close)
 
     def connect_game(self):
-        self.game_window = GameWindow(self.parameters)
+        self.game_window = GameWindow()
         # connect signal to show() and close()
         self.logic.start_game_signal.connect(self.game_window.show)
         self.game_window.text_signal.connect(self.logic.send_chat_message)

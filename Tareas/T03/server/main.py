@@ -8,4 +8,4 @@ if __name__ == '__main__':
         parameters = json.loads(file.read(), object_hook=json_hook)
 
     host, port = parameters['host'], parameters['port']
-    server = Server(host, port, parameters)
+    server = Server(host, port)

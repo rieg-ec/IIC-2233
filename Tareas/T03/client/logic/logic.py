@@ -1,12 +1,21 @@
 from PyQt5.QtCore import QObject, pyqtSignal
 from logic.client import Client
 
+import sys, json
+
+sys.path.append('..')
+from client.utils import json_hook
 
 class Logic(QObject):
+
+    with open('parameters.json', 'r') as file:
+        parameters = json.loads(file.read(), object_hook=json_hook)
+
+
     # username validation:
     username_valid_signal = pyqtSignal(str, list)
     # username not valid:
-    username_invalid_signal = pyqtSignal()
+    username_invalid_signal = pyqtSignal(str)
     # new player joined or left room:
     new_player_signal = pyqtSignal(str, bool)
     # all players joined:
@@ -34,9 +43,8 @@ class Logic(QObject):
     # signal when game ends:
     end_game_signal = pyqtSignal(str) # winner as argument
 
-    def __init__(self, parameters):
+    def __init__(self):
         super().__init__()
-        self.parameters = parameters
         self.client = Client(self.parameters['host'],
             int(self.parameters['port']))
         self.client.server_message_signal.connect(self.server_message)
@@ -83,10 +91,11 @@ class Logic(QObject):
             # send already connected players so the window can show them
             self.username_valid_signal.emit(self.name, args)
 
-        elif key == 'INVALID_USERNAME' or key == 'FULL':
-            # TODO: split into 2 cases
-            # TODO: notify user about what happened
-            self.username_invalid_signal.emit()
+        elif key == 'FULL':
+            self.username_invalid_signal.emit('GAME IS FULL')
+
+        elif key == 'INVALID_USERNAME':
+            self.username_invalid_signal.emit('INVALID USERNAME')
 
         elif key == 'NEW_PLAYER':
             self.new_player_signal.emit(args, True) # args = player

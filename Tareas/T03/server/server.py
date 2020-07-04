@@ -1,26 +1,18 @@
 import threading
 import socket
 import json
+from utils import json_hook
 from game_engine import GameEngine
 from os import path
 
-# TODO: # QUESTION: what if i allow for multiple instances
-                #   of the game? like 2 simultaneous games?
-
-
-
-
-
 class Server:
-    # TODO: MAKE A CLIENT OBJECT TO STORE INFORMATION LIKE WHICH SPRITE TO SEND,
-    #       IF HAS LOST, NAME,
-    # TODO: remove player form game engine players list if disconnects
-    # TODO: when removing player from self.players, another player could connect
-    #           see what happens
 
-    def __init__(self, host, port, parameters): # TODO: remove parameters as a
-        print('Starting server')                #       attribute and read parameters.json
-        self.host = host                        #       on each class that uses it
+    with open('parameters.json', 'r') as file:
+        parameters = json.loads(file.read(), object_hook=json_hook)
+
+    def __init__(self, host, port):
+        print('Starting server')
+        self.host = host
         self.port = port
         self.socket_server = socket.socket(
             socket.AF_INET, socket.SOCK_STREAM)
@@ -29,7 +21,6 @@ class Server:
         self.socket_server.listen()
         self.accept_connections()
         self.players = dict() # validated users
-        self.parameters = parameters
         # =========== LOG ===========
         sep = ' ' * 6
         print(f'author{sep}|{sep}action{sep}|{sep}args')
@@ -152,10 +143,11 @@ class Server:
         then join socket to self.players with username as value and
         socket as key, and send NEW_USER: username command to existing players
         """
-        # TODO: check for valid usernames (dont allow '')
-        # room is not full:
+
         if len(self.players) >= self.parameters['players']:
             response = {"FULL": None}
+        elif not username.isalnum():
+            response = {"INVALID_USERNAME": username}
         elif username in [i for i in self.players.values()]:
             response = {"INVALID_USERNAME": username}
         else:
@@ -381,7 +373,6 @@ class Server:
             return
 
         if player not in [i.name for i in self.game_engine.players]:
-            print('LOST SDFSDFSDFSDFSDFSDFSDFSDFSDFSDFSDFSD')
 
             for socket, name in self.players.items():
                 if name == player:

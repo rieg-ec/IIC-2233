@@ -4,23 +4,30 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QHBoxLayout, QVBoxLayout
 from PyQt5.QtGui import QPixmap
 from os import path
+import sys, json
+
+sys.path.append('..')
+from client.utils import json_hook
 
 class LoginWindow(QWidget):
+
+    with open('parameters.json', 'r') as file:
+        parameters = json.loads(file.read(), object_hook=json_hook)
+
+
     username_signal = pyqtSignal(str)
 
-    def __init__(self, parameters):
+    def __init__(self):
         super().__init__()
-        self.parameters = parameters
         self.initUI()
 
 
     def initUI(self):
         logo_label = QLabel(self)
         logo_pixmap = QPixmap(path.join('ui', 'assets', 'logo.png'))
-        # self.logo_label.setGeometry()
         logo_label.setAlignment(Qt.AlignCenter)
         logo_label.setPixmap(logo_pixmap.scaled(
-            logo_label.width(), logo_label.height()))
+            self.width()/2, self.height()/2))
 
 
         hbox = QHBoxLayout()
@@ -30,9 +37,13 @@ class LoginWindow(QWidget):
         hbox.addWidget(self.dialog_box)
 
         self.join_button = QPushButton('JOIN', self)
+        self.join_button.setStyleSheet(
+            'background-color: grey; border-radius: 2px; width: 50px;'
+            +'height: 20px;')
         self.join_button.clicked.connect(self.join)
-        hbox.addStretch(0.1)
+
         hbox.addWidget(self.join_button)
+        hbox.addStretch(0.1)
 
         vbox = QVBoxLayout()
         vbox.addStretch(2)
@@ -42,7 +53,7 @@ class LoginWindow(QWidget):
         vbox.addStretch(2)
 
         self.setLayout(vbox)
-
+        self.setStyleSheet('background-color: black;')
         self.setWindowTitle('Bienvenido a DCCuatro!')
         self.setGeometry(*self.parameters['login_window_geometry'])
 
@@ -52,7 +63,7 @@ class LoginWindow(QWidget):
         associated also with room.show() (ignore them)
         """
         super().close()
-        
+
     def join(self):
         """
         Called when user clicks on join button and sends signal
@@ -61,5 +72,6 @@ class LoginWindow(QWidget):
         username = self.dialog_box.text()
         self.username_signal.emit(username)
 
-    def invalid_username(self):
-        print(self.dialog_box.text(), ' is not valid')
+    def invalid_username(self, cause):
+        self.dialog_box.setText('')
+        self.dialog_box.setPlaceholderText(cause)

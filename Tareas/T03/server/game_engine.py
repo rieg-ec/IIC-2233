@@ -54,7 +54,6 @@ class GameEngine:
         for player in self.players:
             for _ in range(self.parameters['initial_hand']):
                 card_tuple = self.deck.pop(0)
-                # TODO: draw regular cards until ther is 1 regular left
                 player.cards.append(card_tuple)
 
         self.discard_pile = self.deck.pop(0)
