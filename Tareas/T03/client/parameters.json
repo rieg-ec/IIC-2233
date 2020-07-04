@@ -1,6 +1,6 @@
 {
   "host": "localhost",
-  "port": "9899",
+  "port": "5555",
   "login_window_geometry": ["100", "100", "600", "800"],
   "game_window_geometry": ["100", "100", "1100", "900"]
 }
