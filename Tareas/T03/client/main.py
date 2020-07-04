@@ -1,5 +1,4 @@
 import sys
-from controller import Controller
 from PyQt5.QtWidgets import QApplication
 from utils import json_hook
 import json
@@ -63,7 +62,7 @@ if __name__ == '__main__':
     game_window.back_to_login_signal.connect(login_window.show)
 
     login_window.show()
-    
+
     try:
         logic.connect_to_server()
         sys.exit(app.exec_())
