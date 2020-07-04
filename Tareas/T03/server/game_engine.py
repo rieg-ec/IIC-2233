@@ -184,6 +184,9 @@ class GameEngine:
         Assuming the draw is valid, draws a card and checks if
         player looses in which case it is removed from self.players
         """
+        if len(self.deck) == 0:
+            self.deck = generate_deck(self.parameters['deck_size'])
+
         card_tuple = self.deck.pop(0)
         for p in self.players:
             if p.name == player_name:
