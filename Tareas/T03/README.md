@@ -1,98 +1,55 @@
-# Tarea X: Nombre de la tarea :school_satchel:
+# Tarea 3: DCCuatro :flower_playing_cards:
+##
+##
 
-
-Un buen ```README.md``` puede marcar una gran diferencia en la facilidad con la que corregimos una tarea, y consecuentemente cómo funciona su programa, por lo en general, entre más ordenado y limpio sea éste, mejor será 
-
-Para nuestra suerte, GitHub soporta el formato [MarkDown](https://es.wikipedia.org/wiki/Markdown), el cual permite utilizar una amplia variedad de estilos de texto, tanto para resaltar cosas importantes como para separar ideas o poner código de manera ordenada ([pueden ver casi todas las funcionalidades que incluye aquí](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet))
-
-Un buen ```README.md``` no tiene por que ser muy extenso tampoco, hay que ser **concisos** (a menos que lo consideren necesario) pero **tampoco pueden** faltar cosas. Lo importante es que sea claro y limpio 
-
-**Dejar claro lo que NO pudieron implementar y lo que no funciona a la perfección. Esto puede sonar innecesario pero permite que el ayudante se enfoque en lo que sí podría subir su puntaje.**
 
 ## Consideraciones generales :octocat:
 
-<Descripción de lo que hace y que **_no_** hace la tarea que entregaron junto
-con detalles de último minuto y consideraciones como por ejemplo cambiar algo
-en cierta línea del código o comentar una función>
+La tarea debiese cumplir con todo lo que pide el eunciado, si no se me pasó algo.
 
 ### Cosas implementadas y no implementadas :white_check_mark: :x:
 
-* <Nombre item pauta<sub>1</sub>>: Hecha completa
-* <Nombre item pauta<sub>2</sub>>: Me faltó hacer <insertar qué cosa faltó>
-    * <Nombre subitem pauta<sub>2.1</sub>>: Hecha completa 
-    * <Nombre subitem pauta<sub>2.2</sub>>: Me faltó hacer <insertar qué cosa faltó>
-    * ...
-* <Nombre item pauta<sub>3</sub>>: Me faltó hacer <insertar qué cosa faltó>
-* ...
-* <Nombre item pauta<sub>n</sub>>: Me faltó hacer <insertar qué cosa faltó>
+* Reglas DCCuatro: Hecha completa
+* Networking: Hecha completa
+
+* Interfaz: Hecha completa (no está tan bonita eso sí :c)
+
+* Archivos: Los parametros van en archivos.json, sin embargo los path los calculo en server.py pues no le encontré sentido a poner a mano 30+ paths que siguen un patrón. El archivo generador_de_mazos.py lo ocupo tal cual para generar el mazo inicial de cartas.
 
 ## Ejecución :computer:
-El módulo principal de la tarea a ejecutar es  ```archivo.py```. Además se debe crear los siguientes archivos y directorios adicionales:
-1. ```archivo.ext``` en ```ubicación```
-2. ```directorio``` en ```ubicación```
-3. ...
 
+Para iniciar el servidor, se debe ejecutar el archivo ```main.py``` ubicado en ```T03/server```. Para iniciar el cliente se debe correr el mismo archivo ubicado en ```T03/client```.
+
+Además se debe crear los siguientes archivos y directorios adicionales:
+1. ```sprites/simple``` en ```server``` que contiene los sprites de las cartas
+2. ```directorio``` en ```ubicación```
 
 ## Librerías :books:
 ### Librerías externas utilizadas
 La lista de librerías externas que utilicé fue la siguiente:
 
-1. ```librería_1```: ```función() / módulo```
-2. ```librería_2```: ```función() / módulo``` (debe instalarse)
-3. ...
+1. ```PyQt5``` con las funcionalidades del front end
+2. ```json``` para leer archivos y mensajes en formato json
+3.  ```threading``` para manejar las conexiones entre el cliente y el servidor sin entorpecer la UI y las conexiones con los demas clientes
+4.  ```socket``` para establecer la conexion entre el servidor y los clientes
+5.  ```random``` para manejar los eventos al azar en generador_de_mazos.py
 
 ### Librerías propias
 Por otro lado, los módulos que fueron creados fueron los siguientes:
 
-1. ```librería_1```: Contiene a ```ClaseA```, ```ClaseB```, (ser general, tampoco es necesario especificar cada una)...
-2. ```librería_2```: Hecha para <insertar descripción **breve** de lo que hace o qué contiene>
-3. ...
+1. ```game_engine.py```: Contiene a ```GameEngine```, con la logica interna y las reglas del juego DCCuatro
+2. ```generador_de_mazos.py```: ```sacar_cartas```, función que nos entregaron para manejar la creación de cartas.
+3. ```utils.py``` con la funcion ```json_hook``` para al leer json, los numeros sean interpretados como int y no str.
+4. ```client.py``` contiene una subclase de QObject encargada de mandar y recibir mensajes al servidor, y enviar señales a la clase Logic
+5. ```logic.py```: contiene la subclase de QObject ```Logic``` que recibe las señales de ```Client``` con los comandos mensajes del servidor y envía señales a las interfaces.
+6. ```game.py``` con la clase GameWindow, donde se implementa todo lo gráfico del juego.
+7. ```login.py``` con la parte gráfica de la ventana de inicio
+8. ```room.py``` con la ventana de la sala de espera
+9. ```server.py``` con la clase Server que recibe y envía mensajes a los clientes, encargandose de procesar las acciones y ocupa a la clase GameEngine para los procesos de lógica asociados a las reglas del juego.
 
 ## Supuestos y consideraciones adicionales :thinking:
 Los supuestos que realicé durante la tarea son los siguientes:
 
-1. <Descripción/consideración 1 y justificación del por qué es válido/a> 
-2. <Descripción/consideración 2 y justificación del por qué es válido/a>
-3. ...
-
-PD: <una última consideración (de ser necesaria) o comentario hecho anteriormente que se quiera **recalcar**>
-
-
--------
-
-
-
-**EXTRA:** si van a explicar qué hace específicamente un método, no lo coloquen en el README mismo. Pueden hacerlo directamente comentando el método en su archivo. Por ejemplo:
-
-```python
-class Corrector:
-
-    def __init__(self):
-          pass
-
-    # Este método coloca un 6 en las tareas que recibe
-    def corregir(self, tarea):
-        tarea.nota  = 6
-        return tarea
-```
-
-Si quieren ser más formales, pueden usar alguna convención de documentación. Google tiene la suya, Python tiene otra y hay muchas más. La de Python es la [PEP287, conocida como reST](https://www.python.org/dev/peps/pep-0287/). Lo más básico es documentar así:
-
-```python
-def funcion(argumento):
-    """
-    Mi función hace X con el argumento
-    """
-    return argumento_modificado
-```
-Lo importante es que expliquen qué hace la función y que si saben que alguna parte puede quedar complicada de entender o tienen alguna función mágica usen los comentarios/documentación para que el ayudante entienda sus intenciones.
-
-## Referencias de código externo :book:
-
-Para realizar mi tarea saqué código de:
-1. \<link de código>: este hace \<lo que hace> y está implementado en el archivo <nombre.py> en las líneas <número de líneas> y hace <explicación breve de que hace>
-
-
-
-## Descuentos
-La guía de descuentos se encuentra [link](https://github.com/IIC2233/syllabus/blob/master/Tareas/Descuentos.md).
+1. Un supuesto que realicé es que si un jugador grita DCCuatro en su turno, este instantáneamente roba 4 cartas (si el grito era inválido, obviamente) y pasa de turno. Esto podría ser un problema en caso de que el jugador deba robar 6 o + cartas, pues puede gritar DCCuatro para robar menos.
+2. Otro supuesto asociado a girtar DCCuatro es que siempre supuse que si un jugador A gritaba DCCuatro y un jugador B tenía 1 carta, este debía robarlas altiro (sin esperar a su turno) y me lo imaginé como que el servidor le enviaba las cartas (de lo contrario el jugador podría negarse a robar para siempre). No me queda claro si infringe la regla de que el juego no debe robar cartas por el jugador. Para el robo de cartas normal, ahí sí es siempre el jugador el que roba cartas, aun que no le quede otra opción.
+3. Si 2 jugadores tienen 1 carta, en el caso que (1) un tercer jugador grite DCCuatro, solo uno de esos 2 jugadores robará cartas, y se debe volver a gritar DCCuatro para que el otro robe. Y en el caso que (2) ese tercer jugador también tenga 1 carta restante, al gritar DCCuatro él tendrá la prioridad y por lo tanto quedará registrado como que gritó DCCuatro para él, por lo que para que sus oponentes roben cartas debe volver a gritar DCCuatro.
