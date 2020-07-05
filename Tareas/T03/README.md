@@ -1,6 +1,4 @@
 # Tarea 3: DCCuatro :flower_playing_cards:
-##
-##
 
 
 ## Consideraciones generales :octocat:
@@ -22,7 +20,6 @@ Para iniciar el servidor, se debe ejecutar el archivo ```main.py``` ubicado en `
 
 Además se debe crear los siguientes archivos y directorios adicionales:
 1. ```sprites/simple``` en ```server``` que contiene los sprites de las cartas
-2. ```directorio``` en ```ubicación```
 
 ## Librerías :books:
 ### Librerías externas utilizadas
@@ -54,8 +51,9 @@ Los supuestos que realicé durante la tarea son los siguientes:
 2. Otro supuesto asociado a girtar DCCuatro es que siempre supuse que si un jugador A gritaba DCCuatro y un jugador B tenía 1 carta, este debía robarlas altiro (sin esperar a su turno) y me lo imaginé como que el servidor le enviaba las cartas (de lo contrario el jugador podría negarse a robar para siempre). No me queda claro si infringe la regla de que el juego no debe robar cartas por el jugador. Para el robo de cartas normal, ahí sí es siempre el jugador el que roba cartas, aun que no le quede otra opción.
 3. Si 2 jugadores tienen 1 carta, en el caso que (1) un tercer jugador grite DCCuatro, solo uno de esos 2 jugadores robará cartas, y se debe volver a gritar DCCuatro para que el otro robe. Y en el caso que (2) ese tercer jugador también tenga 1 carta restante, al gritar DCCuatro él tendrá la prioridad y por lo tanto quedará registrado como que gritó DCCuatro para él, por lo que para que sus oponentes roben cartas debe volver a gritar DCCuatro.
 4. En relación al envío de cartas, una forma simple de optimizar el envío de imágenes es que las cartas que sabemos que siempre serán iguales (las cartas boca abajo) se envíen una sola vez al comienzo del juego y el cliente las guarde en memoria para cada vez que deba ocuparlas, y así lo implementé.
-#
-#
+
+
+
 ## Comunicación cliente/servidor
 
 la manera de comunicarse del cliente y el servidor esta basada en 2 tipos de mensajes, aquellos que son imágenes y aquellos que son "comandos".
